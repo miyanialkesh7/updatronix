@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-03-26T12:16:13+00:00\n"
+"POT-Creation-Date: 2026-03-26T12:34:45+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: updatronix\n"
@@ -49,8 +49,8 @@ msgstr ""
 
 #: inc/admin/links.php:26
 #: assets/src/js/components/SettingsPanel.js:82
-#: assets/src/js/pages/SettingsPage.js:89
-#: assets/src/js/pages/SettingsPage.js:92
+#: assets/src/js/pages/SettingsPage.js:126
+#: assets/src/js/pages/SettingsPage.js:129
 msgid "Settings"
 msgstr ""
 
@@ -412,8 +412,8 @@ msgid "Update logging is off. Turn it on in Settings to keep a history of update
 msgstr ""
 
 #: assets/src/js/components/activityLog/ActivityLogPanel.js:380
-#: assets/src/js/pages/SettingsPage.js:75
-#: assets/src/js/pages/SettingsPage.js:78
+#: assets/src/js/pages/SettingsPage.js:112
+#: assets/src/js/pages/SettingsPage.js:115
 msgid "Update logs"
 msgstr ""
 
@@ -496,8 +496,8 @@ msgid "Loading auto-update settings…"
 msgstr ""
 
 #: assets/src/js/components/autoUpdates/AutoUpdatesPanel.js:55
-#: assets/src/js/pages/SettingsPage.js:82
-#: assets/src/js/pages/SettingsPage.js:85
+#: assets/src/js/pages/SettingsPage.js:119
+#: assets/src/js/pages/SettingsPage.js:122
 msgid "Auto-updates"
 msgstr ""
 
@@ -558,6 +558,7 @@ msgid "Disabled — no automatic core updates"
 msgstr ""
 
 #: assets/src/js/components/autoUpdates/CoreSection.js:60
+#: assets/src/js/components/SettingsPanel.js:24
 msgid "Core updates"
 msgstr ""
 
@@ -619,10 +620,6 @@ msgstr ""
 
 #: assets/src/js/components/autoUpdates/TranslationsSection.js:53
 msgid "WordPress updates translations automatically by default. Turn this off to stop automatic translation downloads."
-msgstr ""
-
-#: assets/src/js/components/SettingsPanel.js:24
-msgid "Core (WordPress) updates"
 msgstr ""
 
 #: assets/src/js/components/SettingsPanel.js:25
@@ -765,6 +762,10 @@ msgstr ""
 msgid "Your settings could not be saved. Check your connection and try again."
 msgstr ""
 
-#: assets/src/js/pages/SettingsPage.js:68
+#: assets/src/js/pages/SettingsPage.js:89
+msgid "Loading section…"
+msgstr ""
+
+#: assets/src/js/pages/SettingsPage.js:105
 msgid "Updatronix settings sections"
 msgstr ""
