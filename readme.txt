@@ -125,7 +125,8 @@ Updatronix is multisite-aware and tracks logs on a per-site basis. Full network-
 == Changelog ==
 
 = 1.0.4 =
-* Fix: wire js script translations. 
+* Fix: wire js script translations.
+* Fix: Wrong logging behaviour for minor core auto-update. Was logged as "Reinstall" instead of "Update".
 
 = 1.0.3 =
 * Updatronix release on WordPress.org.
