@@ -44,7 +44,6 @@ phpunit.xml.dist export-ignore
 postcss.config.sort.js export-ignore
 prettierrc export-ignore
 prettierrc.js export-ignore
-README.md export-ignore
 Thumbs.db export-ignore
 workflow.md export-ignore
 wp-cli.local.yml export-ignore
