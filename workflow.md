@@ -9,7 +9,7 @@ Updatronix is a WordPress plugin that logs core, plugin, and theme updates with 
 - PHP **8.1+** (see `readme.txt`)
 - WordPress **6.2+** (tested range in `readme.txt`)
 - Composer
-- Node.js and npm (for `@wordpress/scripts`)
+- Node.js **LTS** and npm (for `@wordpress/scripts`, ESLint, Stylelint, Prettier)
 
 ### Install dependencies
 
@@ -26,10 +26,12 @@ Run these before a commit or release, in order:
 |------|---------|----------------|
 | 1 | `composer run lint:php` | PHP CS Fixer + PHPStan on `updatronix.php` and `inc/` |
 | 2 | `composer run lint:pcp` | Plugin Check via WP-CLI (requires **Local** — see below) |
-| 3 | `npm run lint` | ESLint on JS/React (`npm run lint -- --fix` to auto-fix) |
-| 4 | `composer run make:pot` | Regenerate `languages/updatronix.pot` (requires **Local** — see below) |
+| 3 | `npm run lint` | ESLint (WordPress preset + Prettier via `@wordpress/eslint-plugin`); `npm run lint:fix` to auto-fix |
+| 4 | `npm run lint:css` | Stylelint on `assets/src/**/*.scss` (`npm run lint:css:fix` to auto-fix) |
+| 5 | `npm run format` | Prettier check on `assets/src/**/*.{js,jsx}` (`npm run format:fix` to write) |
+| 6 | `composer run make:pot` | Regenerate `languages/updatronix.pot` (requires **Local** — see below) |
 
-WordPress.org suggests using coding standards / static analysis together with [Plugin Check](https://make.wordpress.org/plugins/developers/). This repo uses **PHP CS Fixer** and **PHPStan** for PHP, then Plugin Check for WordPress.org-oriented rules.
+WordPress.org suggests using coding standards / static analysis together with [Plugin Check](https://make.wordpress.org/plugins/developers/). This repo uses **PHP CS Fixer** and **PHPStan** for PHP, then Plugin Check for WordPress.org-oriented rules. Front-end JS follows **`@wordpress/eslint-plugin`**; SCSS follows **`@wordpress/stylelint-config/scss-stylistic`**; Prettier uses **`@wordpress/prettier-config`** (see `package.json`). SCSS is linted with Stylelint, not Prettier, so formatter commands target JS/JSX only.
 
 ### Composer scripts (reference)
 
@@ -39,14 +41,26 @@ WordPress.org suggests using coding standards / static analysis together with [P
 | `lint:pcp` | `bash .config/local-wp-cli.sh pcp` |
 | `make:pot` | `bash .config/local-wp-cli.sh pot` |
 
-### Configuration files (`.config/`)
+### npm scripts (front-end, reference)
+
+| Script | What it does |
+|--------|----------------|
+| `lint` / `lint:fix` | ESLint on `assets/src/**/*.js` |
+| `lint:css` / `lint:css:fix` | Stylelint on `assets/src/**/*.scss` |
+| `format` / `format:fix` | Prettier on `assets/src/**/*.{js,jsx}` |
+| `start` / `build` | `@wordpress/scripts` bundle |
+
+### Configuration files
 
 | Path | Role |
 |------|------|
 | `.config/.php-cs-fixer.php` | PHP code style |
 | `.config/phpstan.neon` | Static analysis |
 | `.config/phpstan-bootstrap.php` | PHPStan bootstrap |
-| `.config/.eslintrc.js` | ESLint |
+| `.config/.eslintrc.js` | ESLint (`plugin:@wordpress/eslint-plugin/recommended`) |
+| `.config/stylelintrc.json` | Stylelint (`@wordpress/stylelint-config/scss-stylistic` + project overrides) |
+| `package.json` | `"prettier": "@wordpress/prettier-config"` for ESLint / editor Prettier |
+| `.editorconfig` | Tabs for source; spaces for `package.json` / YAML |
 | `.config/local-wp-cli.sh` | Local WP shell + `wp` for `lint:pcp` / `make:pot` |
 | `.config/pcp-setup.php` | Loaded by `wp plugin check --require` (CLI only) |
 
@@ -55,9 +69,11 @@ WordPress.org suggests using coding standards / static analysis together with [P
 - **PHP CS Fixer** — `.config/.php-cs-fixer.php`
 - **PHPStan** — `.config/phpstan.neon`
 
-### JavaScript — `npm run lint`
+### Front-end — ESLint, Stylelint, Prettier
 
-ESLint config: `.config/.eslintrc.js`.
+- **ESLint** — `.config/.eslintrc.js` extends the WordPress `recommended` preset (Prettier runs inside ESLint when `prettier` is installed; do not duplicate `prettier/prettier` rules locally).
+- **Stylelint** — `.config/stylelintrc.json`; lints SCSS under `assets/src/` (scripts pass `--config`).
+- **Prettier** — configured via `package.json` and `@wordpress/prettier-config`; `format` / `format:fix` apply to JavaScript/JSX only so SCSS stays aligned with Stylelint stylistic rules.
 
 ### Plugin Check and POT — Local by Flywheel only
 
