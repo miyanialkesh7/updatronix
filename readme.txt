@@ -4,7 +4,7 @@ Donate link: https://buymeacoffee.com/quentinld
 Tags: updates, auto-update, maintenance, security, audit-log
 Requires at least: 6.2
 Tested up to: 6.9
-Stable tag: 1.0.3
+Stable tag: 1.0.4
 Requires PHP: 8.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -123,6 +123,8 @@ You can configure a retention policy from 1 to 365 days. A daily background task
 Updatronix is multisite-aware and tracks logs on a per-site basis. Full network-wide management features are planned for future updates.
 
 == Changelog ==
+
+= 1.0.4 =
 
 = 1.0.3 =
 * Updatronix release on WordPress.org.
