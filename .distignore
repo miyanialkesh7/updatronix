@@ -15,6 +15,7 @@
 .prettierrc
 .prettierrc.js
 .travis.yml
+assets/src
 behat.yml
 bin
 eslintrc
