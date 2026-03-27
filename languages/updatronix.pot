@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-03-26T12:34:45+00:00\n"
+"POT-Creation-Date: 2026-03-27T09:25:16+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: updatronix\n"
@@ -55,7 +55,7 @@ msgid "Settings"
 msgstr ""
 
 #: inc/admin/links.php:46
-#: inc/admin/menu.php:68
+#: inc/admin/menu.php:71
 msgid "View Updatronix changelog on WordPress.org (opens in a new tab)"
 msgstr ""
 
@@ -83,64 +83,60 @@ msgstr ""
 msgid "Updates log"
 msgstr ""
 
+#: inc/admin/menu.php:56
+msgid "Manage your WordPress updates."
+msgstr ""
+
 #. translators: %s: plugin version number
-#: inc/admin/menu.php:60
+#: inc/admin/menu.php:63
 #, php-format
 msgid "Version %s"
 msgstr ""
 
-#: inc/admin/menu.php:69
+#: inc/admin/menu.php:72
 msgid "What's new?"
 msgstr ""
 
-#: inc/admin/menu.php:79
+#: inc/admin/menu.php:82
 msgid "Read the Updatronix documentation (opens in a new tab)"
 msgstr ""
 
-#: inc/admin/menu.php:80
+#: inc/admin/menu.php:83
 msgid "Documentation"
 msgstr ""
 
-#: inc/admin/menu.php:85
+#: inc/admin/menu.php:88
+msgid "View the source code on GitHub (opens in a new tab)"
+msgstr ""
+
+#: inc/admin/menu.php:89
+msgid "Source code"
+msgstr ""
+
+#: inc/admin/menu.php:94
 msgid "Leave a review for Updatronix on WordPress.org (opens in a new tab)"
 msgstr ""
 
-#: inc/admin/menu.php:86
+#: inc/admin/menu.php:95
 msgid "Leave a review"
 msgstr ""
 
-#: inc/admin/menu.php:92
-msgid "Support development (opens in a new tab)"
-msgstr ""
-
-#: inc/admin/menu.php:93
-msgid "Support development"
-msgstr ""
-
-#: inc/admin/menu.php:101
-msgid "Loading your Updatronix settings…"
-msgstr ""
-
 #. translators: 1: decorative heart emoji, 2: author name
-#: inc/admin/menu.php:112
+#: inc/admin/menu.php:102
 #, php-format
 msgid "Made with %1$s by %2$s"
 msgstr ""
 
-#: inc/admin/menu.php:123
-msgid "Visit the developer website (opens in a new tab)"
+#: inc/admin/menu.php:112
+msgid "Support development (opens in a new tab)"
 msgstr ""
 
-#: inc/admin/menu.php:124
-msgid "Developer website"
+#: inc/admin/menu.php:113
+msgid "Support development"
 msgstr ""
 
-#: inc/admin/menu.php:129
-msgid "View the source code on GitHub (opens in a new tab)"
-msgstr ""
-
-#: inc/admin/menu.php:130
-msgid "Source code"
+#: inc/admin/menu.php:122
+msgid "Loading your Updatronix settings…"
 msgstr ""
 
 #: inc/classes/ErrorHandler.php:53

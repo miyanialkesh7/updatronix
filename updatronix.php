@@ -6,7 +6,7 @@
  * @package   updatronix
  * @link      https://github.com/quentin-ld/updatronix/
  * @author    Quentin Le Duff
- * @copyright 2024-2025 Quentin Le Duff
+ * @copyright 2024-2026 Quentin Le Duff
  * @license   GPL v2 or later
  *
  * Plugin Name: Updatronix
@@ -18,7 +18,7 @@
  * Text Domain: updatronix
  * Domain Path: /languages/
  * Requires at least: 6.2
- * Tested up to: 6.9
+ * Tested up to: 7.0
  * Requires PHP: 8.1
  * License URI: https://www.gnu.org/licenses/old-licenses/gpl-2.0.html/
  * License: GPL v2 or later

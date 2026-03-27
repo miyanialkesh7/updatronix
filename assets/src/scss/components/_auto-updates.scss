@@ -42,6 +42,15 @@
 		}
 	}
 
+	/* Improve row readability in DataViews auto-updates tables. */
+	.dataviews-view-table > tbody > tr:nth-child(2n + 1) {
+		background-color: #f6f7f7;
+	}
+
+	.dataviews-view-table > tbody > tr:nth-child(2n) {
+		background-color: transparent;
+	}
+
 	.dataviews-view-table__col-auto_update.dataviews-view-table__col-first-data {
 		width: 1%;
 	}

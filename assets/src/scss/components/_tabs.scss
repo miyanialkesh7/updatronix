@@ -26,6 +26,15 @@
 					var(--wpds-border-width-xs) solid
 					$color-border-light;
 				padding-right: 0;
+				height: 100%;
+
+				@media screen and (max-width: 768px) {
+					height: auto;
+					border-bottom:
+						var(--wpds-border-width-xs) solid
+						$color-border-light;
+					border-right: none;
+				}
 			}
 		}
 
@@ -90,6 +99,10 @@
 					bottom: 0;
 					width: $border-width-thick;
 					background: $wp-color-accent;
+
+					@media screen and (max-width: 768px) {
+						display: none;
+					}
 				}
 			}
 

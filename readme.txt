@@ -3,7 +3,7 @@ Contributors: quentinldd
 Donate link: https://buymeacoffee.com/quentinld
 Tags: updates, auto-update, maintenance, security, audit-log
 Requires at least: 6.2
-Tested up to: 6.9
+Tested up to: 7.0
 Stable tag: 1.0.4
 Requires PHP: 8.1
 License: GPLv2 or later
@@ -125,8 +125,11 @@ Updatronix is multisite-aware and tracks logs on a per-site basis. Full network-
 == Changelog ==
 
 = 1.0.4 =
-* Fix: wire js script translations.
+* Fix: Wire js script translations.
 * Fix: Wrong logging behaviour for minor core auto-update. Was logged as "Reinstall" instead of "Update".
+* Performance: Code-split the admin JavaScript bundle with lazy-loaded tab modules to keep all emitted chunks below Webpack’s recommended size limit and improve wp-admin load performance.
+* UI: Align user interface standards to WP 7.0.
+* Compatibility : Tested up to WP 7.0.
 
 = 1.0.3 =
 * Updatronix release on WordPress.org.

@@ -52,6 +52,9 @@ function updatronix_options_page(): void {
                     </div>
                     <div class="updatronix-header-title-text">
                         <h1><?php echo esc_html__('Updatronix', 'updatronix'); ?></h1>
+                        <p class="updatronix-header-title-text-description">
+                            <?php echo esc_html__('Manage your WordPress updates.', 'updatronix'); ?>
+                        </p>
                         <?php if ($plugin_version) { ?>
                             <p class="updatronix-plugin-version">
                                 <?php
@@ -79,19 +82,37 @@ function updatronix_options_page(): void {
                     aria-label="<?php echo esc_attr__('Read the Updatronix documentation (opens in a new tab)', 'updatronix'); ?>">
                         <?php echo esc_html__('Documentation', 'updatronix'); ?>
                     </a>
+                    <a href="https://github.com/quentin-ld/updatronix/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label="<?php echo esc_attr__('View the source code on GitHub (opens in a new tab)', 'updatronix'); ?>">
+                        <?php echo esc_html__('Source code', 'updatronix'); ?>
+                    </a>
                     <a href="https://wordpress.org/plugins/updatronix/#reviews"
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label="<?php echo esc_attr__('Leave a review for Updatronix on WordPress.org (opens in a new tab)', 'updatronix'); ?>">
                         <?php echo esc_html__('Leave a review', 'updatronix'); ?>
                     </a>
-                    <a href="https://buymeacoffee.com/quentinld"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    class="components-button is-next-40px-default-size is-primary is-small"
-                    aria-label="<?php echo esc_attr__('Support development (opens in a new tab)', 'updatronix'); ?>">
-                        <?php echo esc_html__('Support development', 'updatronix'); ?> <span aria-hidden="true">☕</span>
-                    </a>
+                    <p class="updatronix-header-support-development">
+                        <span class="updatronix-label-made-with">
+                                    <?php
+                                    echo wp_kses_post(sprintf(
+                                        /* translators: 1: decorative heart emoji, 2: author name */
+                                        __('Made with %1$s by %2$s', 'updatronix'),
+                                        '<span aria-hidden="true">❤️</span>',
+                                        'Quentin Le Duff'
+                                    ));
+    ?>
+                        </span>
+                        <a href="https://buymeacoffee.com/quentinld"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="components-button is-next-40px-default-size is-primary is-small"
+                        aria-label="<?php echo esc_attr__('Support development (opens in a new tab)', 'updatronix'); ?>">
+                            <?php echo esc_html__('Support development', 'updatronix'); ?> <span aria-hidden="true">☕</span>
+                        </a>
+                    </p>
                 </div>
             </header>
             <main id="updatronix-settings" class="updatronix-settings">
@@ -103,34 +124,6 @@ function updatronix_options_page(): void {
                     </div>
                 </div>
             </main>
-            <footer class="updatronix-footer">
-                <div class="updatronix-footer-title">
-                    <p>
-                        <?php
-                        echo wp_kses_post(sprintf(
-                            /* translators: 1: decorative heart emoji, 2: author name */
-                            __('Made with %1$s by %2$s', 'updatronix'),
-                            '<span aria-hidden="true">❤️</span>',
-                            'Quentin Le Duff'
-                        ));
-    ?>
-                    </p>
-                </div>
-                <div class="updatronix-footer-navigation">
-                    <a href="https://holdmywp.com/en/"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    aria-label="<?php echo esc_attr__('Visit the developer website (opens in a new tab)', 'updatronix'); ?>">
-                        <?php echo esc_html__('Developer website', 'updatronix'); ?>
-                    </a>
-                    <a href="https://github.com/quentin-ld/updatronix/"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    aria-label="<?php echo esc_attr__('View the source code on GitHub (opens in a new tab)', 'updatronix'); ?>">
-                        <?php echo esc_html__('Source code', 'updatronix'); ?>
-                    </a>
-                </div>
-            </footer>
         </div>
     </div>
     <?php
