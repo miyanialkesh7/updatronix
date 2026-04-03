@@ -314,11 +314,14 @@ $RECYCLE.BIN/
 
 # End of https://www.toptal.com/developers/gitignore/api/linux,macos,windows,archive,node,composer,visualstudiocode,sublimetext
 
-# PHPUnit #
+# PHPUnit / local caches (also under `.config/` when PHPUnit writes there)
 .phpunit.cache/
+.phpunit.result.cache
+**/.phpunit.result.cache
 
-# WordPress test library + core (install-wp-tests.sh with WP_TESTS_DIR under project) #
+# WordPress test stack under repo, Parcel/Vite-style `.cache`, etc.
 .cache/
+**/.cache/
 
 # NPM #
 ##########

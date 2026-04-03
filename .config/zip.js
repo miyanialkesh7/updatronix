@@ -56,6 +56,10 @@ archive.glob('**/*', {
     'phpunit.xml.dist',
     'tests/**',
     '.phpunit.cache/**',
+    '.cache/**',
+    '**/.cache/**',
+    '.phpunit.result.cache',
+    '**/.phpunit.result.cache',
     'workflow.md',
     'docs/**',
     'FEATURE_REQUEST.md'
