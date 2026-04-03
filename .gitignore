@@ -317,6 +317,7 @@ $RECYCLE.BIN/
 # PHPUnit / local caches (also under `.config/` when PHPUnit writes there)
 .phpunit.cache/
 .phpunit.result.cache
+.config/.phpunit.result.cache
 **/.phpunit.result.cache
 
 # WordPress test stack under repo, Parcel/Vite-style `.cache`, etc.
