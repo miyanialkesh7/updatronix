@@ -542,6 +542,20 @@ final class Updatronix_Update_Logger {
     private const OPTION_PLUGIN_VERSIONS_BEFORE_BY_MAINFILE = 'updatronix_plugin_versions_before_by_mainfile';
     private const OPTION_THEME_VERSIONS_BEFORE = 'updatronix_theme_versions_before';
 
+    /**
+     * Option keys used for pre-update snapshots; removed on plugin uninstall.
+     *
+     * @return list<string>
+     */
+    public static function snapshot_option_keys_for_uninstall(): array {
+        return [
+            self::OPTION_CORE_VERSION_BEFORE,
+            self::OPTION_PLUGIN_VERSIONS_BEFORE,
+            self::OPTION_PLUGIN_VERSIONS_BEFORE_BY_MAINFILE,
+            self::OPTION_THEME_VERSIONS_BEFORE,
+        ];
+    }
+
     /** @var array<string> Collected core update feedback (update_feedback filter). */
     private static array $core_feedback = [];
 

@@ -4,7 +4,7 @@ Donate link: https://buymeacoffee.com/quentinld
 Tags: updates, auto-update, maintenance, security, audit-log
 Requires at least: 6.2
 Tested up to: 7.0
-Stable tag: 1.0.5
+Stable tag: 1.0.6
 Requires PHP: 8.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -85,7 +85,7 @@ Updatronix aims to be fully accessible to all of its users.
 2. Activate the plugin.
 3. Navigate to **Tools → Updatronix** or **Dashboard → Updates log** to view your history and configure settings.
 
-On activation, Updatronix creates a dedicated database table for logs and schedules a daily cleanup task. On deactivation, the cleanup task is removed, but your log data is preserved.
+On activation, Updatronix creates a dedicated database table for logs and schedules a daily cleanup task. On deactivation, the cleanup task is removed, but your log data is preserved. If you delete the plugin from WordPress, the log table, plugin settings, and related options are removed (including on multisite, for each site).
 
 == Frequently Asked Questions ==
 
@@ -126,6 +126,9 @@ You can configure a retention policy from 1 to 365 days. A daily background task
 Updatronix is multisite-aware and tracks logs on a per-site basis. Full network-wide management features are planned for future updates.
 
 == Changelog ==
+
+= 1.0.6 =
+* Align plugin lifecycle with WordPress uninstall expectations.
 
 = 1.0.5 =
 * Fix: Wire js script translations for bundled files.
