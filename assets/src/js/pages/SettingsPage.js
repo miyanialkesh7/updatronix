@@ -90,7 +90,7 @@ export const SettingsPage = () => {
 	);
 
 	return (
-		<main className="updatronix-row">
+		<div className="updatronix-row">
 			<section className="updatronix-main">
 				<div className="updatronix-notices">
 					<Notices />
@@ -162,6 +162,6 @@ export const SettingsPage = () => {
 					</Tabs>
 				</div>
 			</section>
-		</main>
+		</div>
 	);
 };

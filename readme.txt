@@ -129,6 +129,8 @@ Updatronix is multisite-aware and tracks logs on a per-site basis. Full network-
 
 = 1.0.6 =
 * Align plugin lifecycle with WordPress uninstall expectations.
+* Accessibility: fix nested document landmarks.
+* 
 
 = 1.0.5 =
 * Fix: Wire js script translations for bundled files.

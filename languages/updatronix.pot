@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-04-03T07:26:13+00:00\n"
+"POT-Creation-Date: 2026-04-03T07:38:59+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: updatronix\n"
@@ -342,7 +342,7 @@ msgid "Title"
 msgstr ""
 
 #: assets/src/js/components/activityLog/ActivityLogPanel.js:126
-#: assets/src/js/components/autoUpdates/ItemsDataViewSection.js:211
+#: assets/src/js/components/autoUpdates/ItemsDataViewSection.js:222
 msgid "Version"
 msgstr ""
 
@@ -377,12 +377,13 @@ msgstr ""
 
 #: assets/src/js/components/activityLog/ActivityLogPanel.js:239
 #: assets/src/js/components/activityLog/LogDetailsContent.js:62
-#: assets/src/js/components/autoUpdates/ItemsDataViewSection.js:191
+#: assets/src/js/components/autoUpdates/ItemsDataViewSection.js:202
 msgid "Status"
 msgstr ""
 
 #: assets/src/js/components/activityLog/ActivityLogPanel.js:258
 #: assets/src/js/components/activityLog/ActivityLogPanel.js:259
+#: assets/src/js/components/autoUpdates/ItemsDataViewSection.js:265
 msgid "View details"
 msgstr ""
 
@@ -595,36 +596,42 @@ msgstr ""
 msgid "Unavailable"
 msgstr ""
 
-#: assets/src/js/components/autoUpdates/ItemsDataViewSection.js:135
-msgid "Disable auto-update"
+#. translators: %s: plugin or theme name
+#: assets/src/js/components/autoUpdates/ItemsDataViewSection.js:137
+#, js-format
+msgid "Disable auto-update for %s"
 msgstr ""
 
-#: assets/src/js/components/autoUpdates/ItemsDataViewSection.js:139
-msgid "Enable auto-update"
+#. translators: %s: plugin or theme name
+#: assets/src/js/components/autoUpdates/ItemsDataViewSection.js:145
+#, js-format
+msgid "Enable auto-update for %s"
 msgstr ""
 
-#: assets/src/js/components/autoUpdates/ItemsDataViewSection.js:151
+#: assets/src/js/components/autoUpdates/ItemsDataViewSection.js:162
 msgid "Icon"
 msgstr ""
 
-#: assets/src/js/components/autoUpdates/ItemsDataViewSection.js:196
+#: assets/src/js/components/autoUpdates/ItemsDataViewSection.js:207
 msgid "Active"
 msgstr ""
 
-#: assets/src/js/components/autoUpdates/ItemsDataViewSection.js:200
+#: assets/src/js/components/autoUpdates/ItemsDataViewSection.js:211
 msgid "Inactive"
 msgstr ""
 
-#: assets/src/js/components/autoUpdates/ItemsDataViewSection.js:224
+#: assets/src/js/components/autoUpdates/ItemsDataViewSection.js:235
 msgid "Description"
 msgstr ""
 
-#: assets/src/js/components/autoUpdates/ItemsDataViewSection.js:237
+#: assets/src/js/components/autoUpdates/ItemsDataViewSection.js:248
 msgid "Details"
 msgstr ""
 
-#: assets/src/js/components/autoUpdates/ItemsDataViewSection.js:246
-msgid "View"
+#. translators: %s: plugin or theme name
+#: assets/src/js/components/autoUpdates/ItemsDataViewSection.js:258
+#, js-format
+msgid "View details for %s (opens in a new tab)"
 msgstr ""
 
 #: assets/src/js/components/autoUpdates/TranslationsSection.js:43
