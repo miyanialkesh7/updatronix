@@ -490,6 +490,12 @@ final class Updatronix_Update_Logger {
                                 $version_before = (string) $item->partial_version;
                             }
                         }
+                        if ($core_success) {
+                            $disk_ver = self::get_installed_core_version_from_disk();
+                            if ($disk_ver !== '') {
+                                $version_after = $disk_ver;
+                            }
+                        }
                         $action_type = self::resolve_action_type($version_before, $version_after, 'update');
                     }
                 }
@@ -1129,7 +1135,8 @@ final class Updatronix_Update_Logger {
         if ($type === 'core' && $action === 'update') {
             if ($performed_as === 'automatic') {
                 if (isset(self::$pending_logs['core']['core'])) {
-                    self::$pending_logs['core']['core']['version_after'] = get_bloginfo('version');
+                    $pending_after = (string) (self::$pending_logs['core']['core']['version_after'] ?? '');
+                    self::$pending_logs['core']['core']['version_after'] = self::resolve_core_version_after_for_log($pending_after);
                     self::$pending_logs['core']['core']['message'] = $process_message;
                     Updatronix_UpdateLogState::store_pending(
                         (string) self::$pending_logs['core']['core']['event_key'],
@@ -1256,6 +1263,52 @@ final class Updatronix_Update_Logger {
     }
 
     /**
+     * Read $wp_version from wp-includes/version.php without relying on the in-memory global.
+     *
+     * After Core_Upgrader finishes, the file on disk matches the new release, but
+     * get_bloginfo('version') still returns the $wp_version loaded at bootstrap.
+     *
+     * @return string Version string, or empty if the file is missing or not parseable.
+     */
+    private static function get_installed_core_version_from_disk(): string {
+        if (!defined('ABSPATH') || !defined('WPINC')) {
+            return '';
+        }
+        $path = ABSPATH . WPINC . '/version.php';
+        if (!is_readable($path)) {
+            return '';
+        }
+        $contents = file_get_contents($path);
+        if ($contents === false || $contents === '') {
+            return '';
+        }
+        // Single-line literal only: (.+) with /s can span the whole file and swallow comments/code.
+        if (preg_match('/\$wp_version\s*=\s*[\'"]([^\'"\r\n]+)[\'"]\s*;/', $contents, $m)) {
+            return $m[1];
+        }
+
+        return '';
+    }
+
+    /**
+     * Resolved post-update core version: on-disk install first, then transient target, then get_bloginfo().
+     *
+     * @param string $pending_target_version Target from update_core at download time (may be empty).
+     * @return string
+     */
+    private static function resolve_core_version_after_for_log(string $pending_target_version = ''): string {
+        $disk = self::get_installed_core_version_from_disk();
+        if ($disk !== '') {
+            return $disk;
+        }
+        if ($pending_target_version !== '') {
+            return $pending_target_version;
+        }
+
+        return (string) get_bloginfo('version');
+    }
+
+    /**
      * Log WordPress core update or downgrade.
      *
      * @param WP_Upgrader $upgrader        Upgrader instance (for process message).
@@ -1270,8 +1323,12 @@ final class Updatronix_Update_Logger {
             $event_key = self::build_event_key('core', 'core');
         }
 
+        $pending_after = '';
+        if (isset(self::$pending_logs['core']['core']['version_after'])) {
+            $pending_after = (string) self::$pending_logs['core']['core']['version_after'];
+        }
         $version_before = get_option(self::OPTION_CORE_VERSION_BEFORE, '');
-        $version_after = get_bloginfo('version');
+        $version_after = self::resolve_core_version_after_for_log($pending_after);
         $action_type = self::resolve_action_type($version_before, $version_after, 'update');
 
         $steps = self::$core_feedback;
