@@ -317,6 +317,9 @@ $RECYCLE.BIN/
 # PHPUnit #
 .phpunit.cache/
 
+# WordPress test library + core (install-wp-tests.sh with WP_TESTS_DIR under project) #
+.cache/
+
 # NPM #
 ##########
 # Ignore all directories called node_modules in current folder and any subfolders.

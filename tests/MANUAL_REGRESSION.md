@@ -19,7 +19,7 @@ Use this checklist before tagging a release. Adjust environment placeholders as 
 Use the browser devtools Network tab on the settings page, or `curl` with a valid logged-in cookie and `X-WP-Nonce` from `wpApiSettings.nonce` (or the REST nonce endpoint).
 
 1. **GET** `/wp-json/updatronix/v1/settings` as Administrator — **200**, JSON body with `options`.
-2. Same request **unauthenticated** (no cookies) — **401** (or **403** per WP version).
+2. Same request **unauthenticated** (no cookies) — **401** or **403** (WordPress may return either).
 3. **POST/PATCH** `/wp-json/updatronix/v1/settings` with valid body as Administrator and **X-WP-Nonce** — **200**; settings persist after reload.
 4. Mutating request **without** `X-WP-Nonce` (cookie session) — expect REST **cookie check** failure (typically **403**).
 5. Low-privilege user with cookies — **403** on read/write routes.
@@ -35,9 +35,11 @@ Use the browser devtools Network tab on the settings page, or `curl` with a vali
 
 ## Quality bar (automated)
 
-From the plugin root:
+From the plugin root, the full stack is documented in **`workflow.md`**. Typical order:
 
-- `composer run lint:php`
-- `composer run lint:pcp` (if available in your environment)
-- `composer test`
-- `npm run lint` / `npm run lint:css` when JS/CSS changed
+- `composer run verify:php` (PHP CS Fixer + PHPStan + unit tests — same as CI)
+- `composer run lint:pcp` (Local / WP-CLI)
+- `npm run lint` / `npm run lint:css` / `npm run format` when JS/CSS changed
+- Optional: `bash .config/local-wp-cli.sh integration-test` (see `tests/README.md`)
+
+Or run everything that does not require integration tests: **`npm run build:all`** (includes `verify:php` and the rest of the pipeline).

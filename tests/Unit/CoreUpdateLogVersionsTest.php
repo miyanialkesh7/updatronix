@@ -8,10 +8,11 @@
 
 declare(strict_types=1);
 
-use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 
-#[CoversClass(Updatronix_Core_Update_Log_Versions::class)]
+/**
+ * @covers \Updatronix_Core_Update_Log_Versions
+ */
 final class CoreUpdateLogVersionsTest extends TestCase {
     public function test_parse_wp_version_from_file_contents_extracts_literal(): void {
         $contents = "<?php\n\$wp_version = '6.9.4';\n";
