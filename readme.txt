@@ -136,6 +136,7 @@ Updatronix is multisite-aware and tracks logs on a per-site basis. Full network-
 * Fix: Wire js script translations for bundled files.
 * i18n: Load theme/plugin descriptions translated into the current admin language for the auto-update panel.
 * i18n: Add translation for "Icon", "Sucess", "Error", "Warning" labels.
+* Performance: cache the merged Jed/JSON translation inline payload.
 
 = 1.0.4 =
 * Fix: Wire js script translations.

@@ -42,13 +42,14 @@ final class Updatronix_Uninstall {
     }
 
     /**
-     * Unschedule cron, drop log table (and DB version option), delete plugin options.
+     * Unschedule cron, clear plugin transients, drop log table (and DB version option), delete plugin options.
      *
      * @return void
      */
     private static function run_for_current_site(): void {
         require_once updatronix_PLUGIN_DIR . 'inc/classes/Cron.php';
         Updatronix_Cron::unschedule();
+        Updatronix_Cron::delete_plugin_transients();
 
         require_once updatronix_PLUGIN_DIR . 'inc/classes/Database.php';
         Updatronix_Database::drop_table();
