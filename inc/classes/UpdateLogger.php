@@ -12,6 +12,8 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
+require_once __DIR__ . '/CoreUpdateLogVersions.php';
+
 final class Updatronix_Update_Logger {
     /**
      * Register hooks for update events.
@@ -463,40 +465,14 @@ final class Updatronix_Update_Logger {
                             continue;
                         }
                         $name = 'WordPress';
-                        $version_before = get_option(self::OPTION_CORE_VERSION_BEFORE, '');
-                        $version_after = get_bloginfo('version');
                         if (isset(self::$pending_logs['core']['core'])) {
                             $pending_core = self::$pending_logs['core']['core'];
-                            $version_before = (string) ($pending_core['version_before'] ?? $version_before);
-                            $version_after = (string) ($pending_core['version_after'] ?: $version_after);
                             $event_key = (string) ($pending_core['event_key'] ?? $event_key);
                         }
-                        $core_success = isset($result->result) && !is_wp_error($result->result);
-                        if ($core_success && is_object($item)) {
-                            if (is_string($result->result) && $result->result !== '') {
-                                $version_after = $result->result;
-                            } else {
-                                $offer_after = '';
-                                if (isset($item->current) && $item->current !== '') {
-                                    $offer_after = (string) $item->current;
-                                } elseif (isset($item->version) && $item->version !== '') {
-                                    $offer_after = (string) $item->version;
-                                }
-                                if ($offer_after !== '') {
-                                    $version_after = $offer_after;
-                                }
-                            }
-                            if ($version_before === '' && isset($item->partial_version) && $item->partial_version !== '') {
-                                $version_before = (string) $item->partial_version;
-                            }
-                        }
-                        if ($core_success) {
-                            $disk_ver = self::get_installed_core_version_from_disk();
-                            if ($disk_ver !== '') {
-                                $version_after = $disk_ver;
-                            }
-                        }
-                        $action_type = self::resolve_action_type($version_before, $version_after, 'update');
+                        $resolved = self::resolve_core_versions_for_activity_log(true, $result, $item);
+                        $version_before = $resolved['version_before'];
+                        $version_after = $resolved['version_after'];
+                        $action_type = $resolved['action_type'];
                     }
                 }
                 if (self::should_skip_event($event_key)) {
@@ -1282,12 +1258,8 @@ final class Updatronix_Update_Logger {
         if ($contents === false || $contents === '') {
             return '';
         }
-        // Single-line literal only: (.+) with /s can span the whole file and swallow comments/code.
-        if (preg_match('/\$wp_version\s*=\s*[\'"]([^\'"\r\n]+)[\'"]\s*;/', $contents, $m)) {
-            return $m[1];
-        }
 
-        return '';
+        return Updatronix_Core_Update_Log_Versions::parse_wp_version_from_file_contents($contents);
     }
 
     /**
@@ -1297,15 +1269,78 @@ final class Updatronix_Update_Logger {
      * @return string
      */
     private static function resolve_core_version_after_for_log(string $pending_target_version = ''): string {
-        $disk = self::get_installed_core_version_from_disk();
-        if ($disk !== '') {
-            return $disk;
-        }
-        if ($pending_target_version !== '') {
-            return $pending_target_version;
+        return Updatronix_Core_Update_Log_Versions::resolve_core_version_after_triple(
+            self::get_installed_core_version_from_disk(),
+            $pending_target_version,
+            (string) get_bloginfo('version')
+        );
+    }
+
+    /**
+     * Resolve core version_before, version_after, and action_type for the activity log.
+     *
+     * Manual completion (`upgrader_process_complete` → `log_core_update`) and automatic
+     * completion (`automatic_updates_complete`) share this entry point so the two paths stay aligned.
+     *
+     * @param bool        $automatic_completion True when building values from `log_automatic_updates` (WP result objects).
+     * @param object|null $result               Automatic update result object (automatic path only).
+     * @param object|null $item                 Update offer item from `$result->item` (automatic path only).
+     * @return array{version_before: string, version_after: string, action_type: string}
+     */
+    private static function resolve_core_versions_for_activity_log(bool $automatic_completion, ?object $result = null, ?object $item = null): array {
+        if (!$automatic_completion) {
+            $pending_after = '';
+            if (isset(self::$pending_logs['core']['core']['version_after'])) {
+                $pending_after = (string) self::$pending_logs['core']['core']['version_after'];
+            }
+            $version_before = (string) get_option(self::OPTION_CORE_VERSION_BEFORE, '');
+            $version_after = self::resolve_core_version_after_for_log($pending_after);
+
+            return [
+                'version_before' => $version_before,
+                'version_after' => $version_after,
+                'action_type' => Updatronix_Core_Update_Log_Versions::resolve_action_type($version_before, $version_after, 'update'),
+            ];
         }
 
-        return (string) get_bloginfo('version');
+        $version_before = (string) get_option(self::OPTION_CORE_VERSION_BEFORE, '');
+        $version_after = (string) get_bloginfo('version');
+        if (isset(self::$pending_logs['core']['core'])) {
+            $pending_core = self::$pending_logs['core']['core'];
+            $version_before = (string) ($pending_core['version_before'] ?? $version_before);
+            $version_after = (string) ($pending_core['version_after'] ?: $version_after);
+        }
+        $core_success = $result !== null && isset($result->result) && !is_wp_error($result->result);
+        if ($core_success && is_object($item)) {
+            if (is_string($result->result) && $result->result !== '') {
+                $version_after = $result->result;
+            } else {
+                $offer_after = '';
+                if (isset($item->current) && $item->current !== '') {
+                    $offer_after = (string) $item->current;
+                } elseif (isset($item->version) && $item->version !== '') {
+                    $offer_after = (string) $item->version;
+                }
+                if ($offer_after !== '') {
+                    $version_after = $offer_after;
+                }
+            }
+            if ($version_before === '' && isset($item->partial_version) && $item->partial_version !== '') {
+                $version_before = (string) $item->partial_version;
+            }
+        }
+        if ($core_success) {
+            $disk_ver = self::get_installed_core_version_from_disk();
+            if ($disk_ver !== '') {
+                $version_after = $disk_ver;
+            }
+        }
+
+        return [
+            'version_before' => $version_before,
+            'version_after' => $version_after,
+            'action_type' => Updatronix_Core_Update_Log_Versions::resolve_action_type($version_before, $version_after, 'update'),
+        ];
     }
 
     /**
@@ -1323,13 +1358,10 @@ final class Updatronix_Update_Logger {
             $event_key = self::build_event_key('core', 'core');
         }
 
-        $pending_after = '';
-        if (isset(self::$pending_logs['core']['core']['version_after'])) {
-            $pending_after = (string) self::$pending_logs['core']['core']['version_after'];
-        }
-        $version_before = get_option(self::OPTION_CORE_VERSION_BEFORE, '');
-        $version_after = self::resolve_core_version_after_for_log($pending_after);
-        $action_type = self::resolve_action_type($version_before, $version_after, 'update');
+        $resolved = self::resolve_core_versions_for_activity_log(false);
+        $version_before = $resolved['version_before'];
+        $version_after = $resolved['version_after'];
+        $action_type = $resolved['action_type'];
 
         $steps = self::$core_feedback;
         if (self::$core_package_url !== '') {
@@ -1445,28 +1477,6 @@ final class Updatronix_Update_Logger {
     }
 
     /**
-     * Resolve action type: downgrade, same_version, or update.
-     *
-     * @param string $version_before Previous version.
-     * @param string $version_after  Current version.
-     * @param string $default        Default when versions not comparable (e.g. update).
-     * @return string One of: downgrade, same_version, update.
-     */
-    private static function resolve_action_type(string $version_before, string $version_after, string $default = 'update'): string {
-        if ($version_before !== '' && $version_after !== '') {
-            $cmp = version_compare($version_after, $version_before);
-            if ($cmp < 0) {
-                return 'downgrade';
-            }
-            if ($cmp === 0) {
-                return 'same_version';
-            }
-        }
-
-        return $default;
-    }
-
-    /**
      * Log plugin update/install/downgrade.
      *
      * @param string       $plugin_file     Plugin file path.
@@ -1511,7 +1521,7 @@ final class Updatronix_Update_Logger {
             $slug = $plugin_file;
         }
 
-        $action_type = $action === 'install' ? 'install' : self::resolve_action_type($version_before, $version_after, 'update');
+        $action_type = $action === 'install' ? 'install' : Updatronix_Core_Update_Log_Versions::resolve_action_type($version_before, $version_after, 'update');
 
         $title = self::format_plugin_log_title($action_type, $name, $version_after);
         $message = self::format_plugin_log_message($title, $process_message);
@@ -1698,7 +1708,7 @@ final class Updatronix_Update_Logger {
             $version_after = $theme->get('Version') ?: '';
         }
 
-        $action_type = $action === 'install' ? 'install' : self::resolve_action_type($version_before, $version_after, 'update');
+        $action_type = $action === 'install' ? 'install' : Updatronix_Core_Update_Log_Versions::resolve_action_type($version_before, $version_after, 'update');
 
         $title = self::format_plugin_log_title($action_type, $name, $version_after);
         $message = self::format_note_like_wp_screen($title, [], $process_message);

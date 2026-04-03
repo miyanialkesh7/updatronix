@@ -52,6 +52,10 @@ archive.glob('**/*', {
     '*.zip',
     'phpstan.neon',
     'phpstan-bootstrap.php',
+    'phpunit.xml',
+    'phpunit.xml.dist',
+    'tests/**',
+    '.phpunit.cache/**',
     'workflow.md',
     'docs/**',
     'FEATURE_REQUEST.md'

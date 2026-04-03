@@ -314,6 +314,9 @@ $RECYCLE.BIN/
 
 # End of https://www.toptal.com/developers/gitignore/api/linux,macos,windows,archive,node,composer,visualstudiocode,sublimetext
 
+# PHPUnit #
+.phpunit.cache/
+
 # NPM #
 ##########
 # Ignore all directories called node_modules in current folder and any subfolders.
