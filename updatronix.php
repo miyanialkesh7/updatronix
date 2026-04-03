@@ -41,8 +41,14 @@ if (!defined('ABSPATH')) {
 /** Plugin version (must match Version header above; used for DB schema version). */
 define('UPDATRONIX_VERSION', '1.0.6');
 
-define('updatronix_PLUGIN_FILE', __FILE__);
-define('updatronix_PLUGIN_DIR', plugin_dir_path(__FILE__));
+define('UPDATRONIX_PLUGIN_FILE', __FILE__);
+define('UPDATRONIX_PLUGIN_DIR', plugin_dir_path(__FILE__));
+if (!defined('updatronix_PLUGIN_FILE')) {
+    define('updatronix_PLUGIN_FILE', UPDATRONIX_PLUGIN_FILE);
+}
+if (!defined('updatronix_PLUGIN_DIR')) {
+    define('updatronix_PLUGIN_DIR', UPDATRONIX_PLUGIN_DIR);
+}
 
 require_once __DIR__ . '/inc/core/constants.php';
 require_once __DIR__ . '/inc/classes/Bootstrap.php';
@@ -62,6 +68,12 @@ register_activation_hook(__FILE__, 'updatronix_activate');
  * @return void
  */
 function updatronix_activate(): void {
+    $role = get_role('administrator');
+    if ($role) {
+        $role->add_cap(UPDATRONIX_CAP_MANAGE);
+    }
+    update_option('updatronix_cap_migrated', '1', false);
+
     require_once __DIR__ . '/inc/classes/Database.php';
     Updatronix_Database::create_table();
     require_once __DIR__ . '/inc/classes/Cron.php';

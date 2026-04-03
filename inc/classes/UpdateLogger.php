@@ -869,16 +869,21 @@ final class Updatronix_Update_Logger {
             return $value;
         }
 
-        if (!function_exists('get_plugins')) {
+        if (!function_exists('get_plugin_data')) {
             require_once ABSPATH . 'wp-admin/includes/plugin.php';
         }
 
-        $all_plugins = get_plugins();
         foreach (array_keys($value->response) as $file) {
-            if (isset($all_plugins[$file]['Version'])) {
-                if (!isset($value->response[$file]->version_before)) {
-                    $value->response[$file]->version_before = $all_plugins[$file]['Version'];
-                }
+            if (isset($value->response[$file]->version_before)) {
+                continue;
+            }
+            $path = WP_PLUGIN_DIR . '/' . $file;
+            if (!is_readable($path)) {
+                continue;
+            }
+            $data = get_plugin_data($path, false, false);
+            if (!empty($data['Version'])) {
+                $value->response[$file]->version_before = $data['Version'];
             }
         }
 

@@ -31,5 +31,6 @@ if (!defined('updatronix_PLUGIN_DIR')) {
     define('updatronix_PLUGIN_DIR', plugin_dir_path(updatronix_PLUGIN_FILE));
 }
 
+require_once __DIR__ . '/inc/core/constants.php';
 require_once __DIR__ . '/inc/classes/Uninstall.php';
 Updatronix_Uninstall::run();

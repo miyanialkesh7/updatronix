@@ -54,6 +54,11 @@ final class Updatronix_Uninstall {
         require_once updatronix_PLUGIN_DIR . 'inc/classes/Database.php';
         Updatronix_Database::drop_table();
 
+        $role = get_role('administrator');
+        if ($role && $role->has_cap(UPDATRONIX_CAP_MANAGE)) {
+            $role->remove_cap(UPDATRONIX_CAP_MANAGE);
+        }
+
         foreach (self::option_keys() as $key) {
             delete_option($key);
         }
@@ -73,6 +78,7 @@ final class Updatronix_Uninstall {
             [
                 UPDATRONIX_OPTION_SETTINGS,
                 Updatronix_UpdateLogState::OPTION_STATE,
+                'updatronix_cap_migrated',
             ],
             Updatronix_Update_Logger::snapshot_option_keys_for_uninstall()
         );
