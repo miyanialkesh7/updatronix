@@ -45,6 +45,7 @@ final class Updatronix_Bootstrap {
             'Cron.php',
             'ErrorHandler.php',
             'CoreUpdateLogVersions.php',
+            'AutomaticUpdateResultNotes.php',
             'UpdateLogger.php',
             'Notifications.php',
             'Settings.php',

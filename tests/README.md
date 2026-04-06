@@ -10,11 +10,13 @@ composer test
 
 - **Config:** `.config/phpunit.xml.dist`
 - **Suite:** `tests/Unit/`
-- **Bootstrap:** `tests/bootstrap.php` (minimal stubs)
+- **Bootstrap:** `tests/bootstrap.php` (default: minimal stubs, no WordPress)
 
 Uses **PHPUnit 9.6** (same major version as the WordPress integration suite — see below).
 
 ## Integration tests (full WordPress)
+
+Uses the same **`tests/bootstrap.php`** as unit tests; **`.config/phpunit.integration.xml.dist`** sets `UPDATRONIX_INTEGRATION_TESTS=1` so the bootstrap loads **wordpress-tests-lib** and the plugin instead of stubs.
 
 Requires the official **wordpress-tests-lib**, a MySQL/MariaDB server, and PHP with **mysqli** (Local’s PHP satisfies this).
 

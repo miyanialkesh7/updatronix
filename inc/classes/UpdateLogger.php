@@ -481,9 +481,11 @@ final class Updatronix_Update_Logger {
                 if (isset($result->result) && is_wp_error($result->result)) {
                     $status = 'error';
                 }
-                if (isset($result->messages) && is_array($result->messages)) {
-                    $notes = implode("\n", array_map('strip_tags', $result->messages));
-                }
+                $messages = isset($result->messages) && is_array($result->messages) ? $result->messages : [];
+                $notes = Updatronix_Automatic_Update_Result_Notes::merge_skin_messages_with_wp_result(
+                    $messages,
+                    $result->result ?? null
+                );
                 Updatronix_Logger::log(
                     $type === 'translation' ? 'translation' : $type,
                     $action_type,
