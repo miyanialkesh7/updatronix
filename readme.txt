@@ -131,6 +131,7 @@ Updatronix is multisite-aware and tracks logs on a per-site basis. Full network-
 * Align plugin lifecycle with WordPress uninstall expectations.
 * Accessibility: fix nested document landmarks.
 * Fix: Automatic update failures now record the real WP_Error (e.g. filesystem unavailable) in log details, not only generic upgrader messages.
+* Enhancement: Update component dependencies and remove hardcoded values in style to use design-token.css instead.
 
 = 1.0.5 =
 * Fix: Wire js script translations for bundled files.
