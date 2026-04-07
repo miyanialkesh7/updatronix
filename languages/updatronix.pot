@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-04-07T08:30:57+00:00\n"
+"POT-Creation-Date: 2026-04-07T08:38:20+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: updatronix\n"
@@ -50,8 +50,8 @@ msgstr ""
 
 #: inc/admin/links.php:26
 #: assets/src/js/components/SettingsPanel.js:82
-#: assets/src/js/pages/SettingsPage.js:126
-#: assets/src/js/pages/SettingsPage.js:129
+#: assets/src/js/pages/SettingsPage.js:89
+#: assets/src/js/pages/SettingsPage.js:92
 msgid "Settings"
 msgstr ""
 
@@ -352,22 +352,22 @@ msgstr ""
 
 #: assets/src/js/components/activityLog/ActivityLogPanel.js:144
 #: assets/src/js/components/activityLog/ActivityLogPanel.js:154
-#: assets/src/js/components/activityLog/LogDetailsContent.js:57
+#: assets/src/js/components/activityLog/LogDetailsContent.js:56
 msgid "Type"
 msgstr ""
 
 #: assets/src/js/components/activityLog/ActivityLogPanel.js:171
-#: assets/src/js/components/activityLog/LogDetailsContent.js:73
+#: assets/src/js/components/activityLog/LogDetailsContent.js:72
 msgid "Date"
 msgstr ""
 
 #: assets/src/js/components/activityLog/ActivityLogPanel.js:198
-#: assets/src/js/components/activityLog/LogDetailsContent.js:66
+#: assets/src/js/components/activityLog/LogDetailsContent.js:65
 msgid "Triggered by"
 msgstr ""
 
 #: assets/src/js/components/activityLog/ActivityLogPanel.js:207
-#: assets/src/js/components/activityLog/LogDetailsContent.js:70
+#: assets/src/js/components/activityLog/LogDetailsContent.js:69
 msgid "Run type"
 msgstr ""
 
@@ -376,7 +376,7 @@ msgid "User"
 msgstr ""
 
 #: assets/src/js/components/activityLog/ActivityLogPanel.js:239
-#: assets/src/js/components/activityLog/LogDetailsContent.js:62
+#: assets/src/js/components/activityLog/LogDetailsContent.js:61
 #: assets/src/js/components/autoUpdates/ItemsDataViewSection.js:202
 msgid "Status"
 msgstr ""
@@ -410,8 +410,8 @@ msgid "Update logging is off. Turn it on in Settings to keep a history of update
 msgstr ""
 
 #: assets/src/js/components/activityLog/ActivityLogPanel.js:381
-#: assets/src/js/pages/SettingsPage.js:112
-#: assets/src/js/pages/SettingsPage.js:115
+#: assets/src/js/pages/SettingsPage.js:75
+#: assets/src/js/pages/SettingsPage.js:78
 msgid "Update logs"
 msgstr ""
 
@@ -447,40 +447,40 @@ msgstr ""
 msgid "Delete"
 msgstr ""
 
-#: assets/src/js/components/activityLog/LogDetailsContent.js:46
+#: assets/src/js/components/activityLog/LogDetailsContent.js:45
 msgid "Loading log details…"
 msgstr ""
 
-#: assets/src/js/components/activityLog/LogDetailsContent.js:56
+#: assets/src/js/components/activityLog/LogDetailsContent.js:55
 #: assets/src/js/components/activityLog/utils.js:100
 msgid "Item"
 msgstr ""
 
-#: assets/src/js/components/activityLog/LogDetailsContent.js:59
+#: assets/src/js/components/activityLog/LogDetailsContent.js:58
 msgid "Action"
 msgstr ""
 
-#: assets/src/js/components/activityLog/LogDetailsContent.js:63
+#: assets/src/js/components/activityLog/LogDetailsContent.js:62
 msgid "From version"
 msgstr ""
 
-#: assets/src/js/components/activityLog/LogDetailsContent.js:64
+#: assets/src/js/components/activityLog/LogDetailsContent.js:63
 msgid "To version"
 msgstr ""
 
-#: assets/src/js/components/activityLog/LogDetailsContent.js:79
+#: assets/src/js/components/activityLog/LogDetailsContent.js:78
 msgid "Summary"
 msgstr ""
 
-#: assets/src/js/components/activityLog/LogDetailsContent.js:101
+#: assets/src/js/components/activityLog/LogDetailsContent.js:100
 msgid "Process details"
 msgstr ""
 
-#: assets/src/js/components/activityLog/LogDetailsContent.js:116
+#: assets/src/js/components/activityLog/LogDetailsContent.js:115
 msgid "Advanced details"
 msgstr ""
 
-#: assets/src/js/components/activityLog/LogDetailsContent.js:132
+#: assets/src/js/components/activityLog/LogDetailsContent.js:131
 msgid "No additional details are available for this log entry."
 msgstr ""
 
@@ -510,8 +510,8 @@ msgid "Loading auto-update settings…"
 msgstr ""
 
 #: assets/src/js/components/autoUpdates/AutoUpdatesPanel.js:55
-#: assets/src/js/pages/SettingsPage.js:119
-#: assets/src/js/pages/SettingsPage.js:122
+#: assets/src/js/pages/SettingsPage.js:82
+#: assets/src/js/pages/SettingsPage.js:85
 msgid "Auto-updates"
 msgstr ""
 
@@ -786,10 +786,6 @@ msgstr ""
 msgid "Your settings could not be saved. Check your connection and try again."
 msgstr ""
 
-#: assets/src/js/pages/SettingsPage.js:89
-msgid "Loading section…"
-msgstr ""
-
-#: assets/src/js/pages/SettingsPage.js:105
+#: assets/src/js/pages/SettingsPage.js:68
 msgid "Updatronix settings sections"
 msgstr ""
