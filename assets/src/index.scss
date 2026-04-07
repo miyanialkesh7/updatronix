@@ -1,5 +1,5 @@
 @use "scss/abstracts/variables";
-@use "scss/base/root";
+//@use "scss/base/root";
 @use "scss/components/activity-log";
 @use "scss/components/auto-updates";
 @use "scss/components/button";
@@ -7,4 +7,8 @@
 @use "scss/components/tabs";
 @use "scss/components/toggle-control";
 @use "scss/pages/settings";
+//@use "@wordpress/dataviews/build-style/style.css";
+
+@use "@wordpress/theme/design-tokens.css";
+//@use "@wordpress/components/build-style/style.css" as wpComponentsStyle;
 @use "@wordpress/dataviews/build-style/style.css";
