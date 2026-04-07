@@ -1,14 +1,17 @@
+// Abstracts styles
 @use "scss/abstracts/variables";
-//@use "scss/base/root";
+
+// Components styles
 @use "scss/components/activity-log";
 @use "scss/components/auto-updates";
 @use "scss/components/button";
 @use "scss/components/notice";
 @use "scss/components/tabs";
 @use "scss/components/toggle-control";
-@use "scss/pages/settings";
-//@use "@wordpress/dataviews/build-style/style.css";
 
+// Pages styles
+@use "scss/pages/settings";
+
+// Vendor styles
 @use "@wordpress/theme/design-tokens.css";
-//@use "@wordpress/components/build-style/style.css" as wpComponentsStyle;
 @use "@wordpress/dataviews/build-style/style.css";
