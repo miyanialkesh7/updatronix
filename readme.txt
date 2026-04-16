@@ -9,7 +9,7 @@ Requires PHP: 8.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Log every WordPress update with version details, manage auto-updates through native settings, and route notification emails to chosen recipients.
+Log every WordPress update with version details, manage auto-updates through native settings, and route notification emails to chosen recipient.
 
 == Description ==
 
@@ -34,7 +34,7 @@ The plugin also provides auto-update controls that save directly to native WordP
 
 Updatronix filters the notification emails WordPress sends — it does not create a separate notification system.
 
-* Redirect core update alerts, auto-update notices, and recovery mode emails to the recipients you choose.
+* Redirect core update alerts, auto-update notices, and recovery mode emails to the recipient you choose.
 * Select which event types trigger a notification.
 
 = Failure tracking =
@@ -79,7 +79,7 @@ Logging starts automatically when you activate the plugin. To change this, go to
 
 = How do I change where WordPress sends update emails? =
 
-Go to **Tools → Updatronix** → **Settings**, enable "Email notifications," enter one or more recipient addresses separated by commas, and select which event types trigger an email: core updates, plugin and theme auto-updates, debug emails, and recovery mode. Updatronix filters the same emails WordPress sends — it does not create a separate notification system.
+Go to **Tools → Updatronix** → **Settings**, enable "Email notifications," enter the recipient address, and select which event types trigger an email: core updates, plugin and theme auto-updates, debug emails, and recovery mode. Updatronix filters the same emails WordPress sends — it does not create a separate notification system.
 
 = Does Updatronix work with third-party plugins and themes? =
 
