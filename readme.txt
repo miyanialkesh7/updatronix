@@ -4,7 +4,7 @@ Donate link: https://buymeacoffee.com/quentinld
 Tags: updates, auto-update, maintenance, security, audit-log
 Requires at least: 6.2
 Tested up to: 7.0
-Stable tag: 1.0.6.1
+Stable tag: 1.1
 Requires PHP: 8.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -111,6 +111,8 @@ Yes. Updatronix is multisite-aware and tracks logs on a per-site basis. A future
 
 == Changelog ==
 
+= 1.1 =
+
 = 1.0.6.1 =
 * Fix: Readme.txt text is now naturally wrapped.
 
@@ -152,6 +154,8 @@ Yes. Updatronix is multisite-aware and tracks logs on a per-site basis. A future
 * Add: Initial release of Updatronix.
 
 == Upgrade Notice ==
+
+= 1.1 =
 
 = 1.0.6 =
 Improves uninstall cleanup, accessibility, and error logging for failed auto-updates.
