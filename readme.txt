@@ -1,4 +1,4 @@
-=== Updatronix ===
+=== Updatronix - Enhanced Update Manager ===
 Contributors: quentinldd
 Donate link: https://buymeacoffee.com/quentinld
 Tags: updates, auto-update, maintenance, security, audit-log
@@ -17,30 +17,34 @@ Updatronix logs every core, plugin, theme, and translation update that WordPress
 
 The plugin also provides auto-update controls that save directly to native WordPress options, email routing for built-in notification emails, and detection of `wp-config.php` constants that override update behavior. It does not replace the WordPress update engine, perform rollbacks, or connect to external services.
 
-= Update logging =
+== Features ==
 
+= Update logging =
 * Record the name, slug, type, and status of every update.
 * Store version-before and version-after snapshots for each event.
 * See what triggered each update — a manual action, the automatic update system, or a file upload.
 * Review the technical process messages that WordPress generates during the upgrade.
+* View log entries even if an update fails because of a server timeout or fatal error.
+* Review captured error details to help with manual recovery.
+* Export a formatted list of updates for a selected date range in one click.
+
+= Update schedule =
+* Choose the time when Updatronix checks for available updates.
+* Delay automatic updates by a number of days.
+* Reduce bulk auto-update failures, including [fs_unavailable], by queuing updates.
 
 = Auto-update controls =
-
 * Set core updates to apply all versions, minor releases only, or manual-only mode.
-* Toggle auto-updates for individual plugins and themes using the same options WordPress reads natively.
+* Toggle auto-updates for individual plugins and themes.
 * View `wp-config.php` constants (such as `WP_AUTO_UPDATE_CORE`) that override your settings, so you can spot configuration conflicts.
 
-= Email routing =
-
-Updatronix filters the notification emails WordPress sends — it does not create a separate notification system.
-
+= Update notifications emails management =
 * Redirect core update alerts, auto-update notices, and recovery mode emails to the recipient you choose.
 * Select which event types trigger a notification.
+* You can also fully disable updates emails in case you dont need it.
 
-= Failure tracking =
-
-* View log entries even when an update fails due to a server timeout or fatal error.
-* Review error details that the shutdown handler captures for manual recovery.
+= Developers =
+* Hooks to build custom Updatronix add-ons for your workflow.
 
 == Privacy Statement ==
 
@@ -65,7 +69,7 @@ Updatronix aims to be fully accessible to all of its users.
 2. Activate the plugin through the Plugins screen.
 3. Go to **Tools → Updatronix** (or **Dashboard → Updates log**) to view logs and configure settings.
 
-**On activation**, Updatronix creates a dedicated database table for logs and schedules a daily cleanup task through WP-Cron.
+**On activation**, Updatronix creates a dedicated database table for logs and schedules a daily cleanup task.
 
 **On deactivation**, Updatronix removes the cleanup task. Your log data and settings remain in the database.
 
@@ -107,11 +111,17 @@ You set a retention period from one to 365 days in the Settings tab. A daily WP-
 
 = Does this plugin work on multisite? =
 
-Yes. Updatronix is multisite-aware and tracks logs on a per-site basis. A future release will add network-wide management features.
+Yes. Updatronix is multisite-aware and tracks logs on a per-site basis.
 
 == Changelog ==
 
 = 1.1 =
+* New: Added update scheduling so users can set automatic update times.
+* New: Added PHP hooks for developers, agencies, and advanced users.
+* Change: User can export a formatted list of updates for a selected date range in one click.
+* Change: User can fully disable updates emails if needed.
+* Docs: Improved readme wording and structure for clarity.
+* i18n: Localized menu links.
 
 = 1.0.6.1 =
 * Fix: Readme.txt text is now naturally wrapped.
