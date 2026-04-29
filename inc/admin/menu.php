@@ -88,7 +88,7 @@ function updatronix_options_page(): void {
                                 );
                             echo ' — ';
                             ?>
-                                <a href="<?php echo $changelog_url; ?>"
+                                <a href="<?php echo esc_url($changelog_url); ?>"
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 aria-label="<?php echo esc_attr__('View Updatronix changelog on WordPress.org (opens in a new tab)', 'updatronix'); ?>">
@@ -99,19 +99,19 @@ function updatronix_options_page(): void {
                     </div>
                 </div>
                 <div class="updatronix-header-navigation">
-                    <a href="<?php echo $documentation_url; ?>"
+                    <a href="<?php echo esc_url($documentation_url); ?>"
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label="<?php echo esc_attr__('Read the Updatronix documentation (opens in a new tab)', 'updatronix'); ?>">
                         <?php echo esc_html__('Documentation', 'updatronix'); ?>
                     </a>
-                    <a href="<?php echo $source_code_url; ?>"
+                    <a href="<?php echo esc_url($source_code_url); ?>"
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label="<?php echo esc_attr__('View the source code on GitHub (opens in a new tab)', 'updatronix'); ?>">
                         <?php echo esc_html__('Source code', 'updatronix'); ?>
                     </a>
-                    <a href="<?php echo $reviews_url; ?>"
+                    <a href="<?php echo esc_url($reviews_url); ?>"
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label="<?php echo esc_attr__('Leave a review for Updatronix on WordPress.org (opens in a new tab)', 'updatronix'); ?>">
@@ -128,7 +128,7 @@ function updatronix_options_page(): void {
                                     ));
     ?>
                         </span>
-                        <a href="<?php echo $support_url; ?>"
+                        <a href="<?php echo esc_url($support_url); ?>"
                         target="_blank"
                         rel="noopener noreferrer"
                         class="components-button is-next-40px-default-size is-primary is-small"

@@ -117,6 +117,7 @@ Yes. Updatronix is multisite-aware and tracks logs on a per-site basis.
 
 = 1.1 =
 * New: Added update scheduling so users can set automatic update times.
+* New: Added a dedicated Schedule tab in the admin interface that hosts every update-scheduling control.
 * New: Added PHP hooks for developers, agencies, and advanced users.
 * Change: User can export a formatted list of updates for a selected date range in one click.
 * Change: User can fully disable updates emails if needed.
