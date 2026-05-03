@@ -41,7 +41,8 @@ function setTabInUrl(tabId) {
  * @return {JSX.Element} The settings page UI.
  */
 export const SettingsPage = () => {
-	const { settings, setSettings, saveSettings, saving } = usePluginSettings();
+	const { settings, setSettings, saveSettings, saving, scheduleMeta } =
+		usePluginSettings();
 	const [selectedTabId, setSelectedTabId] = useState(getTabFromUrl);
 
 	const handleSelectTab = useCallback((tabId) => {
@@ -112,7 +113,13 @@ export const SettingsPage = () => {
 							<AutoUpdatesPanel />
 						</Tabs.TabPanel>
 						<Tabs.TabPanel tabId={TAB_SCHEDULE}>
-							<SchedulePanel />
+							<SchedulePanel
+								settings={settings}
+								setSettings={setSettings}
+								saveSettings={saveSettings}
+								saving={saving}
+								scheduleMeta={scheduleMeta}
+							/>
 						</Tabs.TabPanel>
 						<Tabs.TabPanel tabId={TAB_SETTINGS}>
 							<SettingsPanel

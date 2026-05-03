@@ -28,6 +28,7 @@ final class Updatronix_Bootstrap {
         Updatronix_Settings::register();
         Updatronix_Notifications::register();
         Updatronix_AutoUpdates::register();
+        Updatronix_AutoUpdateDelay::register();
     }
 
     /**
@@ -50,6 +51,7 @@ final class Updatronix_Bootstrap {
             'Notifications.php',
             'Settings.php',
             'AutoUpdates.php',
+            'AutoUpdateDelay.php',
         ];
         foreach ($classes as $file) {
             $path = $dir . '/' . $file;

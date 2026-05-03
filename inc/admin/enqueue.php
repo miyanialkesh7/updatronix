@@ -273,5 +273,6 @@ function updatronix_localize_settings(string $admin_page): void {
         'namespace' => 'updatronix/v1',
         'nonce' => wp_create_nonce('wp_rest'),
         'options' => $options,
+        'schedule_meta' => updatronix_decorate_schedule_meta_for_display(Updatronix_Cron::get_schedule_rest_meta()),
     ]);
 }

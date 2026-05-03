@@ -127,6 +127,25 @@ final class Updatronix_Settings {
                         'type' => 'array',
                         'items' => ['type' => 'string', 'enum' => ['core', 'plugin_theme', 'debug', 'technical']],
                     ],
+                    'schedule' => [
+                        'type' => 'object',
+                        'properties' => [
+                            'update_check' => [
+                                'type' => 'object',
+                                'properties' => [
+                                    'recurrence' => ['type' => 'string'],
+                                    'time' => ['type' => 'string'],
+                                ],
+                            ],
+                            'delay_updates' => [
+                                'type' => 'object',
+                                'properties' => [
+                                    'enabled' => ['type' => 'boolean'],
+                                    'delay_value' => ['type' => 'integer'],
+                                ],
+                            ],
+                        ],
+                    ],
                 ],
             ],
         ]);
@@ -198,7 +217,13 @@ final class Updatronix_Settings {
     public static function rest_get_settings(\WP_REST_Request $request): WP_REST_Response {
         $options = updatronix_get_settings();
 
-        return new WP_REST_Response(['options' => $options], 200);
+        return new WP_REST_Response(
+            [
+                'options' => $options,
+                'schedule_meta' => self::schedule_meta_response_payload(),
+            ],
+            200
+        );
     }
 
     /**
@@ -455,10 +480,28 @@ final class Updatronix_Settings {
                 : $current['notify_on'],
             'auto_update_translations' => $current['auto_update_translations'],
             'dismissed_constants' => $current['dismissed_constants'],
+            'schedule' => $request->has_param('schedule') && is_array($request->get_param('schedule'))
+                ? updatronix_merge_partial_schedule_into((array) $request->get_param('schedule'), $current['schedule'])
+                : $current['schedule'],
         ];
         updatronix_save_settings_array($next);
 
-        return new WP_REST_Response(['options' => updatronix_get_settings()], 200);
+        return new WP_REST_Response(
+            [
+                'options' => updatronix_get_settings(),
+                'schedule_meta' => self::schedule_meta_response_payload(),
+            ],
+            200
+        );
+    }
+
+    /**
+     * Schedule tab read-only meta for REST JSON.
+     *
+     * @return array<string, mixed>
+     */
+    private static function schedule_meta_response_payload(): array {
+        return updatronix_decorate_schedule_meta_for_display(Updatronix_Cron::get_schedule_rest_meta());
     }
 
     /**

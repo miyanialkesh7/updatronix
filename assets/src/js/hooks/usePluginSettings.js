@@ -4,6 +4,25 @@ import { store as noticesStore } from '@wordpress/notices';
 import apiFetch from '@wordpress/api-fetch';
 import { __ } from '@wordpress/i18n';
 
+const DEFAULT_SCHEDULE = {
+	update_check: {
+		recurrence: '',
+		time: '03:00',
+	},
+	delay_updates: {
+		enabled: false,
+		delay_value: 0,
+	},
+};
+
+const DEFAULT_SCHEDULE_META = {
+	cron_schedule_labels: [],
+	update_check_next_scheduled: false,
+	update_check_next_human: '',
+	wp_cron_disabled: false,
+	timezone_string: '',
+};
+
 /**
  * Read and save plugin settings via localized data and REST.
  *
@@ -18,6 +37,10 @@ export function usePluginSettings() {
 	const initial = useMemo(() => {
 		const opts =
 			typeof window !== 'undefined' && window.updatronixSettings?.options;
+		const meta =
+			typeof window !== 'undefined' &&
+			window.updatronixSettings?.schedule_meta;
+
 		const allowedNotifyOn = ['core', 'plugin_theme', 'debug', 'technical'];
 		let notifyOn = [];
 		if (opts && Array.isArray(opts.notify_on)) {
@@ -32,13 +55,39 @@ export function usePluginSettings() {
 				notifyOn = ['plugin_theme'];
 			}
 		}
-		return opts
+
+		let schedule = DEFAULT_SCHEDULE;
+		if (opts && opts.schedule && typeof opts.schedule === 'object') {
+			schedule = {
+				update_check: {
+					recurrence: String(
+						opts.schedule.update_check?.recurrence ?? ''
+					),
+					time: String(
+						opts.schedule.update_check?.time ??
+							DEFAULT_SCHEDULE.update_check.time
+					),
+				},
+				delay_updates: {
+					enabled: !!opts.schedule.delay_updates?.enabled,
+					delay_value:
+						Number(opts.schedule.delay_updates?.delay_value) || 0,
+				},
+			};
+		}
+
+		const settingsBase = opts
 			? {
 					logging_enabled: !!opts.logging_enabled,
 					retention_days: Number(opts.retention_days) || 90,
 					notify_enabled: !!opts.notify_enabled,
 					notify_emails: String(opts.notify_emails || ''),
 					notifyOn,
+					auto_update_translations: !!opts.auto_update_translations,
+					dismissed_constants: Array.isArray(opts.dismissed_constants)
+						? opts.dismissed_constants
+						: [],
+					schedule,
 				}
 			: {
 					logging_enabled: true,
@@ -46,10 +95,21 @@ export function usePluginSettings() {
 					notify_enabled: false,
 					notify_emails: '',
 					notifyOn,
+					auto_update_translations: true,
+					dismissed_constants: [],
+					schedule,
 				};
+
+		const scheduleMeta = {
+			...DEFAULT_SCHEDULE_META,
+			...(meta && typeof meta === 'object' ? meta : {}),
+		};
+
+		return { settings: settingsBase, scheduleMeta };
 	}, []);
 
-	const [settings, setSettings] = useState(initial);
+	const [settings, setSettings] = useState(initial.settings);
+	const [scheduleMeta, setScheduleMeta] = useState(initial.scheduleMeta);
 	const [saving, setSaving] = useState(false);
 
 	const saveSettings = useCallback(async () => {
@@ -61,6 +121,7 @@ export function usePluginSettings() {
 				notify_enabled: settings.notify_enabled,
 				notify_emails: settings.notify_emails,
 				notify_on: settings.notifyOn,
+				schedule: settings.schedule,
 			};
 			const response = await apiFetch({
 				path: 'updatronix/v1/settings',
@@ -70,7 +131,51 @@ export function usePluginSettings() {
 			if (response?.options) {
 				const { notify_on: notifyOnFromApi, ...rest } =
 					response.options;
-				setSettings({ ...rest, notifyOn: notifyOnFromApi });
+				const nextSchedule =
+					response.options.schedule &&
+					typeof response.options.schedule === 'object'
+						? {
+								update_check: {
+									recurrence: String(
+										response.options.schedule.update_check
+											?.recurrence ?? ''
+									),
+									time: String(
+										response.options.schedule.update_check
+											?.time ??
+											DEFAULT_SCHEDULE.update_check.time
+									),
+								},
+								delay_updates: {
+									enabled:
+										!!response.options.schedule
+											.delay_updates?.enabled,
+									delay_value:
+										Number(
+											response.options.schedule
+												.delay_updates?.delay_value
+										) || 0,
+								},
+							}
+						: settings.schedule;
+				setSettings({
+					...rest,
+					notifyOn: notifyOnFromApi,
+					schedule: nextSchedule,
+					auto_update_translations:
+						!!response.options.auto_update_translations,
+					dismissed_constants: Array.isArray(
+						response.options.dismissed_constants
+					)
+						? response.options.dismissed_constants
+						: [],
+				});
+				if (response.schedule_meta) {
+					setScheduleMeta({
+						...DEFAULT_SCHEDULE_META,
+						...response.schedule_meta,
+					});
+				}
 				createSuccessNotice(__('Settings saved.', 'updatronix'));
 			} else {
 				createWarningNotice(
@@ -98,5 +203,6 @@ export function usePluginSettings() {
 		setSettings,
 		saveSettings,
 		saving,
+		scheduleMeta,
 	};
 }

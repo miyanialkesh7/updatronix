@@ -78,6 +78,7 @@ function updatronix_activate(): void {
     Updatronix_Database::create_table();
     require_once __DIR__ . '/inc/classes/Cron.php';
     Updatronix_Cron::schedule_if_needed();
+    Updatronix_Cron::apply_update_check_schedule_from_settings();
 }
 
 register_deactivation_hook(__FILE__, 'updatronix_deactivate');

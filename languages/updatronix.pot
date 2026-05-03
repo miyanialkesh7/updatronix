@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-04-29T09:41:42+00:00\n"
+"POT-Creation-Date: 2026-05-03T18:40:03+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: updatronix\n"
@@ -45,8 +45,8 @@ msgstr ""
 
 #: inc/admin/links.php:26
 #: assets/src/js/components/SettingsPanel.js:84
-#: assets/src/js/pages/SettingsPage.js:100
-#: assets/src/js/pages/SettingsPage.js:103
+#: assets/src/js/pages/SettingsPage.js:101
+#: assets/src/js/pages/SettingsPage.js:104
 msgid "Settings"
 msgstr ""
 
@@ -87,8 +87,8 @@ msgstr ""
 
 #: inc/admin/menu.php:30
 #: assets/src/js/components/activityLog/ActivityLogPanel.js:381
-#: assets/src/js/pages/SettingsPage.js:79
-#: assets/src/js/pages/SettingsPage.js:82
+#: assets/src/js/pages/SettingsPage.js:80
+#: assets/src/js/pages/SettingsPage.js:83
 msgid "Update logs"
 msgstr ""
 
@@ -161,6 +161,42 @@ msgstr ""
 msgid "Loading your Updatronix settings…"
 msgstr ""
 
+#. translators: 1: number of soak days configured, 2: datetime string when eligibility starts if the update is still offered.
+#: inc/classes/AutoUpdateDelay.php:359
+#, php-format
+msgid "Updatronix deferred this automatic update: soak is %1$d full day(s) after first detection; eligible no earlier than %2$s."
+msgstr ""
+
+#: inc/classes/AutoUpdateDelay.php:395
+msgid "Unknown plugin"
+msgstr ""
+
+#: inc/classes/AutoUpdateDelay.php:415
+msgid "Unknown theme"
+msgstr ""
+
+#: inc/classes/AutoUpdateDelay.php:435
+#: inc/classes/Settings.php:378
+#: inc/classes/Settings.php:386
+#: assets/src/js/components/activityLog/utils.js:130
+#: assets/src/js/components/activityLog/utils.js:138
+msgid "WordPress"
+msgstr ""
+
+#: inc/classes/AutoUpdateDelay.php:445
+msgid "unknown-project"
+msgstr ""
+
+#: inc/classes/AutoUpdateDelay.php:446
+msgid "locale-unknown"
+msgstr ""
+
+#. translators: 1: project slug or id, 2: locale code
+#: inc/classes/AutoUpdateDelay.php:450
+#, php-format
+msgid "Translation update (%1$s · %2$s)"
+msgstr ""
+
 #: inc/classes/AutoUpdates.php:103
 msgid "Manage your WordPress updates with confidence. Control auto-updates, capture technical logs, and route alerts to the right places."
 msgstr ""
@@ -179,104 +215,97 @@ msgstr ""
 msgid "The core update encountered a redirect error (HTTP %d). Check your server configuration."
 msgstr ""
 
-#: inc/classes/Settings.php:269
-#: inc/classes/Settings.php:415
+#: inc/classes/Settings.php:294
+#: inc/classes/Settings.php:440
 msgid "The requested log entry could not be found."
 msgstr ""
 
-#: inc/classes/Settings.php:289
+#: inc/classes/Settings.php:314
 msgid "System"
 msgstr ""
 
 #. translators: %d: WordPress user ID when display name is not available
-#: inc/classes/Settings.php:294
+#: inc/classes/Settings.php:319
 #, php-format
 msgid "User #%d"
 msgstr ""
 
-#: inc/classes/Settings.php:300
+#: inc/classes/Settings.php:325
 msgid "Automatic"
 msgstr ""
 
-#: inc/classes/Settings.php:302
+#: inc/classes/Settings.php:327
 msgid "File upload"
 msgstr ""
 
-#: inc/classes/Settings.php:304
+#: inc/classes/Settings.php:329
 msgid "Manual"
 msgstr ""
 
-#: inc/classes/Settings.php:309
+#: inc/classes/Settings.php:334
 #: assets/src/js/components/activityLog/constants.js:19
 msgid "Update"
 msgstr ""
 
-#: inc/classes/Settings.php:310
+#: inc/classes/Settings.php:335
 #: assets/src/js/components/activityLog/constants.js:20
 msgid "Rollback"
 msgstr ""
 
-#: inc/classes/Settings.php:311
+#: inc/classes/Settings.php:336
 #: assets/src/js/components/activityLog/constants.js:21
 msgid "Install"
 msgstr ""
 
-#: inc/classes/Settings.php:312
+#: inc/classes/Settings.php:337
 #: assets/src/js/components/activityLog/constants.js:22
 msgid "Reinstall"
 msgstr ""
 
-#: inc/classes/Settings.php:313
+#: inc/classes/Settings.php:338
 #: assets/src/js/components/activityLog/constants.js:23
 msgid "Failed"
 msgstr ""
 
-#: inc/classes/Settings.php:314
+#: inc/classes/Settings.php:339
 #: assets/src/js/components/activityLog/constants.js:24
 msgid "Uninstall"
 msgstr ""
 
-#: inc/classes/Settings.php:320
+#: inc/classes/Settings.php:345
 #: assets/src/js/components/activityLog/utils.js:84
 msgid "Bulk action"
 msgstr ""
 
-#: inc/classes/Settings.php:322
+#: inc/classes/Settings.php:347
 #: assets/src/js/components/activityLog/utils.js:87
 msgid "Single action"
 msgstr ""
 
-#: inc/classes/Settings.php:324
-#: inc/classes/Settings.php:374
-#: inc/classes/Settings.php:402
+#: inc/classes/Settings.php:349
+#: inc/classes/Settings.php:399
+#: inc/classes/Settings.php:427
 msgid "—"
 msgstr ""
 
 #. translators: 1: item name, 2: version number
-#: inc/classes/Settings.php:352
+#: inc/classes/Settings.php:377
 #: assets/src/js/components/activityLog/utils.js:129
 #, php-format,js-format
 msgid "Language pack updated for %1$s %2$s"
 msgstr ""
 
-#: inc/classes/Settings.php:353
-#: inc/classes/Settings.php:361
-#: assets/src/js/components/activityLog/utils.js:130
-#: assets/src/js/components/activityLog/utils.js:138
-msgid "WordPress"
-msgstr ""
-
 #. translators: %s: item name
-#: inc/classes/Settings.php:360
+#: inc/classes/Settings.php:385
 #: assets/src/js/components/activityLog/utils.js:137
 #, php-format,js-format
 msgid "Language pack updated for %s"
 msgstr ""
 
 #. translators: %s: version number
-#: inc/classes/Settings.php:371
-#: inc/classes/Settings.php:389
-#: inc/classes/Settings.php:397
+#: inc/classes/Settings.php:396
+#: inc/classes/Settings.php:414
+#: inc/classes/Settings.php:422
 #: assets/src/js/components/activityLog/utils.js:146
 #: assets/src/js/components/activityLog/utils.js:162
 #: assets/src/js/components/activityLog/utils.js:169
@@ -285,26 +314,26 @@ msgid "v%s"
 msgstr ""
 
 #. translators: 1: previous version number, 2: new version number
-#: inc/classes/Settings.php:380
+#: inc/classes/Settings.php:405
 #: assets/src/js/components/activityLog/utils.js:154
 #, php-format,js-format
 msgid "v%1$s → v%2$s"
 msgstr ""
 
-#: inc/classes/Settings.php:421
+#: inc/classes/Settings.php:446
 #: assets/src/js/components/activityLog/ActivityLogPanel.js:286
 msgid "The log entry could not be deleted. Try again or check your database connection."
 msgstr ""
 
-#: inc/classes/Settings.php:486
+#: inc/classes/Settings.php:529
 msgid "The core auto-update setting is controlled by a constant in your wp-config.php file and cannot be changed here."
 msgstr ""
 
-#: inc/classes/Settings.php:506
+#: inc/classes/Settings.php:549
 msgid "This plugin was not found on your site. It may have been removed."
 msgstr ""
 
-#: inc/classes/Settings.php:526
+#: inc/classes/Settings.php:569
 msgid "This theme was not found on your site. It may have been removed."
 msgstr ""
 
@@ -530,8 +559,8 @@ msgid "Loading auto-update settings…"
 msgstr ""
 
 #: assets/src/js/components/autoUpdates/AutoUpdatesPanel.js:55
-#: assets/src/js/pages/SettingsPage.js:86
-#: assets/src/js/pages/SettingsPage.js:89
+#: assets/src/js/pages/SettingsPage.js:87
+#: assets/src/js/pages/SettingsPage.js:90
 msgid "Auto-updates"
 msgstr ""
 
@@ -662,18 +691,93 @@ msgstr ""
 msgid "WordPress updates translations automatically by default. Turn this off to stop automatic translation downloads."
 msgstr ""
 
-#: assets/src/js/components/schedule/SchedulePanel.js:29
-#: assets/src/js/pages/SettingsPage.js:93
-#: assets/src/js/pages/SettingsPage.js:96
+#: assets/src/js/components/schedule/SchedulePanel.js:94
+msgid "Use WordPress default schedule"
+msgstr ""
+
+#. translators: %s: localized date and time of the next scheduled update discovery run
+#: assets/src/js/components/schedule/SchedulePanel.js:110
+#, js-format
+msgid "Next discovery run: %s"
+msgstr ""
+
+#: assets/src/js/components/schedule/SchedulePanel.js:114
+msgid "WordPress will keep its own discovery schedule for core checks."
+msgstr ""
+
+#: assets/src/js/components/schedule/SchedulePanel.js:119
+msgid "Discovery is queued; the next runtime will appear shortly after you save."
+msgstr ""
+
+#: assets/src/js/components/schedule/SchedulePanel.js:128
+#: assets/src/js/pages/SettingsPage.js:94
+#: assets/src/js/pages/SettingsPage.js:97
 msgid "Schedule"
 msgstr ""
 
-#: assets/src/js/components/schedule/SchedulePanel.js:32
-msgid "Choose when Updatronix checks for available updates and how it applies automatic updates."
+#: assets/src/js/components/schedule/SchedulePanel.js:131
+msgid "Control how often this site refreshes WordPress discovery data and set delay preferences for automatic updates."
 msgstr ""
 
-#: assets/src/js/components/schedule/SchedulePanel.js:38
-msgid "Scheduling controls will appear here once the Schedule feature is configured."
+#: assets/src/js/components/schedule/SchedulePanel.js:140
+msgid "Update check schedule"
+msgstr ""
+
+#: assets/src/js/components/schedule/SchedulePanel.js:143
+msgid "Discovery runs only call WordPress update checks; they do not install updates. Choose a Core WP-Cron interval or leave the default so WordPress keeps its built-in schedule."
+msgstr ""
+
+#: assets/src/js/components/schedule/SchedulePanel.js:151
+msgid "Update interval"
+msgstr ""
+
+#: assets/src/js/components/schedule/SchedulePanel.js:152
+msgid "Hourly, twice daily, and daily match WordPress Core recurrence names. \"WordPress default\" clears this plugin extra discovery event."
+msgstr ""
+
+#: assets/src/js/components/schedule/SchedulePanel.js:182
+msgid "Time of check"
+msgstr ""
+
+#: assets/src/js/components/schedule/SchedulePanel.js:189
+msgid "Hour"
+msgstr ""
+
+#: assets/src/js/components/schedule/SchedulePanel.js:231
+msgid "Minute"
+msgstr ""
+
+#: assets/src/js/components/schedule/SchedulePanel.js:269
+msgid "Uses your site timezone setting in WordPress."
+msgstr ""
+
+#: assets/src/js/components/schedule/SchedulePanel.js:278
+msgid "DISABLE_WP_CRON is true. Scheduled discovery will not run until something hits wp-cron.php on a timer (for example, a server cron job)."
+msgstr ""
+
+#: assets/src/js/components/schedule/SchedulePanel.js:292
+#: assets/src/js/components/schedule/SchedulePanel.js:302
+msgid "Delay updates"
+msgstr ""
+
+#: assets/src/js/components/schedule/SchedulePanel.js:295
+msgid "Saves how long you prefer to wait before automatic updates may apply new releases. Enforcement runs in a follow-up milestone; storing the preference here avoids duplicate UI later."
+msgstr ""
+
+#: assets/src/js/components/schedule/SchedulePanel.js:303
+msgid "When enabled, configure how many full days releases should mature before unattended updates."
+msgstr ""
+
+#: assets/src/js/components/schedule/SchedulePanel.js:337
+msgid "Delay duration (days)"
+msgstr ""
+
+#: assets/src/js/components/schedule/SchedulePanel.js:338
+msgid "Applies once automatic update deferral lands in Updatronix."
+msgstr ""
+
+#: assets/src/js/components/schedule/SchedulePanel.js:383
+msgid "Save schedule"
 msgstr ""
 
 #: assets/src/js/components/SettingsPanel.js:25
@@ -804,18 +908,18 @@ msgstr ""
 msgid "Your update logs could not be loaded. Try refreshing the page."
 msgstr ""
 
-#: assets/src/js/hooks/usePluginSettings.js:74
+#: assets/src/js/hooks/usePluginSettings.js:179
 msgid "Settings saved."
 msgstr ""
 
-#: assets/src/js/hooks/usePluginSettings.js:77
+#: assets/src/js/hooks/usePluginSettings.js:182
 msgid "Your settings were saved, but the server did not return the updated values. Refresh the page to confirm."
 msgstr ""
 
-#: assets/src/js/hooks/usePluginSettings.js:86
+#: assets/src/js/hooks/usePluginSettings.js:191
 msgid "Your settings could not be saved. Check your connection and try again."
 msgstr ""
 
-#: assets/src/js/pages/SettingsPage.js:72
+#: assets/src/js/pages/SettingsPage.js:73
 msgid "Updatronix settings sections"
 msgstr ""

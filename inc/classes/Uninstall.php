@@ -73,6 +73,7 @@ final class Updatronix_Uninstall {
         require_once updatronix_PLUGIN_DIR . 'inc/settings/options.php';
         require_once updatronix_PLUGIN_DIR . 'inc/classes/UpdateLogState.php';
         require_once updatronix_PLUGIN_DIR . 'inc/classes/UpdateLogger.php';
+        require_once updatronix_PLUGIN_DIR . 'inc/classes/AutoUpdateDelay.php';
 
         return array_merge(
             [
@@ -80,7 +81,8 @@ final class Updatronix_Uninstall {
                 Updatronix_UpdateLogState::OPTION_STATE,
                 'updatronix_cap_migrated',
             ],
-            Updatronix_Update_Logger::snapshot_option_keys_for_uninstall()
+            Updatronix_Update_Logger::snapshot_option_keys_for_uninstall(),
+            Updatronix_AutoUpdateDelay::uninstall_option_keys()
         );
     }
 }

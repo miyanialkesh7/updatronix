@@ -24,6 +24,218 @@ const UPDATRONIX_SETTINGS_DEFAULTS = [
     'dismissed_constants' => [],
 ];
 
+/**
+ * Default Schedule tab subtree (merged when missing).
+ *
+ * @return array<string, mixed>
+ */
+function updatronix_get_schedule_defaults(): array {
+    return [
+        'update_check' => [
+            'recurrence' => '',
+            'time' => '',
+        ],
+        'delay_updates' => [
+            'enabled' => false,
+            'delay_value' => 0,
+        ],
+    ];
+}
+
+/**
+ * Labels for Core {@see wp_get_schedules()} entries used in the Schedule tab picker (immutable slugs).
+ *
+ * @return list<array{slug: string, label: string}>
+ */
+function updatronix_get_allowed_cron_schedule_labels(): array {
+    /** @var array<string, array{display: string, interval: int, ...}> $all */
+    $all = wp_get_schedules();
+    $allowed_slugs = ['hourly', 'twicedaily', 'daily'];
+    $out = [];
+    foreach ($allowed_slugs as $slug) {
+        if (!isset($all[$slug])) {
+            continue;
+        }
+
+        $out[] = [
+            'slug' => $slug,
+            'label' => (string) $all[$slug]['display'],
+        ];
+    }
+
+    return $out;
+}
+
+/**
+ * Attach an admin-rendered datetime string for Schedule tab cron diagnostics.
+ *
+ * @param array{cron_schedule_labels: list<array{slug: string, label: string}>, update_check_next_scheduled: int|false, wp_cron_disabled: bool, timezone_string: string} $meta Raw meta from {@see Updatronix_Cron::get_schedule_rest_meta()}.
+ * @return array<string, mixed>
+ */
+function updatronix_decorate_schedule_meta_for_display(array $meta): array {
+    $ts = $meta['update_check_next_scheduled'];
+    $date_part = trim((string) get_option('date_format', '') . ' ' . (string) get_option('time_format', ''));
+    if ($date_part === '') {
+        $date_part = 'Y-m-d H:i';
+    }
+    $meta['update_check_next_human'] = ($ts !== false)
+        ? wp_date($date_part, (int) $ts)
+        : '';
+
+    return $meta;
+}
+
+/**
+ * Merge a partial Schedule payload from REST over the baseline (already normalized).
+ *
+ * @param array<string, mixed> $partial
+ * @param array<string, mixed> $baseline
+ * @return array<string, mixed>
+ */
+function updatronix_merge_partial_schedule_into(array $partial, array $baseline): array {
+    $merged = [
+        'update_check' => [
+            'recurrence' => $baseline['update_check']['recurrence'],
+            'time' => $baseline['update_check']['time'],
+        ],
+        'delay_updates' => [
+            'enabled' => $baseline['delay_updates']['enabled'],
+            'delay_value' => $baseline['delay_updates']['delay_value'],
+        ],
+    ];
+
+    if (isset($partial['update_check']) && is_array($partial['update_check'])) {
+        $uc = $partial['update_check'];
+        if (array_key_exists('recurrence', $uc)) {
+            $merged['update_check']['recurrence'] = (string) $uc['recurrence'];
+        }
+        if (array_key_exists('time', $uc)) {
+            $merged['update_check']['time'] = (string) $uc['time'];
+        }
+    }
+
+    if (isset($partial['delay_updates']) && is_array($partial['delay_updates'])) {
+        $du = $partial['delay_updates'];
+        if (array_key_exists('enabled', $du)) {
+            $merged['delay_updates']['enabled'] = (bool) $du['enabled'];
+        }
+        if (array_key_exists('delay_value', $du)) {
+            $merged['delay_updates']['delay_value'] = (int) $du['delay_value'];
+        }
+    }
+
+    return $merged;
+}
+
+/**
+ * Sanitize Schedule subtree (REST + Settings API JSON).
+ *
+ * @param array<string, mixed> $in
+ * @return array{update_check: array{recurrence: string, time: string}, delay_updates: array{enabled: bool, delay_value: int}}
+ */
+function updatronix_sanitize_schedule_array(array $in): array {
+    $defaults = updatronix_get_schedule_defaults();
+
+    $uc_in = isset($in['update_check']) && is_array($in['update_check'])
+        ? $in['update_check']
+        : [];
+    $du_in = isset($in['delay_updates']) && is_array($in['delay_updates'])
+        ? $in['delay_updates']
+        : [];
+
+    $recurrence_raw = strtolower(trim((string) ($uc_in['recurrence'] ?? $defaults['update_check']['recurrence'])));
+    $recurrence = in_array($recurrence_raw, ['hourly', 'twicedaily', 'daily'], true)
+        ? $recurrence_raw
+        : '';
+
+    $time_raw = trim((string) ($uc_in['time'] ?? $defaults['update_check']['time']));
+    $time = '';
+    if ($recurrence === 'daily' || $recurrence === 'twicedaily') {
+        $time = updatronix_sanitize_schedule_wall_time($time_raw);
+    }
+
+    $delay_enabled = (bool) ($du_in['enabled'] ?? false);
+    $delay_value_raw = isset($du_in['delay_value']) ? (int) $du_in['delay_value'] : (int) $defaults['delay_updates']['delay_value'];
+    $delay_value = $delay_enabled ? max(1, min(365, $delay_value_raw)) : max(0, min(365, $delay_value_raw));
+
+    if (!$delay_enabled) {
+        $delay_value = 0;
+    }
+
+    return [
+        'update_check' => [
+            'recurrence' => $recurrence,
+            'time' => $time,
+        ],
+        'delay_updates' => [
+            'enabled' => $delay_enabled,
+            'delay_value' => $delay_value,
+        ],
+    ];
+}
+
+/**
+ * Normalize H:i in site-wall-clock semantics (used with {@see wp_timezone()} for cron timestamps).
+ *
+ * @param string $time_raw User input.
+ * @return string Canonical `HH:mm` defaulting to 03:00 when empty or invalid (for daily schedules).
+ */
+function updatronix_sanitize_schedule_wall_time(string $time_raw): string {
+    if ($time_raw !== '' && preg_match('/^(?:([01]?[0-9]|2[0-3])):([0-5][0-9])$/', $time_raw, $matches)) {
+        $h = (int) $matches[1];
+        $m = (int) $matches[2];
+        $h = max(0, min(23, $h));
+        $m = max(0, min(59, $m));
+
+        return sprintf('%02d:%02d', $h, $m);
+    }
+
+    return '03:00';
+}
+
+/**
+ * Next Unix timestamp for the first recurring discovery run ({@see wp_schedule_event()} first argument).
+ *
+ * `twicedaily` uses Core’s twelve-hour interval; the picker time anchors only the initial run wall clock.
+ *
+ * @param string $recurrence hourly|twicedaily|daily
+ * @param string $time       H:i site TZ wall clock when not hourly
+ *
+ * @return int
+ */
+function updatronix_next_update_check_timestamp(string $recurrence, string $time): int {
+    if ($recurrence === 'hourly') {
+        return (int) time();
+    }
+
+    if ($recurrence !== 'daily' && $recurrence !== 'twicedaily') {
+        return (int) time();
+    }
+
+    $tz = wp_timezone();
+    try {
+        $now = new \DateTimeImmutable('now', $tz);
+        $today = $now->format('Y-m-d');
+        $normalized = updatronix_sanitize_schedule_wall_time($time);
+        $parts = explode(':', $normalized);
+        $hour = (int) $parts[0];
+        $minute = (int) ($parts[1] ?? 0);
+        $run = \DateTimeImmutable::createFromFormat('Y-m-d H:i:s', sprintf('%s %02d:%02d:00', $today, $hour, $minute), $tz);
+
+        if ($run === false) {
+            return (int) time();
+        }
+
+        if ($run->getTimestamp() <= $now->getTimestamp()) {
+            $run = $run->modify('+1 day');
+        }
+
+        return (int) $run->getTimestamp();
+    } catch (\Exception $exception) {
+        return (int) time();
+    }
+}
+
 add_action('init', 'updatronix_register_settings');
 add_action('init', 'updatronix_maybe_grant_manage_cap', 1);
 
@@ -64,7 +276,7 @@ function updatronix_register_settings(): void {
 /**
  * Get plugin settings from the single JSON option.
  *
- * @return array{logging_enabled: bool, retention_days: int, notify_enabled: bool, notify_emails: string, notify_on: array<string>, auto_update_translations: bool, dismissed_constants: array<string>}
+ * @return array{logging_enabled: bool, retention_days: int, notify_enabled: bool, notify_emails: string, notify_on: array<string>, auto_update_translations: bool, dismissed_constants: array<string>, schedule: array{update_check: array{recurrence: string, time: string}, delay_updates: array{enabled: bool, delay_value: int}}}
  */
 function updatronix_get_settings(): array {
     $raw = get_option(UPDATRONIX_OPTION_SETTINGS, '');
@@ -76,6 +288,7 @@ function updatronix_get_settings(): array {
         }
     }
 
+    $schedule_src = isset($decoded['schedule']) && is_array($decoded['schedule']) ? $decoded['schedule'] : [];
     $defaults = UPDATRONIX_SETTINGS_DEFAULTS;
     $out = [
         'logging_enabled' => isset($decoded['logging_enabled']) ? (bool) $decoded['logging_enabled'] : $defaults['logging_enabled'],
@@ -87,6 +300,7 @@ function updatronix_get_settings(): array {
         'dismissed_constants' => isset($decoded['dismissed_constants']) && is_array($decoded['dismissed_constants'])
             ? array_values(array_filter($decoded['dismissed_constants'], 'is_string'))
             : $defaults['dismissed_constants'],
+        'schedule' => updatronix_sanitize_schedule_array($schedule_src),
     ];
 
     return $out;
@@ -122,6 +336,9 @@ function updatronix_sanitize_settings_json(mixed $value): string {
         'notify_on' => $notify_on,
         'auto_update_translations' => (bool) ($value['auto_update_translations'] ?? true),
         'dismissed_constants' => array_values(array_filter((array) ($value['dismissed_constants'] ?? []), 'is_string')),
+        'schedule' => updatronix_sanitize_schedule_array(
+            isset($value['schedule']) && is_array($value['schedule']) ? $value['schedule'] : []
+        ),
     ];
     $encoded = wp_json_encode($out);
 
@@ -136,6 +353,7 @@ function updatronix_sanitize_settings_json(mixed $value): string {
  */
 function updatronix_save_settings_array(array $input): void {
     update_option(UPDATRONIX_OPTION_SETTINGS, updatronix_sanitize_settings_json($input));
+    do_action('updatronix_after_save_settings');
 }
 
 /**
