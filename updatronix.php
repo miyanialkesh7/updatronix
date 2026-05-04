@@ -57,6 +57,7 @@ require_once __DIR__ . '/inc/admin/enqueue.php';
 require_once __DIR__ . '/inc/admin/links.php';
 require_once __DIR__ . '/inc/admin/menu.php';
 require_once __DIR__ . '/inc/settings/options.php';
+require_once __DIR__ . '/inc/admin/native-update-delay-notice.php';
 
 add_action('plugins_loaded', ['Updatronix_Bootstrap', 'init']);
 

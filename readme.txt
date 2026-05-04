@@ -116,6 +116,10 @@ Yes. Updatronix is multisite-aware and tracks logs on a per-site basis.
 == Changelog ==
 
 = 1.1 =
+* Change: Schedule tab — clearer copy for automatic update delay (offer-age soak) and duration help.
+* New: When delay updates are enabled, an informational notice appears on Updates, Plugins, and Themes explaining how the countdown relates to deferral — plus a Schedule tab hint. (Translate new strings.)
+* Fix: With a custom schedule, WordPress “Automatic update not scheduled” notices on Updates and Plugins no longer appear; the plugin keeps the real `wp_version_check` cron entry aligned with your chosen interval.
+* Change: Schedule tab — one recurrence controls refresh and eligible background automatic updates; optional WordPress default restores Core cron. (Retranslate updated Schedule strings.)
 * New: Added update scheduling so users can set automatic update times.
 * New: Added a dedicated Schedule tab in the admin interface that hosts every update-scheduling control.
 * New: Optional automatic update soak period (offer-age delay) using saved Schedule preferences, with deferrals recorded in the activity log.

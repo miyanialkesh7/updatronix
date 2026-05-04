@@ -1,5 +1,5 @@
 /**
- * Schedule panel — update discovery interval and delay preference persistence.
+ * Schedule tab — background update window (discovery + eligible auto-updates) and delay preferences.
  */
 
 import { memo, useMemo } from '@wordpress/element';
@@ -16,6 +16,7 @@ import {
 } from '@wordpress/components';
 import { update as iconUpdate, calendar as iconDelay } from '@wordpress/icons';
 import { __, sprintf } from '@wordpress/i18n';
+import { ConstantNotices } from '../autoUpdates/ConstantNotices';
 
 const SCHED_FALLBACK = {
 	update_check: {
@@ -58,14 +59,16 @@ function partsToHi(v) {
 }
 
 /**
- * Schedule tab body — Core recurrence + delay preferences.
+ * Schedule tab body — background update recurrence and delay preferences.
  *
- * @param {Object}   props              Component props.
- * @param {Object}   props.settings     Current settings including `schedule`.
- * @param {Function} props.setSettings  Setter.
- * @param {Function} props.saveSettings Async save.
- * @param {boolean}  props.saving       Saving state.
- * @param {Object}   props.scheduleMeta Labels + next run diagnostics.
+ * @param {Object}   props                         Component props.
+ * @param {Object}   props.settings                Current settings including `schedule`.
+ * @param {Function} props.setSettings             Setter.
+ * @param {Function} props.saveSettings            Async save.
+ * @param {boolean}  props.saving                  Saving state.
+ * @param {Object}   props.scheduleMeta            Labels + next run diagnostics.
+ * @param {Object}   props.wpConfigConstants       Localized constant map (same payload as Auto-updates).
+ * @param {Function} props.onDismissConstantNotice Dismiss handler for dismissible constant notices.
  * @return {JSX.Element} JSX.
  */
 export const SchedulePanel = memo(function SchedulePanel({
@@ -74,6 +77,8 @@ export const SchedulePanel = memo(function SchedulePanel({
 	saveSettings,
 	saving,
 	scheduleMeta,
+	wpConfigConstants,
+	onDismissConstantNotice,
 }) {
 	const schedule = settings.schedule ?? SCHED_FALLBACK;
 
@@ -100,24 +105,27 @@ export const SchedulePanel = memo(function SchedulePanel({
 
 	const timeParts = hiToParts(schedule.update_check.time ?? '');
 
+	const scheduleDriver = scheduleMeta.schedule_driver ?? 'wordpress';
+
 	let nextScheduledCopy;
 	if (
 		scheduleMeta.update_check_next_scheduled !== false &&
-		scheduleMeta.update_check_next_human
+		scheduleMeta.update_check_next_human &&
+		scheduleDriver === 'updatronix'
 	) {
 		nextScheduledCopy = sprintf(
-			/* translators: %s: localized date and time of the next scheduled update discovery run */
-			__('Next discovery run: %s', 'updatronix'),
+			/* translators: %s: localized date/time of the next plugin-scheduled background update run */
+			__('Next background update run: %s', 'updatronix'),
 			scheduleMeta.update_check_next_human
 		);
-	} else if (recurrence === '') {
+	} else if (scheduleDriver === 'wordpress') {
 		nextScheduledCopy = __(
-			'WordPress will keep its own discovery schedule for core checks.',
+			'WordPress uses its own cron schedule for update checks and eligible automatic updates.',
 			'updatronix'
 		);
 	} else {
 		nextScheduledCopy = __(
-			'Discovery is queued; the next runtime will appear shortly after you save.',
+			'The next run time will appear shortly after you save.',
 			'updatronix'
 		);
 	}
@@ -129,7 +137,7 @@ export const SchedulePanel = memo(function SchedulePanel({
 			</h2>
 			<Text variant="muted">
 				{__(
-					'Control how often this site refreshes WordPress discovery data and set delay preferences for automatic updates.',
+					'Choose when this site runs background update work and set delay preferences for automatic updates.',
 					'updatronix'
 				)}
 			</Text>
@@ -137,20 +145,27 @@ export const SchedulePanel = memo(function SchedulePanel({
 			<div className="updatronix-settings-section">
 				<h3 className="updatronix-settings-section-title">
 					<Icon icon={iconUpdate} size={24} />
-					{__('Update check schedule', 'updatronix')}
+					{__('Background update schedule', 'updatronix')}
 				</h3>
 				<Text variant="muted" as="p">
 					{__(
-						'Discovery runs only call WordPress update checks; they do not install updates. Choose a Core WP-Cron interval or leave the default so WordPress keeps its built-in schedule.',
+						'A single schedule controls when WordPress checks for updates and may apply eligible automatic updates. Pick a Core WP-Cron interval and optional time, or leave WordPress default so Core keeps its own cron.',
 						'updatronix'
 					)}
 				</Text>
+				<ConstantNotices
+					constants={wpConfigConstants}
+					sections={['schedule']}
+					dismissibleOnly
+					dismissed={settings.dismissed_constants ?? []}
+					onDismiss={onDismissConstantNotice}
+				/>
 				<SelectControl
 					__nextHasNoMarginBottom
 					__next40pxDefaultSize
 					label={__('Update interval', 'updatronix')}
 					help={__(
-						'Hourly, twice daily, and daily match WordPress Core recurrence names. "WordPress default" clears this plugin extra discovery event.',
+						'Hourly, twice daily, and daily match WordPress Core recurrence names. WordPress default clears this plugin schedule.',
 						'updatronix'
 					)}
 					value={recurrence}
@@ -273,14 +288,6 @@ export const SchedulePanel = memo(function SchedulePanel({
 						</Text>
 					</fieldset>
 				)}
-				{scheduleMeta.wp_cron_disabled && (
-					<Notice status="warning" isDismissible={false}>
-						{__(
-							'DISABLE_WP_CRON is true. Scheduled discovery will not run until something hits wp-cron.php on a timer (for example, a server cron job).',
-							'updatronix'
-						)}
-					</Notice>
-				)}
 				<Notice status="info" isDismissible={false}>
 					{nextScheduledCopy}
 				</Notice>
@@ -293,7 +300,7 @@ export const SchedulePanel = memo(function SchedulePanel({
 				</h3>
 				<Text variant="muted" as="p">
 					{__(
-						'Saves how long you prefer to wait before automatic updates may apply new releases. Enforcement runs in a follow-up milestone; storing the preference here avoids duplicate UI later.',
+						'Background automatic updates can wait until each release has been offered for a number of full days. Updatronix tracks maturity per update (core, plugin, theme, or translation). Deferred installs are recorded in Update logs.',
 						'updatronix'
 					)}
 				</Text>
@@ -301,7 +308,7 @@ export const SchedulePanel = memo(function SchedulePanel({
 					__nextHasNoMarginBottom
 					label={__('Delay updates', 'updatronix')}
 					help={__(
-						'When enabled, configure how many full days releases should mature before unattended updates.',
+						'When enabled, background automatic installs wait until each offer has soaked for the duration you set (counted from first detection).',
 						'updatronix'
 					)}
 					checked={schedule.delay_updates.enabled}
@@ -336,7 +343,7 @@ export const SchedulePanel = memo(function SchedulePanel({
 							__next40pxDefaultSize
 							label={__('Delay duration (days)', 'updatronix')}
 							help={__(
-								'Applies once automatic update deferral lands in Updatronix.',
+								'Minimum full days after an offer is first detected before it may install via the automatic updater.',
 								'updatronix'
 							)}
 							min={1}
@@ -371,6 +378,14 @@ export const SchedulePanel = memo(function SchedulePanel({
 						/>
 					)}
 				</fieldset>
+				{schedule.delay_updates.enabled && (
+					<Text variant="muted" as="p">
+						{__(
+							'On WordPress Updates, Plugins, and Themes screens, the automatic update countdown shows when the next background check may run — not exactly when each delayed item will install. Maturity is per offer; deferrals appear in Update logs.',
+							'updatronix'
+						)}
+					</Text>
+				)}
 			</div>
 
 			<div className="updatronix-actions">

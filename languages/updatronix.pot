@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-05-03T18:40:03+00:00\n"
+"POT-Creation-Date: 2026-05-04T08:56:46+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: updatronix\n"
@@ -45,8 +45,8 @@ msgstr ""
 
 #: inc/admin/links.php:26
 #: assets/src/js/components/SettingsPanel.js:84
-#: assets/src/js/pages/SettingsPage.js:101
-#: assets/src/js/pages/SettingsPage.js:104
+#: assets/src/js/pages/SettingsPage.js:118
+#: assets/src/js/pages/SettingsPage.js:121
 msgid "Settings"
 msgstr ""
 
@@ -87,8 +87,8 @@ msgstr ""
 
 #: inc/admin/menu.php:30
 #: assets/src/js/components/activityLog/ActivityLogPanel.js:381
-#: assets/src/js/pages/SettingsPage.js:80
-#: assets/src/js/pages/SettingsPage.js:83
+#: assets/src/js/pages/SettingsPage.js:97
+#: assets/src/js/pages/SettingsPage.js:100
 msgid "Update logs"
 msgstr ""
 
@@ -159,6 +159,28 @@ msgstr ""
 
 #: inc/admin/menu.php:145
 msgid "Loading your Updatronix settings…"
+msgstr ""
+
+#. translators: %d: configured full-day soak count (1–365).
+#: inc/admin/native-update-delay-notice.php:39
+#, php-format
+msgid "Updatronix has automatic update delay enabled: new releases must mature for %d full day after first detection before they may install in the background."
+msgid_plural "Updatronix has automatic update delay enabled: new releases must mature for %d full days after first detection before they may install in the background."
+msgstr[0] ""
+msgstr[1] ""
+
+#: inc/admin/native-update-delay-notice.php:49
+msgid "The countdown WordPress shows below refers to when the next background update check may run. Delay applies separately to each update offer, so an install can happen on a later run. Check the Updatronix activity log for deferred items."
+msgstr ""
+
+#. translators: %1$s: Schedule tab URL. %2$s: Update logs URL.
+#: inc/admin/native-update-delay-notice.php:60
+#, php-format
+msgid "You can <a href=\"%1$s\">open the Schedule tab</a> to change delay settings, or <a href=\"%2$s\">view update logs</a> for deferral details."
+msgstr ""
+
+#: inc/admin/native-update-delay-notice.php:71
+msgid "Ask a site administrator who can access Updatronix under Tools to review delay settings or the update log."
 msgstr ""
 
 #. translators: 1: number of soak days configured, 2: datetime string when eligibility starts if the update is still offered.
@@ -554,41 +576,41 @@ msgstr ""
 msgid "Cancelled"
 msgstr ""
 
-#: assets/src/js/components/autoUpdates/AutoUpdatesPanel.js:47
+#: assets/src/js/components/autoUpdates/AutoUpdatesPanel.js:53
 msgid "Loading auto-update settings…"
 msgstr ""
 
-#: assets/src/js/components/autoUpdates/AutoUpdatesPanel.js:55
-#: assets/src/js/pages/SettingsPage.js:87
-#: assets/src/js/pages/SettingsPage.js:90
+#: assets/src/js/components/autoUpdates/AutoUpdatesPanel.js:61
+#: assets/src/js/pages/SettingsPage.js:104
+#: assets/src/js/pages/SettingsPage.js:107
 msgid "Auto-updates"
 msgstr ""
 
-#: assets/src/js/components/autoUpdates/AutoUpdatesPanel.js:58
+#: assets/src/js/components/autoUpdates/AutoUpdatesPanel.js:64
 msgid "Choose which parts of your site update automatically: core, plugins, themes, and translations."
 msgstr ""
 
-#: assets/src/js/components/autoUpdates/AutoUpdatesPanel.js:89
+#: assets/src/js/components/autoUpdates/AutoUpdatesPanel.js:95
 msgid "Themes"
 msgstr ""
 
-#: assets/src/js/components/autoUpdates/AutoUpdatesPanel.js:90
+#: assets/src/js/components/autoUpdates/AutoUpdatesPanel.js:96
 msgid "Theme"
 msgstr ""
 
-#: assets/src/js/components/autoUpdates/AutoUpdatesPanel.js:91
+#: assets/src/js/components/autoUpdates/AutoUpdatesPanel.js:97
 msgid "Search themes"
 msgstr ""
 
-#: assets/src/js/components/autoUpdates/AutoUpdatesPanel.js:103
+#: assets/src/js/components/autoUpdates/AutoUpdatesPanel.js:109
 msgid "Plugins"
 msgstr ""
 
-#: assets/src/js/components/autoUpdates/AutoUpdatesPanel.js:104
+#: assets/src/js/components/autoUpdates/AutoUpdatesPanel.js:110
 msgid "Plugin"
 msgstr ""
 
-#: assets/src/js/components/autoUpdates/AutoUpdatesPanel.js:105
+#: assets/src/js/components/autoUpdates/AutoUpdatesPanel.js:111
 msgid "Search plugins"
 msgstr ""
 
@@ -605,7 +627,7 @@ msgid "DISALLOW_FILE_MODS is set to true in your wp-config.php file. WordPress c
 msgstr ""
 
 #: assets/src/js/components/autoUpdates/ConstantNotices.js:26
-msgid "DISABLE_WP_CRON is set to true in your wp-config.php file. Automatic updates use WP-Cron and will not run unless you have set up an external cron job."
+msgid "WordPress will not run scheduled events on ordinary page loads. Make sure something still triggers wp-cron.php on a timer — for example your host calling wp-cron.php from a system cron job — so automatic updates and other scheduled tasks can run."
 msgstr ""
 
 #: assets/src/js/components/autoUpdates/CoreSection.js:42
@@ -691,92 +713,92 @@ msgstr ""
 msgid "WordPress updates translations automatically by default. Turn this off to stop automatic translation downloads."
 msgstr ""
 
-#: assets/src/js/components/schedule/SchedulePanel.js:94
+#: assets/src/js/components/schedule/SchedulePanel.js:99
 msgid "Use WordPress default schedule"
 msgstr ""
 
-#. translators: %s: localized date and time of the next scheduled update discovery run
-#: assets/src/js/components/schedule/SchedulePanel.js:110
+#. translators: %s: localized date/time of the next plugin-scheduled background update run
+#: assets/src/js/components/schedule/SchedulePanel.js:118
 #, js-format
-msgid "Next discovery run: %s"
+msgid "Next background update run: %s"
 msgstr ""
 
-#: assets/src/js/components/schedule/SchedulePanel.js:114
-msgid "WordPress will keep its own discovery schedule for core checks."
+#: assets/src/js/components/schedule/SchedulePanel.js:122
+msgid "WordPress uses its own cron schedule for update checks and eligible automatic updates."
 msgstr ""
 
-#: assets/src/js/components/schedule/SchedulePanel.js:119
-msgid "Discovery is queued; the next runtime will appear shortly after you save."
+#: assets/src/js/components/schedule/SchedulePanel.js:127
+msgid "The next run time will appear shortly after you save."
 msgstr ""
 
-#: assets/src/js/components/schedule/SchedulePanel.js:128
-#: assets/src/js/pages/SettingsPage.js:94
-#: assets/src/js/pages/SettingsPage.js:97
+#: assets/src/js/components/schedule/SchedulePanel.js:136
+#: assets/src/js/pages/SettingsPage.js:111
+#: assets/src/js/pages/SettingsPage.js:114
 msgid "Schedule"
 msgstr ""
 
-#: assets/src/js/components/schedule/SchedulePanel.js:131
-msgid "Control how often this site refreshes WordPress discovery data and set delay preferences for automatic updates."
+#: assets/src/js/components/schedule/SchedulePanel.js:139
+msgid "Choose when this site runs background update work and set delay preferences for automatic updates."
 msgstr ""
 
-#: assets/src/js/components/schedule/SchedulePanel.js:140
-msgid "Update check schedule"
-msgstr ""
-
-#: assets/src/js/components/schedule/SchedulePanel.js:143
-msgid "Discovery runs only call WordPress update checks; they do not install updates. Choose a Core WP-Cron interval or leave the default so WordPress keeps its built-in schedule."
+#: assets/src/js/components/schedule/SchedulePanel.js:148
+msgid "Background update schedule"
 msgstr ""
 
 #: assets/src/js/components/schedule/SchedulePanel.js:151
+msgid "A single schedule controls when WordPress checks for updates and may apply eligible automatic updates. Pick a Core WP-Cron interval and optional time, or leave WordPress default so Core keeps its own cron."
+msgstr ""
+
+#: assets/src/js/components/schedule/SchedulePanel.js:166
 msgid "Update interval"
 msgstr ""
 
-#: assets/src/js/components/schedule/SchedulePanel.js:152
-msgid "Hourly, twice daily, and daily match WordPress Core recurrence names. \"WordPress default\" clears this plugin extra discovery event."
+#: assets/src/js/components/schedule/SchedulePanel.js:167
+msgid "Hourly, twice daily, and daily match WordPress Core recurrence names. WordPress default clears this plugin schedule."
 msgstr ""
 
-#: assets/src/js/components/schedule/SchedulePanel.js:182
+#: assets/src/js/components/schedule/SchedulePanel.js:197
 msgid "Time of check"
 msgstr ""
 
-#: assets/src/js/components/schedule/SchedulePanel.js:189
+#: assets/src/js/components/schedule/SchedulePanel.js:204
 msgid "Hour"
 msgstr ""
 
-#: assets/src/js/components/schedule/SchedulePanel.js:231
+#: assets/src/js/components/schedule/SchedulePanel.js:246
 msgid "Minute"
 msgstr ""
 
-#: assets/src/js/components/schedule/SchedulePanel.js:269
+#: assets/src/js/components/schedule/SchedulePanel.js:284
 msgid "Uses your site timezone setting in WordPress."
 msgstr ""
 
-#: assets/src/js/components/schedule/SchedulePanel.js:278
-msgid "DISABLE_WP_CRON is true. Scheduled discovery will not run until something hits wp-cron.php on a timer (for example, a server cron job)."
-msgstr ""
-
-#: assets/src/js/components/schedule/SchedulePanel.js:292
-#: assets/src/js/components/schedule/SchedulePanel.js:302
+#: assets/src/js/components/schedule/SchedulePanel.js:299
+#: assets/src/js/components/schedule/SchedulePanel.js:309
 msgid "Delay updates"
 msgstr ""
 
-#: assets/src/js/components/schedule/SchedulePanel.js:295
-msgid "Saves how long you prefer to wait before automatic updates may apply new releases. Enforcement runs in a follow-up milestone; storing the preference here avoids duplicate UI later."
+#: assets/src/js/components/schedule/SchedulePanel.js:302
+msgid "Background automatic updates can wait until each release has been offered for a number of full days. Updatronix tracks maturity per update (core, plugin, theme, or translation). Deferred installs are recorded in Update logs."
 msgstr ""
 
-#: assets/src/js/components/schedule/SchedulePanel.js:303
-msgid "When enabled, configure how many full days releases should mature before unattended updates."
+#: assets/src/js/components/schedule/SchedulePanel.js:310
+msgid "When enabled, background automatic installs wait until each offer has soaked for the duration you set (counted from first detection)."
 msgstr ""
 
-#: assets/src/js/components/schedule/SchedulePanel.js:337
+#: assets/src/js/components/schedule/SchedulePanel.js:344
 msgid "Delay duration (days)"
 msgstr ""
 
-#: assets/src/js/components/schedule/SchedulePanel.js:338
-msgid "Applies once automatic update deferral lands in Updatronix."
+#: assets/src/js/components/schedule/SchedulePanel.js:345
+msgid "Minimum full days after an offer is first detected before it may install via the automatic updater."
 msgstr ""
 
 #: assets/src/js/components/schedule/SchedulePanel.js:383
+msgid "On WordPress Updates, Plugins, and Themes screens, the automatic update countdown shows when the next background check may run — not exactly when each delayed item will install. Maturity is per offer; deferrals appear in Update logs."
+msgstr ""
+
+#: assets/src/js/components/schedule/SchedulePanel.js:398
 msgid "Save schedule"
 msgstr ""
 
@@ -872,35 +894,36 @@ msgstr ""
 msgid "Save settings"
 msgstr ""
 
-#: assets/src/js/hooks/useAutoUpdates.js:33
+#: assets/src/js/hooks/useAutoUpdates.js:34
 msgid "Your auto-update settings could not be loaded. Try refreshing the page."
 msgstr ""
 
-#: assets/src/js/hooks/useAutoUpdates.js:58
+#: assets/src/js/hooks/useAutoUpdates.js:59
 msgid "Core auto-update setting saved."
 msgstr ""
 
-#: assets/src/js/hooks/useAutoUpdates.js:63
+#: assets/src/js/hooks/useAutoUpdates.js:64
 msgid "The core auto-update setting could not be saved. Check your connection and try again."
 msgstr ""
 
-#: assets/src/js/hooks/useAutoUpdates.js:88
+#: assets/src/js/hooks/useAutoUpdates.js:89
 msgid "The plugin auto-update setting could not be changed. Try again."
 msgstr ""
 
-#: assets/src/js/hooks/useAutoUpdates.js:113
+#: assets/src/js/hooks/useAutoUpdates.js:114
 msgid "The theme auto-update setting could not be changed. Try again."
 msgstr ""
 
-#: assets/src/js/hooks/useAutoUpdates.js:136
+#: assets/src/js/hooks/useAutoUpdates.js:137
 msgid "Translation auto-update setting saved."
 msgstr ""
 
-#: assets/src/js/hooks/useAutoUpdates.js:141
+#: assets/src/js/hooks/useAutoUpdates.js:142
 msgid "The translation auto-update setting could not be changed. Try again."
 msgstr ""
 
-#: assets/src/js/hooks/useAutoUpdates.js:165
+#: assets/src/js/hooks/useAutoUpdates.js:169
+#: assets/src/js/hooks/usePluginSettings.js:228
 msgid "The notice could not be dismissed. Try again."
 msgstr ""
 
@@ -908,18 +931,18 @@ msgstr ""
 msgid "Your update logs could not be loaded. Try refreshing the page."
 msgstr ""
 
-#: assets/src/js/hooks/usePluginSettings.js:179
+#: assets/src/js/hooks/usePluginSettings.js:181
 msgid "Settings saved."
 msgstr ""
 
-#: assets/src/js/hooks/usePluginSettings.js:182
+#: assets/src/js/hooks/usePluginSettings.js:184
 msgid "Your settings were saved, but the server did not return the updated values. Refresh the page to confirm."
 msgstr ""
 
-#: assets/src/js/hooks/usePluginSettings.js:191
+#: assets/src/js/hooks/usePluginSettings.js:193
 msgid "Your settings could not be saved. Check your connection and try again."
 msgstr ""
 
-#: assets/src/js/pages/SettingsPage.js:73
+#: assets/src/js/pages/SettingsPage.js:90
 msgid "Updatronix settings sections"
 msgstr ""

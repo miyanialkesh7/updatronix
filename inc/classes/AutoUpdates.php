@@ -164,7 +164,7 @@ final class Updatronix_AutoUpdates {
             $constants['DISABLE_WP_CRON'] = [
                 'defined' => true,
                 'value' => true,
-                'affects' => ['core', 'plugins', 'themes', 'translations'],
+                'affects' => ['core', 'plugins', 'themes', 'translations', 'schedule'],
                 'locks' => false,
             ];
         }

@@ -21,6 +21,8 @@ const DEFAULT_SCHEDULE_META = {
 	update_check_next_human: '',
 	wp_cron_disabled: false,
 	timezone_string: '',
+	schedule_driver: 'wordpress',
+	unified_schedule_active: false,
 };
 
 /**
@@ -198,11 +200,48 @@ export function usePluginSettings() {
 		}
 	}, [settings, createSuccessNotice, createErrorNotice, createWarningNotice]);
 
+	const wpConfigConstants = useMemo(() => {
+		if (typeof window === 'undefined') {
+			return {};
+		}
+		const c = window.updatronixSettings?.constants;
+		return c && typeof c === 'object' ? c : {};
+	}, []);
+
+	const dismissConstantNotice = useCallback(
+		async (constantName) => {
+			try {
+				const response = await apiFetch({
+					path: 'updatronix/v1/auto-updates/dismiss-constant',
+					method: 'POST',
+					data: { constant: constantName },
+				});
+				if (Array.isArray(response?.dismissed_constants)) {
+					setSettings((prev) => ({
+						...prev,
+						dismissed_constants: response.dismissed_constants,
+					}));
+				}
+			} catch (e) {
+				createErrorNotice(
+					e?.message ||
+						__(
+							'The notice could not be dismissed. Try again.',
+							'updatronix'
+						)
+				);
+			}
+		},
+		[createErrorNotice]
+	);
+
 	return {
 		settings,
 		setSettings,
 		saveSettings,
 		saving,
 		scheduleMeta,
+		wpConfigConstants,
+		dismissConstantNotice,
 	};
 }

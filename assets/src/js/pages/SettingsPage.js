@@ -41,8 +41,25 @@ function setTabInUrl(tabId) {
  * @return {JSX.Element} The settings page UI.
  */
 export const SettingsPage = () => {
-	const { settings, setSettings, saveSettings, saving, scheduleMeta } =
-		usePluginSettings();
+	const {
+		settings,
+		setSettings,
+		saveSettings,
+		saving,
+		scheduleMeta,
+		wpConfigConstants,
+		dismissConstantNotice,
+	} = usePluginSettings();
+
+	const syncDismissedConstants = useCallback(
+		(dismissed) => {
+			setSettings((prev) => ({
+				...prev,
+				dismissed_constants: dismissed,
+			}));
+		},
+		[setSettings]
+	);
 	const [selectedTabId, setSelectedTabId] = useState(getTabFromUrl);
 
 	const handleSelectTab = useCallback((tabId) => {
@@ -110,7 +127,14 @@ export const SettingsPage = () => {
 							/>
 						</Tabs.TabPanel>
 						<Tabs.TabPanel tabId={TAB_AUTO_UPDATES}>
-							<AutoUpdatesPanel />
+							<AutoUpdatesPanel
+								dismissedConstants={
+									settings.dismissed_constants
+								}
+								onDismissedConstantsChange={
+									syncDismissedConstants
+								}
+							/>
 						</Tabs.TabPanel>
 						<Tabs.TabPanel tabId={TAB_SCHEDULE}>
 							<SchedulePanel
@@ -119,6 +143,8 @@ export const SettingsPage = () => {
 								saveSettings={saveSettings}
 								saving={saving}
 								scheduleMeta={scheduleMeta}
+								wpConfigConstants={wpConfigConstants}
+								onDismissConstantNotice={dismissConstantNotice}
 							/>
 						</Tabs.TabPanel>
 						<Tabs.TabPanel tabId={TAB_SETTINGS}>

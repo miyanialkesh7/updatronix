@@ -69,7 +69,7 @@ function updatronix_get_allowed_cron_schedule_labels(): array {
 /**
  * Attach an admin-rendered datetime string for Schedule tab cron diagnostics.
  *
- * @param array{cron_schedule_labels: list<array{slug: string, label: string}>, update_check_next_scheduled: int|false, wp_cron_disabled: bool, timezone_string: string} $meta Raw meta from {@see Updatronix_Cron::get_schedule_rest_meta()}.
+ * @param array{cron_schedule_labels: list<array{slug: string, label: string}>, update_check_next_scheduled: int|false, wp_cron_disabled: bool, timezone_string: string, schedule_driver: 'wordpress'|'updatronix', unified_schedule_active: bool} $meta Raw meta from {@see Updatronix_Cron::get_schedule_rest_meta()}.
  * @return array<string, mixed>
  */
 function updatronix_decorate_schedule_meta_for_display(array $meta): array {
