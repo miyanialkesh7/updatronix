@@ -113,7 +113,7 @@ final class Updatronix_Cron {
         $settings = updatronix_get_settings();
         $recurrence = $settings['schedule']['update_check']['recurrence'];
 
-        return $recurrence !== '' && in_array($recurrence, ['hourly', 'twicedaily', 'daily'], true);
+        return $recurrence !== '' && in_array($recurrence, updatronix_allowed_update_check_recurrence_slugs(), true);
     }
 
     /**
@@ -154,6 +154,8 @@ final class Updatronix_Cron {
     }
 
     /**
+     * Restores WordPress core update-check cron hooks when this plugin is not driving the unified schedule.
+     *
      * @return void
      */
     private static function restore_core_update_check_crons_if_needed(): void {
@@ -197,7 +199,7 @@ final class Updatronix_Cron {
         $settings = updatronix_get_settings();
         $schedule = $settings['schedule'];
         $recurrence = $schedule['update_check']['recurrence'];
-        if ($recurrence === '' || !in_array($recurrence, ['hourly', 'twicedaily', 'daily'], true)) {
+        if ($recurrence === '' || !in_array($recurrence, updatronix_allowed_update_check_recurrence_slugs(), true)) {
             self::sync_core_update_crons_with_schedule();
 
             return;
@@ -224,7 +226,7 @@ final class Updatronix_Cron {
         $settings = updatronix_get_settings();
         $schedule = $settings['schedule'];
         $recurrence = $schedule['update_check']['recurrence'];
-        if ($recurrence === '' || !in_array($recurrence, ['hourly', 'twicedaily', 'daily'], true)) {
+        if ($recurrence === '' || !in_array($recurrence, updatronix_allowed_update_check_recurrence_slugs(), true)) {
             self::sync_core_update_crons_with_schedule();
 
             return;

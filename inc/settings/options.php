@@ -43,6 +43,17 @@ function updatronix_get_schedule_defaults(): array {
 }
 
 /**
+ * Recurrence slugs allowed for unified `wp_version_check` scheduling.
+ *
+ * Each slug must exist in {@see wp_get_schedules()} (WordPress default schedules).
+ *
+ * @return list<string>
+ */
+function updatronix_allowed_update_check_recurrence_slugs(): array {
+    return ['hourly', 'twicedaily', 'daily', 'weekly'];
+}
+
+/**
  * Labels for Core {@see wp_get_schedules()} entries used in the Schedule tab picker (immutable slugs).
  *
  * @return list<array{slug: string, label: string}>
@@ -50,9 +61,8 @@ function updatronix_get_schedule_defaults(): array {
 function updatronix_get_allowed_cron_schedule_labels(): array {
     /** @var array<string, array{display: string, interval: int, ...}> $all */
     $all = wp_get_schedules();
-    $allowed_slugs = ['hourly', 'twicedaily', 'daily'];
     $out = [];
-    foreach ($allowed_slugs as $slug) {
+    foreach (updatronix_allowed_update_check_recurrence_slugs() as $slug) {
         if (!isset($all[$slug])) {
             continue;
         }
@@ -144,13 +154,14 @@ function updatronix_sanitize_schedule_array(array $in): array {
         : [];
 
     $recurrence_raw = strtolower(trim((string) ($uc_in['recurrence'] ?? $defaults['update_check']['recurrence'])));
-    $recurrence = in_array($recurrence_raw, ['hourly', 'twicedaily', 'daily'], true)
+    $allowed_recurrences = updatronix_allowed_update_check_recurrence_slugs();
+    $recurrence = in_array($recurrence_raw, $allowed_recurrences, true)
         ? $recurrence_raw
         : '';
 
     $time_raw = trim((string) ($uc_in['time'] ?? $defaults['update_check']['time']));
     $time = '';
-    if ($recurrence === 'daily' || $recurrence === 'twicedaily') {
+    if ($recurrence === 'daily' || $recurrence === 'twicedaily' || $recurrence === 'weekly') {
         $time = updatronix_sanitize_schedule_wall_time($time_raw);
     }
 
@@ -196,9 +207,11 @@ function updatronix_sanitize_schedule_wall_time(string $time_raw): string {
 /**
  * Next Unix timestamp for the first recurring discovery run ({@see wp_schedule_event()} first argument).
  *
- * `twicedaily` uses Core’s twelve-hour interval; the picker time anchors only the initial run wall clock.
+ * `twicedaily` uses Core's twelve-hour interval; the picker time anchors only the initial run wall clock.
  *
- * @param string $recurrence hourly|twicedaily|daily
+ * For `weekly`, if today's preferred time has passed, the next run is the same weekday and clock time in seven days.
+ *
+ * @param string $recurrence hourly|twicedaily|daily|weekly
  * @param string $time       H:i site TZ wall clock when not hourly
  *
  * @return int
@@ -208,7 +221,7 @@ function updatronix_next_update_check_timestamp(string $recurrence, string $time
         return (int) time();
     }
 
-    if ($recurrence !== 'daily' && $recurrence !== 'twicedaily') {
+    if ($recurrence !== 'daily' && $recurrence !== 'twicedaily' && $recurrence !== 'weekly') {
         return (int) time();
     }
 
@@ -227,7 +240,11 @@ function updatronix_next_update_check_timestamp(string $recurrence, string $time
         }
 
         if ($run->getTimestamp() <= $now->getTimestamp()) {
-            $run = $run->modify('+1 day');
+            if ($recurrence === 'weekly') {
+                $run = $run->modify('+7 days');
+            } else {
+                $run = $run->modify('+1 day');
+            }
         }
 
         return (int) $run->getTimestamp();

@@ -62,7 +62,7 @@ export function AutoUpdatesPanel({
 			</h2>
 			<Text variant="muted">
 				{__(
-					'Choose which parts of your site update automatically: core, plugins, themes, and translations.',
+					'Choose what updates automatically on your site: WordPress core, plugins, themes, and translations.',
 					'updatronix'
 				)}
 			</Text>

@@ -147,6 +147,17 @@ final class Updatronix_Logger {
             'created_at' => current_time('mysql'),
         ];
         self::bump_logs_cache_last_changed();
+
+        /**
+         * Fires after a log entry is stored in the custom audit log table.
+         *
+         * Hook for integrations that should react when a new row is persisted.
+         *
+         * @since 1.0.0
+         *
+         * @param int                    $log_id New log row ID.
+         * @param array<string, mixed>   $data   Snapshot of stored fields (log_type, action_type, item_name, item_slug, version_before, version_after, status, message, trace, update_context, event_key, created_at).
+         */
         do_action('updatronix_after_log', $log_id, $data);
 
         return $log_id;

@@ -31,7 +31,7 @@ const NOTIFY_TYPES = [
 		key: 'plugin_theme',
 		label: __('Plugin and theme updates', 'updatronix'),
 		help: __(
-			'WordPress sends one combined email for plugin and theme auto-updates (success, fail, or mixed).',
+			'WordPress sends one combined email for plugin and theme auto-updates (success, failure, or mixed).',
 			'updatronix'
 		),
 	},
@@ -144,7 +144,7 @@ export const SettingsPanel = memo(function SettingsPanel({
 					__nextHasNoMarginBottom
 					label={__('Manage update notifications', 'updatronix')}
 					help={__(
-						'When enabled, WordPress sends update notification emails to the address below. Use the checkboxes to choose which update types trigger a notification.',
+						'When enabled, WordPress sends notification emails to the address below. Use the boxes to choose which update types send mail.',
 						'updatronix'
 					)}
 					checked={settings.notify_enabled}
@@ -183,7 +183,7 @@ export const SettingsPanel = memo(function SettingsPanel({
 						</h4>
 						<p className="updatronix-settings-help">
 							{__(
-								'Choose which update types trigger emails. You receive one email per run: the detailed report when available, otherwise the standard WordPress summary. Options match WordPress’s own update email behavior.',
+								'Choose which kinds of updates trigger email. For each run, WordPress sends one email: the detailed report when available, otherwise the usual summary. These options mirror WordPress’s default behavior.',
 								'updatronix'
 							)}
 						</p>

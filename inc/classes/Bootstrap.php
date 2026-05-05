@@ -12,10 +12,14 @@ if (!defined('ABSPATH')) {
 
 /**
  * Bootstraps the Updatronix plugin.
+ *
+ * @since 1.0.0
  */
 final class Updatronix_Bootstrap {
     /**
-     * Initialize the plugin: load classes and register hooks.
+     * Loads dependent classes and registers hooks on `plugins_loaded`.
+     *
+     * @since 1.0.0
      *
      * @return void
      */

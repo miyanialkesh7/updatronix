@@ -9,7 +9,7 @@ Requires PHP: 8.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Log every WordPress update with version details, manage auto-updates through native settings, and route notification emails to chosen recipient.
+Log every WordPress update with version details, manage auto-updates through native settings, and route notification emails to your chosen recipients.
 
 == Description ==
 
@@ -38,10 +38,10 @@ The plugin also provides auto-update controls that save directly to native WordP
 * Toggle auto-updates for individual plugins and themes.
 * View `wp-config.php` constants (such as `WP_AUTO_UPDATE_CORE`) that override your settings, so you can spot configuration conflicts.
 
-= Update notifications emails management =
+= Update notification email management =
 * Redirect core update alerts, auto-update notices, and recovery mode emails to the recipient you choose.
 * Select which event types trigger a notification.
-* You can also fully disable updates emails in case you dont need it.
+* You can also disable update notification emails entirely when you do not need them.
 
 = Developers =
 * Hooks to build custom Updatronix add-ons for your workflow.
@@ -52,7 +52,7 @@ Updatronix does not collect, store, or transmit personal data to third parties. 
 
 == Accessibility Statement ==
 
-Updatronix aims to be fully accessible to all of its users.
+Updatronix admin screens follow WordPress accessibility practices and aim for WCAG 2.2 Level AA conformance.
 
 == Screenshots ==
 
@@ -67,7 +67,7 @@ Updatronix aims to be fully accessible to all of its users.
 
 1. Upload the plugin files to the `/wp-content/plugins/updatronix/` directory, or install the plugin through the WordPress Plugins screen.
 2. Activate the plugin through the Plugins screen.
-3. Go to **Tools → Updatronix** (or **Dashboard → Updates log**) to view logs and configure settings.
+3. Go to **Tools → Updatronix** (or **Dashboard → Update logs**) to view logs and configure settings.
 
 **On activation**, Updatronix creates a dedicated database table for logs and schedules a daily cleanup task.
 
@@ -79,7 +79,7 @@ Updatronix aims to be fully accessible to all of its users.
 
 = How do I enable logging? =
 
-Logging starts automatically when you activate the plugin. To change this, go to **Tools → Updatronix** (or **Dashboard → Updates log**), open the **Settings** tab, and toggle "Enable update logging." When enabled, the plugin records every core, plugin, theme, and translation update with version-before and version-after values, trigger type, and technical process messages.
+Logging starts automatically when you activate the plugin. To change this, go to **Tools → Updatronix** (or **Dashboard → Update logs**), open the **Settings** tab, and toggle "Enable update logging." When enabled, the plugin records every core, plugin, theme, and translation update with version-before and version-after values, trigger type, and technical process messages.
 
 = How do I change where WordPress sends update emails? =
 
@@ -116,6 +116,9 @@ Yes. Updatronix is multisite-aware and tracks logs on a per-site basis.
 == Changelog ==
 
 = 1.1 =
+* New: Schedule tab includes WordPress “weekly” cron alongside hourly, twice daily, and daily for update checks.
+* Change: Schedule tab copy streamlined (single help per control, no em dash in strings); matching delay notice and WP_CRON notice punctuation.
+* Change: Schedule tab — shorter help text and labels in plain language, aligned with Auto-updates tab tone (retranslate JS strings).
 * Change: Schedule tab — clearer copy for automatic update delay (offer-age soak) and duration help.
 * New: When delay updates are enabled, an informational notice appears on Updates, Plugins, and Themes explaining how the countdown relates to deferral — plus a Schedule tab hint. (Translate new strings.)
 * Fix: With a custom schedule, WordPress “Automatic update not scheduled” notices on Updates and Plugins no longer appear; the plugin keeps the real `wp_version_check` cron entry aligned with your chosen interval.

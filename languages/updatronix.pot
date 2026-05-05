@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-05-04T08:56:46+00:00\n"
+"POT-Creation-Date: 2026-05-05T10:17:30+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: updatronix\n"
@@ -26,7 +26,7 @@ msgstr ""
 
 #. Description of the plugin
 #: updatronix.php
-msgid "Log every WordPress update with version details, manage auto-updates through native settings, and route notification emails to chosen recipients."
+msgid "Log every WordPress update with version details, manage auto-updates through native settings, and route notification emails to your chosen recipients."
 msgstr ""
 
 #. Author of the plugin
@@ -51,17 +51,17 @@ msgid "Settings"
 msgstr ""
 
 #: inc/admin/links.php:46
-#: inc/admin/menu.php:94
+#: inc/admin/menu.php:98
 msgid "View Updatronix changelog on WordPress.org (opens in a new tab)"
 msgstr ""
 
 #: inc/admin/links.php:47
-#: inc/admin/menu.php:95
+#: inc/admin/menu.php:99
 msgid "Changelog"
 msgstr ""
 
 #: inc/admin/links.php:52
-#: inc/admin/menu.php:105
+#: inc/admin/menu.php:109
 msgid "Read the Updatronix documentation (opens in a new tab)"
 msgstr ""
 
@@ -70,7 +70,7 @@ msgid "Docs"
 msgstr ""
 
 #: inc/admin/links.php:58
-#: inc/admin/menu.php:135
+#: inc/admin/menu.php:139
 msgid "Support Updatronix development (opens in a new tab)"
 msgstr ""
 
@@ -78,14 +78,14 @@ msgstr ""
 msgid "Support"
 msgstr ""
 
-#: inc/admin/menu.php:21
-#: inc/admin/menu.php:22
-#: inc/admin/menu.php:29
-#: inc/admin/menu.php:77
+#: inc/admin/menu.php:23
+#: inc/admin/menu.php:24
+#: inc/admin/menu.php:31
+#: inc/admin/menu.php:81
 msgid "Updatronix"
 msgstr ""
 
-#: inc/admin/menu.php:30
+#: inc/admin/menu.php:32
 #: assets/src/js/components/activityLog/ActivityLogPanel.js:381
 #: assets/src/js/pages/SettingsPage.js:97
 #: assets/src/js/pages/SettingsPage.js:100
@@ -93,94 +93,94 @@ msgid "Update logs"
 msgstr ""
 
 #. translators: URL to the plugin changelog page.
-#: inc/admin/menu.php:49
+#: inc/admin/menu.php:53
 msgid "https://wordpress.org/plugins/updatronix/#developers"
 msgstr ""
 
 #. translators: URL to plugin documentation.
-#: inc/admin/menu.php:51
+#: inc/admin/menu.php:55
 msgid "https://holdmywp.com/en/documents/"
 msgstr ""
 
 #. translators: URL to source code repository.
-#: inc/admin/menu.php:53
+#: inc/admin/menu.php:57
 msgid "https://github.com/quentin-ld/updatronix/"
 msgstr ""
 
 #. translators: URL to the plugin reviews page.
-#: inc/admin/menu.php:55
+#: inc/admin/menu.php:59
 msgid "https://wordpress.org/plugins/updatronix/#reviews"
 msgstr ""
 
 #. translators: URL to support plugin development.
-#: inc/admin/menu.php:57
+#: inc/admin/menu.php:61
 msgid "https://buymeacoffee.com/quentinld"
 msgstr ""
 
-#: inc/admin/menu.php:79
+#: inc/admin/menu.php:83
 msgid "Manage your WordPress updates."
 msgstr ""
 
 #. translators: %s: plugin version number
-#: inc/admin/menu.php:86
+#: inc/admin/menu.php:90
 #, php-format
 msgid "Version %s"
 msgstr ""
 
-#: inc/admin/menu.php:106
+#: inc/admin/menu.php:110
 msgid "Documentation"
 msgstr ""
 
-#: inc/admin/menu.php:111
+#: inc/admin/menu.php:115
 msgid "View the source code on GitHub (opens in a new tab)"
 msgstr ""
 
-#: inc/admin/menu.php:112
+#: inc/admin/menu.php:116
 msgid "Source code"
 msgstr ""
 
-#: inc/admin/menu.php:117
+#: inc/admin/menu.php:121
 msgid "Leave a review for Updatronix on WordPress.org (opens in a new tab)"
 msgstr ""
 
-#: inc/admin/menu.php:118
+#: inc/admin/menu.php:122
 msgid "Leave a review"
 msgstr ""
 
 #. translators: 1: decorative heart emoji, 2: author name
-#: inc/admin/menu.php:125
+#: inc/admin/menu.php:129
 #, php-format
 msgid "Made with %1$s by %2$s"
 msgstr ""
 
-#: inc/admin/menu.php:136
+#: inc/admin/menu.php:140
 msgid "Support development"
 msgstr ""
 
-#: inc/admin/menu.php:145
+#: inc/admin/menu.php:149
 msgid "Loading your Updatronix settings…"
 msgstr ""
 
-#. translators: %d: configured full-day soak count (1–365).
-#: inc/admin/native-update-delay-notice.php:39
+#. translators: %d: full days to wait after WordPress first sees an update (1–365).
+#: inc/admin/native-update-delay-notice.php:38
 #, php-format
-msgid "Updatronix has automatic update delay enabled: new releases must mature for %d full day after first detection before they may install in the background."
-msgid_plural "Updatronix has automatic update delay enabled: new releases must mature for %d full days after first detection before they may install in the background."
+msgid "Delayed updates are on in Updatronix: WordPress waits %d full day after it first sees an update before installing it automatically."
+msgid_plural "Delayed updates are on in Updatronix: WordPress waits %d full days after it first sees an update before installing it automatically."
 msgstr[0] ""
 msgstr[1] ""
 
-#: inc/admin/native-update-delay-notice.php:49
-msgid "The countdown WordPress shows below refers to when the next background update check may run. Delay applies separately to each update offer, so an install can happen on a later run. Check the Updatronix activity log for deferred items."
+#: inc/admin/native-update-delay-notice.php:48
+msgid "Countdowns on this screen show when the next automatic update check may run, not when a delayed install happens. Each update keeps its own timer. Details stay in Update logs."
 msgstr ""
 
 #. translators: %1$s: Schedule tab URL. %2$s: Update logs URL.
-#: inc/admin/native-update-delay-notice.php:60
+#: inc/admin/native-update-delay-notice.php:59
 #, php-format
-msgid "You can <a href=\"%1$s\">open the Schedule tab</a> to change delay settings, or <a href=\"%2$s\">view update logs</a> for deferral details."
+msgid "Change delay settings on the <a href=\"%1$s\">Schedule tab</a> or open <a href=\"%2$s\">Update logs</a> for details."
 msgstr ""
 
-#: inc/admin/native-update-delay-notice.php:71
-msgid "Ask a site administrator who can access Updatronix under Tools to review delay settings or the update log."
+#: inc/admin/native-update-delay-notice.php:70
+msgid "Ask a site administrator who can open Tools → Updatronix to change delay settings or review Update logs."
 msgstr ""
 
 #. translators: 1: number of soak days configured, 2: datetime string when eligibility starts if the update is still offered.
@@ -491,11 +491,11 @@ msgid "Update logging is off. Turn it on in Settings to keep a history of update
 msgstr ""
 
 #: assets/src/js/components/activityLog/ActivityLogPanel.js:384
-msgid "Browse recent WordPress, plugin, theme, and translation updates."
+msgid "Review recent updates to WordPress core, plugins, themes, and translations."
 msgstr ""
 
 #: assets/src/js/components/activityLog/ActivityLogPanel.js:400
-msgid "No update logs yet. Logs will appear here after the next update."
+msgid "No update logs yet. Entries appear after WordPress runs an update."
 msgstr ""
 
 #: assets/src/js/components/activityLog/ActivityLogPanel.js:405
@@ -587,7 +587,7 @@ msgid "Auto-updates"
 msgstr ""
 
 #: assets/src/js/components/autoUpdates/AutoUpdatesPanel.js:64
-msgid "Choose which parts of your site update automatically: core, plugins, themes, and translations."
+msgid "Choose what updates automatically on your site: WordPress core, plugins, themes, and translations."
 msgstr ""
 
 #: assets/src/js/components/autoUpdates/AutoUpdatesPanel.js:95
@@ -627,7 +627,7 @@ msgid "DISALLOW_FILE_MODS is set to true in your wp-config.php file. WordPress c
 msgstr ""
 
 #: assets/src/js/components/autoUpdates/ConstantNotices.js:26
-msgid "WordPress will not run scheduled events on ordinary page loads. Make sure something still triggers wp-cron.php on a timer — for example your host calling wp-cron.php from a system cron job — so automatic updates and other scheduled tasks can run."
+msgid "WordPress does not run scheduled tasks during normal visits. Ask your host to call wp-cron.php on a timer, often with a system cron job, so automatic updates and other schedules keep working."
 msgstr ""
 
 #: assets/src/js/components/autoUpdates/CoreSection.js:42
@@ -652,7 +652,7 @@ msgid "Core auto-update mode"
 msgstr ""
 
 #: assets/src/js/components/autoUpdates/CoreSection.js:80
-msgid "A constant in your wp-config.php file controls this setting. To change it, edit that file directly."
+msgid "This choice is set in your wp-config.php file. Edit that file to change it."
 msgstr ""
 
 #: assets/src/js/components/autoUpdates/ItemsDataViewSection.js:115
@@ -660,7 +660,7 @@ msgid "Auto-update"
 msgstr ""
 
 #: assets/src/js/components/autoUpdates/ItemsDataViewSection.js:121
-msgid "Auto-updates are not available for this item (e.g. not hosted on WordPress.org)."
+msgid "Automatic updates are not available for this item (for example, it is not hosted on WordPress.org)."
 msgstr ""
 
 #: assets/src/js/components/autoUpdates/ItemsDataViewSection.js:126
@@ -710,96 +710,85 @@ msgid "Translation auto-updates"
 msgstr ""
 
 #: assets/src/js/components/autoUpdates/TranslationsSection.js:58
-msgid "WordPress updates translations automatically by default. Turn this off to stop automatic translation downloads."
+msgid "WordPress downloads translation updates automatically by default. Turn this off to skip automatic downloads."
 msgstr ""
 
-#: assets/src/js/components/schedule/SchedulePanel.js:99
+#: assets/src/js/components/schedule/SchedulePanel.js:100
 msgid "Use WordPress default schedule"
 msgstr ""
 
-#. translators: %s: localized date/time of the next plugin-scheduled background update run
-#: assets/src/js/components/schedule/SchedulePanel.js:118
+#. translators: %s: localized date/time of the next scheduled automatic update check
+#: assets/src/js/components/schedule/SchedulePanel.js:119
 #, js-format
-msgid "Next background update run: %s"
+msgid "Next automatic update check: %s"
 msgstr ""
 
-#: assets/src/js/components/schedule/SchedulePanel.js:122
-msgid "WordPress uses its own cron schedule for update checks and eligible automatic updates."
+#: assets/src/js/components/schedule/SchedulePanel.js:123
+msgid "WordPress picks when update checks and automatic updates run."
 msgstr ""
 
-#: assets/src/js/components/schedule/SchedulePanel.js:127
-msgid "The next run time will appear shortly after you save."
+#: assets/src/js/components/schedule/SchedulePanel.js:128
+msgid "Save your changes to see the next scheduled time."
 msgstr ""
 
-#: assets/src/js/components/schedule/SchedulePanel.js:136
+#: assets/src/js/components/schedule/SchedulePanel.js:137
 #: assets/src/js/pages/SettingsPage.js:111
 #: assets/src/js/pages/SettingsPage.js:114
 msgid "Schedule"
 msgstr ""
 
-#: assets/src/js/components/schedule/SchedulePanel.js:139
-msgid "Choose when this site runs background update work and set delay preferences for automatic updates."
+#: assets/src/js/components/schedule/SchedulePanel.js:140
+msgid "Pick how often WordPress checks for updates and whether automatic installs wait."
 msgstr ""
 
 #: assets/src/js/components/schedule/SchedulePanel.js:148
-msgid "Background update schedule"
+msgid "Update checks"
 msgstr ""
 
-#: assets/src/js/components/schedule/SchedulePanel.js:151
-msgid "A single schedule controls when WordPress checks for updates and may apply eligible automatic updates. Pick a Core WP-Cron interval and optional time, or leave WordPress default so Core keeps its own cron."
+#: assets/src/js/components/schedule/SchedulePanel.js:160
+msgid "How often"
 msgstr ""
 
-#: assets/src/js/components/schedule/SchedulePanel.js:166
-msgid "Update interval"
+#: assets/src/js/components/schedule/SchedulePanel.js:161
+msgid "Sets how often WordPress checks for updates and runs automatic updates. WordPress default keeps Core timing. Daily, twice daily, and weekly schedules use the preferred time below."
 msgstr ""
 
-#: assets/src/js/components/schedule/SchedulePanel.js:167
-msgid "Hourly, twice daily, and daily match WordPress Core recurrence names. WordPress default clears this plugin schedule."
+#: assets/src/js/components/schedule/SchedulePanel.js:191
+msgid "Preferred time"
 msgstr ""
 
-#: assets/src/js/components/schedule/SchedulePanel.js:197
-msgid "Time of check"
-msgstr ""
-
-#: assets/src/js/components/schedule/SchedulePanel.js:204
+#: assets/src/js/components/schedule/SchedulePanel.js:198
 msgid "Hour"
 msgstr ""
 
-#: assets/src/js/components/schedule/SchedulePanel.js:246
+#: assets/src/js/components/schedule/SchedulePanel.js:240
 msgid "Minute"
 msgstr ""
 
-#: assets/src/js/components/schedule/SchedulePanel.js:284
-msgid "Uses your site timezone setting in WordPress."
+#: assets/src/js/components/schedule/SchedulePanel.js:278
+msgid "Uses your site timezone from Settings, General."
 msgstr ""
 
-#: assets/src/js/components/schedule/SchedulePanel.js:299
-#: assets/src/js/components/schedule/SchedulePanel.js:309
+#: assets/src/js/components/schedule/SchedulePanel.js:292
+#: assets/src/js/components/schedule/SchedulePanel.js:296
 msgid "Delay updates"
 msgstr ""
 
-#: assets/src/js/components/schedule/SchedulePanel.js:302
-msgid "Background automatic updates can wait until each release has been offered for a number of full days. Updatronix tracks maturity per update (core, plugin, theme, or translation). Deferred installs are recorded in Update logs."
+#: assets/src/js/components/schedule/SchedulePanel.js:297
+msgid "When enabled, installs wait your chosen full days after WordPress first sees each update. Core, plugins, themes, and translations count separately. Countdowns on Updates, Plugins, and Themes show the next check, not the install moment. See Update logs."
 msgstr ""
 
-#: assets/src/js/components/schedule/SchedulePanel.js:310
-msgid "When enabled, background automatic installs wait until each offer has soaked for the duration you set (counted from first detection)."
+#: assets/src/js/components/schedule/SchedulePanel.js:331
+msgid "Days to wait"
 msgstr ""
 
-#: assets/src/js/components/schedule/SchedulePanel.js:344
-msgid "Delay duration (days)"
+#: assets/src/js/components/schedule/SchedulePanel.js:332
+msgid "Enter a number from 1 to 365."
 msgstr ""
 
-#: assets/src/js/components/schedule/SchedulePanel.js:345
-msgid "Minimum full days after an offer is first detected before it may install via the automatic updater."
-msgstr ""
-
-#: assets/src/js/components/schedule/SchedulePanel.js:383
-msgid "On WordPress Updates, Plugins, and Themes screens, the automatic update countdown shows when the next background check may run — not exactly when each delayed item will install. Maturity is per offer; deferrals appear in Update logs."
-msgstr ""
-
-#: assets/src/js/components/schedule/SchedulePanel.js:398
-msgid "Save schedule"
+#: assets/src/js/components/schedule/SchedulePanel.js:377
+#: assets/src/js/components/SettingsPanel.js:215
+msgid "Save settings"
 msgstr ""
 
 #: assets/src/js/components/SettingsPanel.js:25
@@ -811,7 +800,7 @@ msgid "Plugin and theme updates"
 msgstr ""
 
 #: assets/src/js/components/SettingsPanel.js:33
-msgid "WordPress sends one combined email for plugin and theme auto-updates (success, fail, or mixed)."
+msgid "WordPress sends one combined email for plugin and theme auto-updates (success, failure, or mixed)."
 msgstr ""
 
 #: assets/src/js/components/SettingsPanel.js:40
@@ -863,7 +852,7 @@ msgid "Manage update notifications"
 msgstr ""
 
 #: assets/src/js/components/SettingsPanel.js:146
-msgid "When enabled, WordPress sends update notification emails to the address below. Use the checkboxes to choose which update types trigger a notification."
+msgid "When enabled, WordPress sends notification emails to the address below. Use the boxes to choose which update types send mail."
 msgstr ""
 
 #: assets/src/js/components/SettingsPanel.js:165
@@ -883,15 +872,11 @@ msgid "Notification types"
 msgstr ""
 
 #: assets/src/js/components/SettingsPanel.js:185
-msgid "Choose which update types trigger emails. You receive one email per run: the detailed report when available, otherwise the standard WordPress summary. Options match WordPress’s own update email behavior."
+msgid "Choose which kinds of updates trigger email. For each run, WordPress sends one email: the detailed report when available, otherwise the usual summary. These options mirror WordPress’s default behavior."
 msgstr ""
 
 #: assets/src/js/components/SettingsPanel.js:214
 msgid "Saving…"
-msgstr ""
-
-#: assets/src/js/components/SettingsPanel.js:215
-msgid "Save settings"
 msgstr ""
 
 #: assets/src/js/hooks/useAutoUpdates.js:34

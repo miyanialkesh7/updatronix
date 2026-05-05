@@ -382,7 +382,7 @@ export function ActivityLogPanel({ loggingEnabled = true }) {
 			</h2>
 			<Text variant="muted">
 				{__(
-					'Browse recent WordPress, plugin, theme, and translation updates.',
+					'Review recent updates to WordPress core, plugins, themes, and translations.',
 					'updatronix'
 				)}
 			</Text>
@@ -398,7 +398,7 @@ export function ActivityLogPanel({ loggingEnabled = true }) {
 				defaultLayouts={defaultLayouts}
 				config={{ perPageSizes: [10, 25, 50, 100] }}
 				empty={__(
-					'No update logs yet. Logs will appear here after the next update.',
+					'No update logs yet. Entries appear after WordPress runs an update.',
 					'updatronix'
 				)}
 				search

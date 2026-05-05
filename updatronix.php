@@ -10,7 +10,7 @@
  * @license   GPL v2 or later
  *
  * Plugin Name: Updatronix - Enhanced Update Manager
- * Description: Log every WordPress update with version details, manage auto-updates through native settings, and route notification emails to chosen recipients.
+ * Description: Log every WordPress update with version details, manage auto-updates through native settings, and route notification emails to your chosen recipients.
  * Version: 1.1
  * Plugin URI: https://wordpress.org/plugins/updatronix/
  * Author: Quentin Le Duff
@@ -66,6 +66,8 @@ register_activation_hook(__FILE__, 'updatronix_activate');
 /**
  * Register capabilities, create the log table, and schedule cron.
  *
+ * @since 1.0.0
+ *
  * @return void
  */
 function updatronix_activate(): void {
@@ -86,6 +88,8 @@ register_deactivation_hook(__FILE__, 'updatronix_deactivate');
 
 /**
  * Unschedule cron on deactivation. The log table is kept.
+ *
+ * @since 1.0.0
  *
  * @return void
  */

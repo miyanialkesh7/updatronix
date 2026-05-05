@@ -1,9 +1,12 @@
 <?php
 
 /**
- * Fired when the plugin is uninstalled (deleted), not on deactivation.
+ * Runs when the plugin is deleted from WordPress, not on deactivation.
+ *
+ * Loads constants and delegates cleanup to {@see Updatronix_Uninstall::run()}.
  *
  * @package updatronix
+ * @since 1.0.0
  */
 
 if (!defined('WP_UNINSTALL_PLUGIN')) {

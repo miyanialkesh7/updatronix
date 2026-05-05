@@ -12,7 +12,9 @@ if (!defined('ABSPATH')) {
 
 add_action('admin_menu', 'updatronix_add_option_page');
 /**
- * Add Updatronix under Tools and a link under Dashboard > Updatronix.
+ * Registers **Tools → Updatronix** and **Dashboard → Update logs**, both opening the same app shell.
+ *
+ * @since 1.0.0
  *
  * @return void
  */
@@ -35,7 +37,9 @@ function updatronix_add_option_page(): void {
 }
 
 /**
- * Output Updatronix settings page (shell; React app mounts in #updatronix-settings).
+ * Outputs the admin page shell; the React app mounts into `#updatronix-settings`.
+ *
+ * @since 1.0.0
  *
  * @return void
  */

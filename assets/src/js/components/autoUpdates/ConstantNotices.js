@@ -24,7 +24,7 @@ const CONSTANT_DESCRIPTIONS = {
 		'updatronix'
 	),
 	DISABLE_WP_CRON: __(
-		'WordPress will not run scheduled events on ordinary page loads. Make sure something still triggers wp-cron.php on a timer — for example your host calling wp-cron.php from a system cron job — so automatic updates and other scheduled tasks can run.',
+		'WordPress does not run scheduled tasks during normal visits. Ask your host to call wp-cron.php on a timer, often with a system cron job, so automatic updates and other schedules keep working.',
 		'updatronix'
 	),
 };

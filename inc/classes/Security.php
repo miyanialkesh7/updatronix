@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Ensures secure database interactions and sanitization of inputs
+ * Sanitization helpers for log fields, REST payloads, and related admin inputs.
  *
  * @package updatronix
  */
