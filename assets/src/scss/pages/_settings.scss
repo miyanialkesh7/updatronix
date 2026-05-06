@@ -515,6 +515,25 @@
 			margin-top: var(--wpds-dimension-gap-xs);
 		}
 	}
+
+	.updatronix-notifications-disable-card {
+		margin-top: var(--wpds-dimension-gap-lg);
+		max-width: $max-width-content;
+
+		.components-card__media {
+			border-radius: var(--wpds-border-radius-lg);
+			overflow: hidden;
+		}
+
+		.updatronix-notifications-disable-card__inner {
+			padding: var(--wpds-dimension-padding-md) var(--wpds-dimension-padding-lg);
+			background: color-mix(in srgb, var(--wp-components-color-warning, #f0b849) 18%, var(--wpds-color-bg-surface-neutral-strong, #fff));
+		}
+
+		.components-toggle-control {
+			margin-bottom: 0;
+		}
+	}
 }
 
 .updatronix-panel-title {

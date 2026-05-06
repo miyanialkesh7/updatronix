@@ -17,6 +17,8 @@ const UPDATRONIX_OPTION_SETTINGS = 'updatronix_settings';
 const UPDATRONIX_SETTINGS_DEFAULTS = [
     'logging_enabled' => true,
     'retention_days' => 90,
+    /** @see updatronix_sanitize_notifications_mode() */
+    'notifications_mode' => 'default',
     'notify_enabled' => false,
     'notify_emails' => '',
     'notify_on' => [],
@@ -293,7 +295,7 @@ function updatronix_register_settings(): void {
 /**
  * Get plugin settings from the single JSON option.
  *
- * @return array{logging_enabled: bool, retention_days: int, notify_enabled: bool, notify_emails: string, notify_on: array<string>, auto_update_translations: bool, dismissed_constants: array<string>, schedule: array{update_check: array{recurrence: string, time: string}, delay_updates: array{enabled: bool, delay_value: int}}}
+ * @return array{logging_enabled: bool, retention_days: int, notifications_mode: string, notify_enabled: bool, notify_emails: string, notify_on: array<string>, auto_update_translations: bool, dismissed_constants: array<string>, schedule: array{update_check: array{recurrence: string, time: string}, delay_updates: array{enabled: bool, delay_value: int}}}
  */
 function updatronix_get_settings(): array {
     $raw = get_option(UPDATRONIX_OPTION_SETTINGS, '');
@@ -310,6 +312,7 @@ function updatronix_get_settings(): array {
     $out = [
         'logging_enabled' => isset($decoded['logging_enabled']) ? (bool) $decoded['logging_enabled'] : $defaults['logging_enabled'],
         'retention_days' => isset($decoded['retention_days']) ? max(1, min(365, (int) $decoded['retention_days'])) : $defaults['retention_days'],
+        'notifications_mode' => updatronix_sanitize_notifications_mode($decoded['notifications_mode'] ?? $defaults['notifications_mode']),
         'notify_enabled' => isset($decoded['notify_enabled']) ? (bool) $decoded['notify_enabled'] : $defaults['notify_enabled'],
         'notify_emails' => isset($decoded['notify_emails']) ? (string) $decoded['notify_emails'] : $defaults['notify_emails'],
         'notify_on' => updatronix_normalize_notify_on($decoded['notify_on'] ?? $defaults['notify_on']),
@@ -348,6 +351,7 @@ function updatronix_sanitize_settings_json(mixed $value): string {
     $out = [
         'logging_enabled' => (bool) ($value['logging_enabled'] ?? true),
         'retention_days' => max(1, min(365, (int) ($value['retention_days'] ?? 90))),
+        'notifications_mode' => updatronix_sanitize_notifications_mode($value['notifications_mode'] ?? 'default'),
         'notify_enabled' => (bool) ($value['notify_enabled'] ?? false),
         'notify_emails' => updatronix_sanitize_emails($value['notify_emails'] ?? ''),
         'notify_on' => $notify_on,
@@ -383,6 +387,28 @@ function updatronix_sanitize_emails(mixed $value): string {
     $emails = array_filter(array_map('sanitize_email', explode(',', (string) $value)));
 
     return implode(', ', $emails);
+}
+
+/**
+ * Normalize notifications_mode for storage and runtime.
+ *
+ * - `default`: native Updatronix redirect / per-type behaviour (same as pre–1.1.0 installs).
+ * - `disabled`: suppress core/plugin/theme/update-debug notification emails (recovery mode untouched).
+ * Legacy stored value `redirect` is treated as `default`.
+ *
+ * @param mixed $value Raw value.
+ * @return string `default`|`disabled`
+ */
+function updatronix_sanitize_notifications_mode(mixed $value): string {
+    $raw = strtolower(trim((string) $value));
+    if ($raw === 'disabled') {
+        return 'disabled';
+    }
+    if ($raw === 'redirect') {
+        return 'default';
+    }
+
+    return 'default';
 }
 
 /**

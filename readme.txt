@@ -129,6 +129,7 @@ Yes. Updatronix is multisite-aware and tracks logs on a per-site basis.
 * New: Added PHP hooks for developers, agencies, and advanced users.
 * Change: User can export a formatted list of updates for a selected date range in one click.
 * Change: User can fully disable updates emails if needed.
+* New: Settings tab adds a noticeable control and `notifications_mode` option to stop all WordPress update notification emails while leaving recovery mode email behavior unchanged. (Translate new Settings strings.)
 * Docs: Improved readme wording and structure for clarity.
 * i18n: Localized menu links.
 

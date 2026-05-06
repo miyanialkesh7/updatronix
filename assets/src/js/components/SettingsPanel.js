@@ -6,6 +6,8 @@
 import { memo } from '@wordpress/element';
 import {
 	Button,
+	Card,
+	CardMedia,
 	Icon,
 	ToggleControl,
 	TextControl,
@@ -78,6 +80,8 @@ export const SettingsPanel = memo(function SettingsPanel({
 		}));
 	};
 
+	const emailsFullyDisabled = settings.notificationsMode === 'disabled';
+
 	return (
 		<div className="updatronix-settings-form">
 			<h2 className="updatronix-panel-title">
@@ -148,6 +152,7 @@ export const SettingsPanel = memo(function SettingsPanel({
 						'updatronix'
 					)}
 					checked={settings.notify_enabled}
+					disabled={emailsFullyDisabled}
 					onChange={(value) =>
 						setSettings((prev) => ({
 							...prev,
@@ -156,7 +161,7 @@ export const SettingsPanel = memo(function SettingsPanel({
 					}
 				/>
 				<fieldset
-					disabled={!settings.notify_enabled}
+					disabled={!settings.notify_enabled || emailsFullyDisabled}
 					className="updatronix-settings-fieldset"
 				>
 					<TextControl
@@ -201,6 +206,35 @@ export const SettingsPanel = memo(function SettingsPanel({
 						))}
 					</div>
 				</fieldset>
+				<Card
+					className="updatronix-notifications-disable-card"
+					isBorderless
+				>
+					<CardMedia>
+						<div className="updatronix-notifications-disable-card__inner">
+							<ToggleControl
+								__nextHasNoMarginBottom
+								label={__(
+									'Disable all update notification emails',
+									'updatronix'
+								)}
+								help={__(
+									"Only enable this option if you actively monitor this site's updates elsewhere and do not want WordPress to send update notification emails. Recovery mode is not affected.",
+									'updatronix'
+								)}
+								checked={emailsFullyDisabled}
+								onChange={(value) =>
+									setSettings((prev) => ({
+										...prev,
+										notificationsMode: value
+											? 'disabled'
+											: 'default',
+									}))
+								}
+							/>
+						</div>
+					</CardMedia>
+				</Card>
 			</div>
 			<div className="updatronix-actions">
 				<Button

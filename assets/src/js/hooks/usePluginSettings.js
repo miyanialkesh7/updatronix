@@ -82,6 +82,10 @@ export function usePluginSettings() {
 			? {
 					logging_enabled: !!opts.logging_enabled,
 					retention_days: Number(opts.retention_days) || 90,
+					notificationsMode:
+						opts.notifications_mode === 'disabled'
+							? 'disabled'
+							: 'default',
 					notify_enabled: !!opts.notify_enabled,
 					notify_emails: String(opts.notify_emails || ''),
 					notifyOn,
@@ -94,6 +98,7 @@ export function usePluginSettings() {
 			: {
 					logging_enabled: true,
 					retention_days: 90,
+					notificationsMode: 'default',
 					notify_enabled: false,
 					notify_emails: '',
 					notifyOn,
@@ -120,6 +125,7 @@ export function usePluginSettings() {
 			const payload = {
 				logging_enabled: settings.logging_enabled,
 				retention_days: settings.retention_days,
+				notifications_mode: settings.notificationsMode,
 				notify_enabled: settings.notify_enabled,
 				notify_emails: settings.notify_emails,
 				notify_on: settings.notifyOn,
@@ -131,8 +137,11 @@ export function usePluginSettings() {
 				data: payload,
 			});
 			if (response?.options) {
-				const { notify_on: notifyOnFromApi, ...rest } =
-					response.options;
+				const {
+					notify_on: notifyOnFromApi,
+					notifications_mode: notificationsModeFromApi,
+					...rest
+				} = response.options;
 				const nextSchedule =
 					response.options.schedule &&
 					typeof response.options.schedule === 'object'
@@ -162,6 +171,10 @@ export function usePluginSettings() {
 						: settings.schedule;
 				setSettings({
 					...rest,
+					notificationsMode:
+						notificationsModeFromApi === 'disabled'
+							? 'disabled'
+							: 'default',
 					notifyOn: notifyOnFromApi,
 					schedule: nextSchedule,
 					auto_update_translations:

@@ -121,6 +121,7 @@ final class Updatronix_Settings {
                 'args' => [
                     'logging_enabled' => ['type' => 'boolean'],
                     'retention_days' => ['type' => 'integer', 'minimum' => 1, 'maximum' => 365],
+                    'notifications_mode' => ['type' => 'string', 'enum' => ['default', 'disabled']],
                     'notify_enabled' => ['type' => 'boolean'],
                     'notify_emails' => ['type' => 'string'],
                     'notify_on' => [
@@ -473,6 +474,9 @@ final class Updatronix_Settings {
         $next = [
             'logging_enabled' => $request->has_param('logging_enabled') ? (bool) $request->get_param('logging_enabled') : $current['logging_enabled'],
             'retention_days' => $request->has_param('retention_days') ? max(1, min(365, (int) $request->get_param('retention_days'))) : $current['retention_days'],
+            'notifications_mode' => $request->has_param('notifications_mode')
+                ? updatronix_sanitize_notifications_mode($request->get_param('notifications_mode'))
+                : $current['notifications_mode'],
             'notify_enabled' => $request->has_param('notify_enabled') ? (bool) $request->get_param('notify_enabled') : $current['notify_enabled'],
             'notify_emails' => $request->has_param('notify_emails') ? updatronix_sanitize_emails($request->get_param('notify_emails')) : $current['notify_emails'],
             'notify_on' => $request->has_param('notify_on') && is_array($request->get_param('notify_on'))

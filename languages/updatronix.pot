@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-05-05T10:17:30+00:00\n"
+"POT-Creation-Date: 2026-05-06T08:08:54+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: updatronix\n"
@@ -44,7 +44,7 @@ msgid "Open Updatronix settings"
 msgstr ""
 
 #: inc/admin/links.php:26
-#: assets/src/js/components/SettingsPanel.js:84
+#: assets/src/js/components/SettingsPanel.js:88
 #: assets/src/js/pages/SettingsPage.js:118
 #: assets/src/js/pages/SettingsPage.js:121
 msgid "Settings"
@@ -198,8 +198,8 @@ msgid "Unknown theme"
 msgstr ""
 
 #: inc/classes/AutoUpdateDelay.php:435
-#: inc/classes/Settings.php:378
-#: inc/classes/Settings.php:386
+#: inc/classes/Settings.php:379
+#: inc/classes/Settings.php:387
 #: assets/src/js/components/activityLog/utils.js:130
 #: assets/src/js/components/activityLog/utils.js:138
 msgid "WordPress"
@@ -237,97 +237,97 @@ msgstr ""
 msgid "The core update encountered a redirect error (HTTP %d). Check your server configuration."
 msgstr ""
 
-#: inc/classes/Settings.php:294
-#: inc/classes/Settings.php:440
+#: inc/classes/Settings.php:295
+#: inc/classes/Settings.php:441
 msgid "The requested log entry could not be found."
 msgstr ""
 
-#: inc/classes/Settings.php:314
+#: inc/classes/Settings.php:315
 msgid "System"
 msgstr ""
 
 #. translators: %d: WordPress user ID when display name is not available
-#: inc/classes/Settings.php:319
+#: inc/classes/Settings.php:320
 #, php-format
 msgid "User #%d"
 msgstr ""
 
-#: inc/classes/Settings.php:325
+#: inc/classes/Settings.php:326
 msgid "Automatic"
 msgstr ""
 
-#: inc/classes/Settings.php:327
+#: inc/classes/Settings.php:328
 msgid "File upload"
 msgstr ""
 
-#: inc/classes/Settings.php:329
+#: inc/classes/Settings.php:330
 msgid "Manual"
 msgstr ""
 
-#: inc/classes/Settings.php:334
+#: inc/classes/Settings.php:335
 #: assets/src/js/components/activityLog/constants.js:19
 msgid "Update"
 msgstr ""
 
-#: inc/classes/Settings.php:335
+#: inc/classes/Settings.php:336
 #: assets/src/js/components/activityLog/constants.js:20
 msgid "Rollback"
 msgstr ""
 
-#: inc/classes/Settings.php:336
+#: inc/classes/Settings.php:337
 #: assets/src/js/components/activityLog/constants.js:21
 msgid "Install"
 msgstr ""
 
-#: inc/classes/Settings.php:337
+#: inc/classes/Settings.php:338
 #: assets/src/js/components/activityLog/constants.js:22
 msgid "Reinstall"
 msgstr ""
 
-#: inc/classes/Settings.php:338
+#: inc/classes/Settings.php:339
 #: assets/src/js/components/activityLog/constants.js:23
 msgid "Failed"
 msgstr ""
 
-#: inc/classes/Settings.php:339
+#: inc/classes/Settings.php:340
 #: assets/src/js/components/activityLog/constants.js:24
 msgid "Uninstall"
 msgstr ""
 
-#: inc/classes/Settings.php:345
+#: inc/classes/Settings.php:346
 #: assets/src/js/components/activityLog/utils.js:84
 msgid "Bulk action"
 msgstr ""
 
-#: inc/classes/Settings.php:347
+#: inc/classes/Settings.php:348
 #: assets/src/js/components/activityLog/utils.js:87
 msgid "Single action"
 msgstr ""
 
-#: inc/classes/Settings.php:349
-#: inc/classes/Settings.php:399
-#: inc/classes/Settings.php:427
+#: inc/classes/Settings.php:350
+#: inc/classes/Settings.php:400
+#: inc/classes/Settings.php:428
 msgid "—"
 msgstr ""
 
 #. translators: 1: item name, 2: version number
-#: inc/classes/Settings.php:377
+#: inc/classes/Settings.php:378
 #: assets/src/js/components/activityLog/utils.js:129
 #, php-format,js-format
 msgid "Language pack updated for %1$s %2$s"
 msgstr ""
 
 #. translators: %s: item name
-#: inc/classes/Settings.php:385
+#: inc/classes/Settings.php:386
 #: assets/src/js/components/activityLog/utils.js:137
 #, php-format,js-format
 msgid "Language pack updated for %s"
 msgstr ""
 
 #. translators: %s: version number
-#: inc/classes/Settings.php:396
-#: inc/classes/Settings.php:414
-#: inc/classes/Settings.php:422
+#: inc/classes/Settings.php:397
+#: inc/classes/Settings.php:415
+#: inc/classes/Settings.php:423
 #: assets/src/js/components/activityLog/utils.js:146
 #: assets/src/js/components/activityLog/utils.js:162
 #: assets/src/js/components/activityLog/utils.js:169
@@ -336,26 +336,26 @@ msgid "v%s"
 msgstr ""
 
 #. translators: 1: previous version number, 2: new version number
-#: inc/classes/Settings.php:405
+#: inc/classes/Settings.php:406
 #: assets/src/js/components/activityLog/utils.js:154
 #, php-format,js-format
 msgid "v%1$s → v%2$s"
 msgstr ""
 
-#: inc/classes/Settings.php:446
+#: inc/classes/Settings.php:447
 #: assets/src/js/components/activityLog/ActivityLogPanel.js:286
 msgid "The log entry could not be deleted. Try again or check your database connection."
 msgstr ""
 
-#: inc/classes/Settings.php:529
+#: inc/classes/Settings.php:533
 msgid "The core auto-update setting is controlled by a constant in your wp-config.php file and cannot be changed here."
 msgstr ""
 
-#: inc/classes/Settings.php:549
+#: inc/classes/Settings.php:553
 msgid "This plugin was not found on your site. It may have been removed."
 msgstr ""
 
-#: inc/classes/Settings.php:569
+#: inc/classes/Settings.php:573
 msgid "This theme was not found on your site. It may have been removed."
 msgstr ""
 
@@ -643,7 +643,7 @@ msgid "Disabled (no core auto-updates)"
 msgstr ""
 
 #: assets/src/js/components/autoUpdates/CoreSection.js:65
-#: assets/src/js/components/SettingsPanel.js:24
+#: assets/src/js/components/SettingsPanel.js:26
 msgid "Core updates"
 msgstr ""
 
@@ -787,95 +787,103 @@ msgid "Enter a number from 1 to 365."
 msgstr ""
 
 #: assets/src/js/components/schedule/SchedulePanel.js:377
-#: assets/src/js/components/SettingsPanel.js:215
+#: assets/src/js/components/SettingsPanel.js:249
 msgid "Save settings"
 msgstr ""
 
-#: assets/src/js/components/SettingsPanel.js:25
+#: assets/src/js/components/SettingsPanel.js:27
 msgid "WordPress core update emails: success, failure, manual, and critical."
 msgstr ""
 
-#: assets/src/js/components/SettingsPanel.js:32
+#: assets/src/js/components/SettingsPanel.js:34
 msgid "Plugin and theme updates"
 msgstr ""
 
-#: assets/src/js/components/SettingsPanel.js:33
+#: assets/src/js/components/SettingsPanel.js:35
 msgid "WordPress sends one combined email for plugin and theme auto-updates (success, failure, or mixed)."
 msgstr ""
 
-#: assets/src/js/components/SettingsPanel.js:40
+#: assets/src/js/components/SettingsPanel.js:42
 msgid "Debug email (detailed report)"
 msgstr ""
 
-#: assets/src/js/components/SettingsPanel.js:41
+#: assets/src/js/components/SettingsPanel.js:43
 msgid "Development-style report with core, plugin, theme, and translation results. WordPress normally sends this only on development versions; enable here to receive it on any site."
 msgstr ""
 
-#: assets/src/js/components/SettingsPanel.js:48
+#: assets/src/js/components/SettingsPanel.js:50
 msgid "Recovery mode (technical email)"
 msgstr ""
 
-#: assets/src/js/components/SettingsPanel.js:49
+#: assets/src/js/components/SettingsPanel.js:51
 msgid "Sent when your site enters recovery mode after a fatal error."
 msgstr ""
 
-#: assets/src/js/components/SettingsPanel.js:87
+#: assets/src/js/components/SettingsPanel.js:91
 msgid "Set up logging, choose how long to keep records, and manage email notifications."
 msgstr ""
 
-#: assets/src/js/components/SettingsPanel.js:95
+#: assets/src/js/components/SettingsPanel.js:99
 msgid "Update logging"
 msgstr ""
 
-#: assets/src/js/components/SettingsPanel.js:99
+#: assets/src/js/components/SettingsPanel.js:103
 msgid "Record all updates"
 msgstr ""
 
-#: assets/src/js/components/SettingsPanel.js:100
+#: assets/src/js/components/SettingsPanel.js:104
 msgid "Keep a record of all core, plugin, theme, and translation updates."
 msgstr ""
 
-#: assets/src/js/components/SettingsPanel.js:118
+#: assets/src/js/components/SettingsPanel.js:122
 msgid "Keep logs for (days)"
 msgstr ""
 
-#: assets/src/js/components/SettingsPanel.js:119
+#: assets/src/js/components/SettingsPanel.js:123
 msgid "Logs older than this number of days are automatically removed once a day."
 msgstr ""
 
-#: assets/src/js/components/SettingsPanel.js:141
+#: assets/src/js/components/SettingsPanel.js:145
 msgid "Update notifications"
 msgstr ""
 
-#: assets/src/js/components/SettingsPanel.js:145
+#: assets/src/js/components/SettingsPanel.js:149
 msgid "Manage update notifications"
 msgstr ""
 
-#: assets/src/js/components/SettingsPanel.js:146
+#: assets/src/js/components/SettingsPanel.js:150
 msgid "When enabled, WordPress sends notification emails to the address below. Use the boxes to choose which update types send mail."
 msgstr ""
 
-#: assets/src/js/components/SettingsPanel.js:165
+#: assets/src/js/components/SettingsPanel.js:170
 msgid "Send notification emails to"
 msgstr ""
 
-#: assets/src/js/components/SettingsPanel.js:166
+#: assets/src/js/components/SettingsPanel.js:171
 msgid "Update notification emails are sent to this address instead of the default admin email."
 msgstr ""
 
-#: assets/src/js/components/SettingsPanel.js:178
+#: assets/src/js/components/SettingsPanel.js:183
 msgid "admin@example.com"
 msgstr ""
 
-#: assets/src/js/components/SettingsPanel.js:182
+#: assets/src/js/components/SettingsPanel.js:187
 msgid "Notification types"
 msgstr ""
 
-#: assets/src/js/components/SettingsPanel.js:185
+#: assets/src/js/components/SettingsPanel.js:190
 msgid "Choose which kinds of updates trigger email. For each run, WordPress sends one email: the detailed report when available, otherwise the usual summary. These options mirror WordPress’s default behavior."
 msgstr ""
 
-#: assets/src/js/components/SettingsPanel.js:214
+#: assets/src/js/components/SettingsPanel.js:217
+msgid "Disable all update notification emails"
+msgstr ""
+
+#: assets/src/js/components/SettingsPanel.js:221
+msgid "Only enable this option if you actively monitor this site's updates elsewhere and do not want WordPress to send update notification emails. Recovery mode is not affected."
+msgstr ""
+
+#: assets/src/js/components/SettingsPanel.js:248
 msgid "Saving…"
 msgstr ""
 
@@ -908,7 +916,7 @@ msgid "The translation auto-update setting could not be changed. Try again."
 msgstr ""
 
 #: assets/src/js/hooks/useAutoUpdates.js:169
-#: assets/src/js/hooks/usePluginSettings.js:228
+#: assets/src/js/hooks/usePluginSettings.js:241
 msgid "The notice could not be dismissed. Try again."
 msgstr ""
 
@@ -916,15 +924,15 @@ msgstr ""
 msgid "Your update logs could not be loaded. Try refreshing the page."
 msgstr ""
 
-#: assets/src/js/hooks/usePluginSettings.js:181
+#: assets/src/js/hooks/usePluginSettings.js:194
 msgid "Settings saved."
 msgstr ""
 
-#: assets/src/js/hooks/usePluginSettings.js:184
+#: assets/src/js/hooks/usePluginSettings.js:197
 msgid "Your settings were saved, but the server did not return the updated values. Refresh the page to confirm."
 msgstr ""
 
-#: assets/src/js/hooks/usePluginSettings.js:193
+#: assets/src/js/hooks/usePluginSettings.js:206
 msgid "Your settings could not be saved. Check your connection and try again."
 msgstr ""
 
