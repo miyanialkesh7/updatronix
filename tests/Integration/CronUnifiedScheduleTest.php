@@ -58,6 +58,46 @@ final class CronUnifiedScheduleTest extends WP_UnitTestCase {
     }
 
     /**
+     * Regression guard for M1 (`.cursor/notes/2026-05-09-code-review-opus-notifications-schedule-features.md`):
+     * `Updatronix_Cron::prime_unified_discovery_before_core()` must not cause Core's priority-10
+     * callback (`wp_version_check()`) to run twice in a single `do_action( 'wp_version_check' )` tick.
+     *
+     * The plugin's listener primes plugin/theme transients at priority 9 and lets Core's listener
+     * run untouched at priority 10. Counting filter dispatches on `pre_set_site_transient_update_core`
+     * is a tight proxy: `wp_version_check()` always sets that transient before returning.
+     *
+     * @return void
+     */
+    public function test_unified_prime_does_not_double_run_version_check(): void {
+        $current = updatronix_get_settings();
+        $current['schedule']['update_check']['recurrence'] = 'daily';
+        $current['schedule']['update_check']['time'] = '03:00';
+        updatronix_save_settings_array($current);
+
+        self::assertTrue(Updatronix_Cron::is_unified_schedule_active());
+
+        $core_set_transient_calls = 0;
+        $listener = static function ($value) use (&$core_set_transient_calls) {
+            $core_set_transient_calls++;
+
+            return $value;
+        };
+        add_filter('pre_set_site_transient_update_core', $listener, 99);
+
+        try {
+            do_action('wp_version_check');
+        } finally {
+            remove_filter('pre_set_site_transient_update_core', $listener, 99);
+        }
+
+        self::assertSame(
+            1,
+            $core_set_transient_calls,
+            'wp_version_check() must run exactly once per cron tick when unified scheduling is active.'
+        );
+    }
+
+    /**
      * Weekly is a native WordPress cron schedule; unified mode should accept it and keep `wp_version_check` scheduled.
      *
      * @return void

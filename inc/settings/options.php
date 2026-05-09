@@ -10,8 +10,17 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-/** Option key for the single JSON settings. */
+/** Option key for the single JSON settings (per-site). */
 const UPDATRONIX_OPTION_SETTINGS = 'updatronix_settings';
+
+/**
+ * Option key for the network-scoped Schedule subtree.
+ *
+ * On multisite this lives in `wp_sitemeta` (`get_site_option`/`update_site_option`); on single-site
+ * installations it is a regular non-autoloaded option. Keeping it out of `updatronix_settings`
+ * prevents per-site saves from racing the network-wide `wp_version_check` WP-Cron event.
+ */
+const UPDATRONIX_OPTION_NETWORK_SCHEDULE = 'updatronix_network_schedule';
 
 /** Default settings (keys only; used when decoding). */
 const UPDATRONIX_SETTINGS_DEFAULTS = [
@@ -293,7 +302,11 @@ function updatronix_register_settings(): void {
 }
 
 /**
- * Get plugin settings from the single JSON option.
+ * Get plugin settings.
+ *
+ * Returns the per-site option fields merged with the network-scoped Schedule subtree so that callers
+ * see one canonical settings array. The Schedule subtree is read from the network site option via
+ * {@see updatronix_get_network_schedule()}.
  *
  * @return array{logging_enabled: bool, retention_days: int, notifications_mode: string, notify_enabled: bool, notify_emails: string, notify_on: array<string>, auto_update_translations: bool, dismissed_constants: array<string>, schedule: array{update_check: array{recurrence: string, time: string}, delay_updates: array{enabled: bool, delay_value: int}}}
  */
@@ -307,8 +320,10 @@ function updatronix_get_settings(): array {
         }
     }
 
-    $schedule_src = isset($decoded['schedule']) && is_array($decoded['schedule']) ? $decoded['schedule'] : [];
     $defaults = UPDATRONIX_SETTINGS_DEFAULTS;
+    $raw_dismissed = isset($decoded['dismissed_constants']) && is_array($decoded['dismissed_constants'])
+        ? array_values(array_filter($decoded['dismissed_constants'], 'is_string'))
+        : $defaults['dismissed_constants'];
     $out = [
         'logging_enabled' => isset($decoded['logging_enabled']) ? (bool) $decoded['logging_enabled'] : $defaults['logging_enabled'],
         'retention_days' => isset($decoded['retention_days']) ? max(1, min(365, (int) $decoded['retention_days'])) : $defaults['retention_days'],
@@ -317,17 +332,85 @@ function updatronix_get_settings(): array {
         'notify_emails' => isset($decoded['notify_emails']) ? (string) $decoded['notify_emails'] : $defaults['notify_emails'],
         'notify_on' => updatronix_normalize_notify_on($decoded['notify_on'] ?? $defaults['notify_on']),
         'auto_update_translations' => isset($decoded['auto_update_translations']) ? (bool) $decoded['auto_update_translations'] : $defaults['auto_update_translations'],
-        'dismissed_constants' => isset($decoded['dismissed_constants']) && is_array($decoded['dismissed_constants'])
-            ? array_values(array_filter($decoded['dismissed_constants'], 'is_string'))
-            : $defaults['dismissed_constants'],
-        'schedule' => updatronix_sanitize_schedule_array($schedule_src),
+        'dismissed_constants' => updatronix_sanitize_dismissed_constants($raw_dismissed),
+        'schedule' => updatronix_get_network_schedule(),
     ];
 
     return $out;
 }
 
 /**
+ * Read the Schedule subtree from the network site option (multisite) or option (single-site).
+ *
+ * @return array{update_check: array{recurrence: string, time: string}, delay_updates: array{enabled: bool, delay_value: int}}
+ */
+function updatronix_get_network_schedule(): array {
+    if (is_multisite()) {
+        $raw = get_site_option(UPDATRONIX_OPTION_NETWORK_SCHEDULE, '');
+    } else {
+        $raw = get_option(UPDATRONIX_OPTION_NETWORK_SCHEDULE, '');
+    }
+
+    $decoded = [];
+    if (is_string($raw) && $raw !== '') {
+        $candidate = json_decode($raw, true);
+        if (is_array($candidate)) {
+            $decoded = $candidate;
+        }
+    } elseif (is_array($raw)) {
+        $decoded = $raw;
+    }
+
+    return updatronix_sanitize_schedule_array($decoded);
+}
+
+/**
+ * Persist the Schedule subtree to the network site option (multisite) or option (single-site).
+ *
+ * No-op when the new value is byte-equal to the stored value, to avoid spurious cron rescheduling
+ * when {@see updatronix_save_settings_array()} is called by code paths that did not change Schedule
+ * (for example {@see Updatronix_AutoUpdates::dismiss_constant()}).
+ *
+ * @param array<string, mixed> $schedule Raw or sanitised schedule subtree.
+ * @return bool True when the option was written; false when no write was needed.
+ */
+function updatronix_save_network_schedule(array $schedule): bool {
+    $sanitised = updatronix_sanitize_schedule_array($schedule);
+    $current = updatronix_get_network_schedule();
+    if ($sanitised === $current) {
+        return false;
+    }
+
+    $encoded = wp_json_encode($sanitised);
+    if ($encoded === false) {
+        return false;
+    }
+
+    if (is_multisite()) {
+        update_site_option(UPDATRONIX_OPTION_NETWORK_SCHEDULE, $encoded);
+    } else {
+        update_option(UPDATRONIX_OPTION_NETWORK_SCHEDULE, $encoded, false);
+    }
+
+    /**
+     * Fires after the network-scoped Schedule subtree changes (recurrence, time, or delay window).
+     *
+     * Listeners (e.g. {@see Updatronix_Cron::apply_update_check_schedule_from_settings()}) should hook
+     * this action — not `updatronix_after_save_settings` — so unrelated settings writes don't re-arm
+     * the cron event with a fresh first-run timestamp.
+     *
+     * @since 1.1.0
+     */
+    do_action('updatronix_after_save_network_schedule');
+
+    return true;
+}
+
+/**
  * Sanitize incoming settings (REST or form) into a JSON string for the option.
+ *
+ * The Schedule subtree is stored separately — see {@see updatronix_get_network_schedule()} — and
+ * is intentionally not persisted in this option.
  *
  * @param mixed $value Raw value (array or JSON string).
  * @return string JSON string to store.
@@ -340,26 +423,16 @@ function updatronix_sanitize_settings_json(mixed $value): string {
     if (!is_array($value)) {
         $value = [];
     }
-    $allowed_notify = ['core', 'plugin_theme', 'debug', 'technical'];
-    $raw_notify = array_filter((array) ($value['notify_on'] ?? []), 'is_string');
-    $notify_on = array_values(array_intersect($raw_notify, $allowed_notify));
-    // Legacy: treat 'plugin' or 'theme' as 'plugin_theme'.
-    if (array_intersect($raw_notify, ['plugin', 'theme']) !== [] && !in_array('plugin_theme', $notify_on, true)) {
-        $notify_on[] = 'plugin_theme';
-        $notify_on = array_values(array_unique($notify_on));
-    }
+    $raw_dismissed = array_values(array_filter((array) ($value['dismissed_constants'] ?? []), 'is_string'));
     $out = [
         'logging_enabled' => (bool) ($value['logging_enabled'] ?? true),
         'retention_days' => max(1, min(365, (int) ($value['retention_days'] ?? 90))),
         'notifications_mode' => updatronix_sanitize_notifications_mode($value['notifications_mode'] ?? 'default'),
         'notify_enabled' => (bool) ($value['notify_enabled'] ?? false),
         'notify_emails' => updatronix_sanitize_emails($value['notify_emails'] ?? ''),
-        'notify_on' => $notify_on,
+        'notify_on' => updatronix_normalize_notify_on($value['notify_on'] ?? []),
         'auto_update_translations' => (bool) ($value['auto_update_translations'] ?? true),
-        'dismissed_constants' => array_values(array_filter((array) ($value['dismissed_constants'] ?? []), 'is_string')),
-        'schedule' => updatronix_sanitize_schedule_array(
-            isset($value['schedule']) && is_array($value['schedule']) ? $value['schedule'] : []
-        ),
+        'dismissed_constants' => updatronix_sanitize_dismissed_constants($raw_dismissed),
     ];
     $encoded = wp_json_encode($out);
 
@@ -369,22 +442,57 @@ function updatronix_sanitize_settings_json(mixed $value): string {
 /**
  * Persist settings using the same sanitization as the Settings API and register_setting callback.
  *
+ * Splits the payload between the per-site option (`updatronix_settings`) and the network-scoped
+ * Schedule option (see {@see updatronix_save_network_schedule()}). Always fires
+ * `do_action( 'updatronix_after_save_settings' )` so cron re-apply and any future audit hook listener
+ * see every settings write.
+ *
  * @param array<string, mixed> $input Raw settings (same shape as {@see updatronix_get_settings()} keys).
  * @return void
  */
 function updatronix_save_settings_array(array $input): void {
+    if (isset($input['schedule']) && is_array($input['schedule'])) {
+        updatronix_save_network_schedule($input['schedule']);
+    }
     update_option(UPDATRONIX_OPTION_SETTINGS, updatronix_sanitize_settings_json($input));
     do_action('updatronix_after_save_settings');
 }
 
+/** Maximum raw byte length accepted for the comma-separated `notify_emails` field. */
+const UPDATRONIX_NOTIFY_EMAILS_MAX_BYTES = 4096;
+
+/** Maximum number of valid recipient addresses persisted from `notify_emails`. */
+const UPDATRONIX_NOTIFY_EMAILS_MAX_RECIPIENTS = 32;
+
 /**
  * Sanitize comma-separated email list.
+ *
+ * Truncates the raw input at {@see UPDATRONIX_NOTIFY_EMAILS_MAX_BYTES} bytes before parsing and
+ * keeps at most {@see UPDATRONIX_NOTIFY_EMAILS_MAX_RECIPIENTS} valid addresses. The bounds protect
+ * against autoloaded option bloat and against turning the site into an outbound mail amplifier.
  *
  * @param mixed $value Raw value.
  * @return string Sanitized comma-separated email addresses.
  */
 function updatronix_sanitize_emails(mixed $value): string {
-    $emails = array_filter(array_map('sanitize_email', explode(',', (string) $value)));
+    $raw = (string) $value;
+    if (strlen($raw) > UPDATRONIX_NOTIFY_EMAILS_MAX_BYTES) {
+        $raw = substr($raw, 0, UPDATRONIX_NOTIFY_EMAILS_MAX_BYTES);
+    }
+    $emails = [];
+    foreach (explode(',', $raw) as $candidate) {
+        $clean = sanitize_email($candidate);
+        if ($clean === '') {
+            continue;
+        }
+        if (in_array($clean, $emails, true)) {
+            continue;
+        }
+        $emails[] = $clean;
+        if (count($emails) >= UPDATRONIX_NOTIFY_EMAILS_MAX_RECIPIENTS) {
+            break;
+        }
+    }
 
     return implode(', ', $emails);
 }
@@ -412,23 +520,60 @@ function updatronix_sanitize_notifications_mode(mixed $value): string {
 }
 
 /**
- * Normalize notify_on for display (REST/localize). Expands legacy 'all' to all allowed keys.
+ * Normalize notify_on for display (REST/localize) against the canonical allowlist.
+ *
+ * The legacy fold for `'plugin'`, `'theme'`, and `'all'` values from older drafts has been removed:
+ * 1.1 ships a single canonical four-value enum and no migration shim is required (feature undeployed).
  *
  * @param mixed $notify_on Raw option value.
- * @return array<string> Normalized notification type keys.
+ * @return list<string> Normalized notification type keys.
  */
 function updatronix_normalize_notify_on(mixed $notify_on): array {
     $allowed = ['core', 'plugin_theme', 'debug', 'technical'];
     $raw = array_filter((array) $notify_on, 'is_string');
-    if (in_array('all', $raw, true)) {
-        return $allowed;
-    }
-    $arr = array_values(array_intersect($raw, $allowed));
-    // Legacy: map 'plugin' or 'theme' to 'plugin_theme' for display.
-    if (array_intersect($raw, ['plugin', 'theme']) !== [] && !in_array('plugin_theme', $arr, true)) {
-        $arr[] = 'plugin_theme';
-        $arr = array_values(array_unique($arr));
+
+    return array_values(array_intersect($raw, $allowed));
+}
+
+/**
+ * Sanitise the `dismissed_constants` list against the constants the plugin actually surfaces.
+ *
+ * Caps the persisted list at 32 entries to bound option growth. Unknown constant names are dropped.
+ *
+ * @param list<string> $raw Raw constant names from storage or REST.
+ * @return list<string>
+ */
+function updatronix_sanitize_dismissed_constants(array $raw): array {
+    $allowed = updatronix_dismissable_constants_allowlist();
+    $filtered = [];
+    foreach ($raw as $name) {
+        if (!in_array($name, $allowed, true)) {
+            continue;
+        }
+        if (in_array($name, $filtered, true)) {
+            continue;
+        }
+        $filtered[] = $name;
+        if (count($filtered) >= 32) {
+            break;
+        }
     }
 
-    return $arr;
+    return $filtered;
+}
+
+/**
+ * Constants the plugin can surface a notice for (and therefore can be dismissed).
+ *
+ * Mirrors the keys produced by {@see Updatronix_AutoUpdates::get_constants()}.
+ *
+ * @return list<string>
+ */
+function updatronix_dismissable_constants_allowlist(): array {
+    return [
+        'WP_AUTO_UPDATE_CORE',
+        'AUTOMATIC_UPDATER_DISABLED',
+        'DISALLOW_FILE_MODS',
+        'DISABLE_WP_CRON',
+    ];
 }

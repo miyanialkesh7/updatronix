@@ -7,7 +7,7 @@ import { memo } from '@wordpress/element';
 import {
 	Button,
 	Card,
-	CardMedia,
+	CardBody,
 	Icon,
 	ToggleControl,
 	TextControl,
@@ -210,7 +210,7 @@ export const SettingsPanel = memo(function SettingsPanel({
 					className="updatronix-notifications-disable-card"
 					isBorderless
 				>
-					<CardMedia>
+					<CardBody>
 						<div className="updatronix-notifications-disable-card__inner">
 							<ToggleControl
 								__nextHasNoMarginBottom
@@ -232,8 +232,14 @@ export const SettingsPanel = memo(function SettingsPanel({
 									}))
 								}
 							/>
+							<Text as="p">
+								{__(
+									'Recovery mode still emails the site administrator after a fatal error so you can regain access.',
+									'updatronix'
+								)}
+							</Text>
 						</div>
-					</CardMedia>
+					</CardBody>
 				</Card>
 			</div>
 			<div className="updatronix-actions">

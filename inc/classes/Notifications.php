@@ -119,7 +119,8 @@ final class Updatronix_Notifications {
      * Suppress standard core email when the detailed (debug) email was already sent this run.
      *
      * @param bool   $send        Whether to send. Default true.
-     * @param string $type        success, fail, manual, critical.
+     * @param string $type        Background event type: `success`, `fail`, or `critical`. Core's `WP_Automatic_Updater::send_email()`
+     *                            does not run this filter for `manual` mails — those flow through `send_core_update_notification_email`.
      * @param object $core_update The update offer.
      * @param mixed  $result      The result.
      * @return bool

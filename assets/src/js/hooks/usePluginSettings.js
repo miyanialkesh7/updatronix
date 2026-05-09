@@ -46,16 +46,9 @@ export function usePluginSettings() {
 		const allowedNotifyOn = ['core', 'plugin_theme', 'debug', 'technical'];
 		let notifyOn = [];
 		if (opts && Array.isArray(opts.notify_on)) {
-			notifyOn = opts.notify_on.includes('all')
-				? [...allowedNotifyOn]
-				: opts.notify_on.filter((x) => allowedNotifyOn.includes(x));
-			// Legacy: if server sent plugin/theme, treat as plugin_theme
-			if (
-				notifyOn.length === 0 &&
-				opts.notify_on.some((x) => x === 'plugin' || x === 'theme')
-			) {
-				notifyOn = ['plugin_theme'];
-			}
+			notifyOn = opts.notify_on.filter((x) =>
+				allowedNotifyOn.includes(x)
+			);
 		}
 
 		let schedule = DEFAULT_SCHEDULE;
@@ -191,7 +184,16 @@ export function usePluginSettings() {
 						...response.schedule_meta,
 					});
 				}
-				createSuccessNotice(__('Settings saved.', 'updatronix'));
+				if (response.schedule_ignored) {
+					createWarningNotice(
+						__(
+							'Schedule changes were not saved because they affect every site on this network. Ask a network administrator to update them.',
+							'updatronix'
+						)
+					);
+				} else {
+					createSuccessNotice(__('Settings saved.', 'updatronix'));
+				}
 			} else {
 				createWarningNotice(
 					__(

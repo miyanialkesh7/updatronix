@@ -10,7 +10,7 @@
  * @license   GPL v2 or later
  *
  * Plugin Name: Updatronix - Enhanced Update Manager
- * Description: Log every WordPress update with version details, manage auto-updates through native settings, and route notification emails to your chosen recipients.
+ * Description: Stay in control of WordPress updates on your site.
  * Version: 1.1
  * Plugin URI: https://wordpress.org/plugins/updatronix/
  * Author: Quentin Le Duff

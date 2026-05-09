@@ -123,7 +123,10 @@ final class Updatronix_Settings {
                     'retention_days' => ['type' => 'integer', 'minimum' => 1, 'maximum' => 365],
                     'notifications_mode' => ['type' => 'string', 'enum' => ['default', 'disabled']],
                     'notify_enabled' => ['type' => 'boolean'],
-                    'notify_emails' => ['type' => 'string'],
+                    'notify_emails' => [
+                        'type' => 'string',
+                        'maxLength' => UPDATRONIX_NOTIFY_EMAILS_MAX_BYTES,
+                    ],
                     'notify_on' => [
                         'type' => 'array',
                         'items' => ['type' => 'string', 'enum' => ['core', 'plugin_theme', 'debug', 'technical']],
@@ -142,7 +145,7 @@ final class Updatronix_Settings {
                                 'type' => 'object',
                                 'properties' => [
                                     'enabled' => ['type' => 'boolean'],
-                                    'delay_value' => ['type' => 'integer'],
+                                    'delay_value' => ['type' => 'integer', 'minimum' => 0, 'maximum' => 365],
                                 ],
                             ],
                         ],
@@ -466,11 +469,22 @@ final class Updatronix_Settings {
     /**
      * REST: Update plugin settings.
      *
+     * On multisite, schedule writes additionally require `manage_network_options` because the
+     * Schedule subtree is stored as a network site option and drives the network-wide
+     * `wp_version_check` WP-Cron event. Subsite admins with only `manage_updatronix` can save the
+     * other settings but their `schedule` payload is silently kept at the current network value.
+     * Read access is unchanged.
+     *
      * @param \WP_REST_Request<array<string, mixed>> $request Request.
      * @return WP_REST_Response
      */
     public static function rest_update_settings(\WP_REST_Request $request): WP_REST_Response {
         $current = updatronix_get_settings();
+
+        $may_write_schedule = !is_multisite() || current_user_can('manage_network_options');
+        $schedule_in_request = $request->has_param('schedule') && is_array($request->get_param('schedule'));
+        $schedule_ignored = $schedule_in_request && !$may_write_schedule;
+
         $next = [
             'logging_enabled' => $request->has_param('logging_enabled') ? (bool) $request->get_param('logging_enabled') : $current['logging_enabled'],
             'retention_days' => $request->has_param('retention_days') ? max(1, min(365, (int) $request->get_param('retention_days'))) : $current['retention_days'],
@@ -484,7 +498,7 @@ final class Updatronix_Settings {
                 : $current['notify_on'],
             'auto_update_translations' => $current['auto_update_translations'],
             'dismissed_constants' => $current['dismissed_constants'],
-            'schedule' => $request->has_param('schedule') && is_array($request->get_param('schedule'))
+            'schedule' => ($schedule_in_request && $may_write_schedule)
                 ? updatronix_merge_partial_schedule_into((array) $request->get_param('schedule'), $current['schedule'])
                 : $current['schedule'],
         ];
@@ -494,6 +508,7 @@ final class Updatronix_Settings {
             [
                 'options' => updatronix_get_settings(),
                 'schedule_meta' => self::schedule_meta_response_payload(),
+                'schedule_ignored' => $schedule_ignored,
             ],
             200
         );
@@ -593,12 +608,21 @@ final class Updatronix_Settings {
     /**
      * REST: Dismiss a constant notice.
      *
+     * Returns 400 when the requested constant is not in the dismissable allowlist
+     * (see {@see updatronix_dismissable_constants_allowlist()}).
+     *
      * @param \WP_REST_Request<array<string, mixed>> $request Request.
      * @return WP_REST_Response
      */
     public static function rest_dismiss_constant(\WP_REST_Request $request): WP_REST_Response {
         $constant = sanitize_text_field($request->get_param('constant'));
-        Updatronix_AutoUpdates::dismiss_constant($constant);
+        $ok = Updatronix_AutoUpdates::dismiss_constant($constant);
+
+        if (!$ok) {
+            return new WP_REST_Response([
+                'message' => __('That constant is not recognised by Updatronix.', 'updatronix'),
+            ], 400);
+        }
 
         return new WP_REST_Response(Updatronix_AutoUpdates::get_data(), 200);
     }

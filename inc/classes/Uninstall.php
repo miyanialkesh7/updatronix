@@ -34,11 +34,32 @@ final class Updatronix_Uninstall {
                 self::run_for_current_site();
                 restore_current_blog();
             }
+            self::delete_network_options();
 
             return;
         }
 
         self::run_for_current_site();
+        self::delete_network_options();
+    }
+
+    /**
+     * Remove network-scoped plugin options exactly once per uninstall.
+     *
+     * On multisite this clears `wp_sitemeta`; on single-site it removes the regular non-autoloaded
+     * option fallback.
+     *
+     * @return void
+     */
+    private static function delete_network_options(): void {
+        require_once updatronix_PLUGIN_DIR . 'inc/settings/options.php';
+        if (is_multisite()) {
+            delete_site_option(UPDATRONIX_OPTION_NETWORK_SCHEDULE);
+
+            return;
+        }
+
+        delete_option(UPDATRONIX_OPTION_NETWORK_SCHEDULE);
     }
 
     /**

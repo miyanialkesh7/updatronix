@@ -57,7 +57,30 @@ final class Updatronix_Cron {
         add_action('init', [self::class, 'sync_core_update_crons_with_schedule'], 11);
         add_action('shutdown', [self::class, 'maybe_schedule_if_needed'], 999);
         add_action('shutdown', [self::class, 'maybe_heal_update_check_schedule'], 998);
-        add_action('updatronix_after_save_settings', [self::class, 'apply_update_check_schedule_from_settings']);
+        add_action('updatronix_after_save_network_schedule', [self::class, 'apply_update_check_schedule_from_settings']);
+    }
+
+    /**
+     * Whether self-heal paths may run on this request.
+     *
+     * Front-end requests don't trigger cron events, so the transient throttle is the only
+     * thing standing between an attacker who can clear plugin transients and the cron table.
+     * Restricting heal work to cron, admin, and CLI contexts removes that lever.
+     *
+     * @return bool
+     */
+    private static function self_heal_allowed_in_context(): bool {
+        if (wp_doing_cron()) {
+            return true;
+        }
+        if (is_admin()) {
+            return true;
+        }
+        if (defined('WP_CLI') && WP_CLI) {
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -69,6 +92,10 @@ final class Updatronix_Cron {
      * @return void
      */
     public static function maybe_schedule_if_needed(): void {
+        if (!self::self_heal_allowed_in_context()) {
+            return;
+        }
+
         if (get_transient(self::SELF_HEAL_TRANSIENT)) {
             return;
         }
@@ -166,10 +193,15 @@ final class Updatronix_Cron {
     }
 
     /**
-     * Runs before Core's callback on `wp_version_check`: refresh plugin/theme transients first, then delegate to
-     * {@see wp_version_check()} which ends with {@see do_action()} `wp_maybe_auto_update` during cron.
+     * Runs before Core's callback on `wp_version_check`: refresh plugin/theme transients so the
+     * priority-10 listener ({@see wp_version_check()}) sees primed data and triggers
+     * `wp_maybe_auto_update` against the freshest available offers.
      *
-     * When not {@see self::is_unified_schedule_active()}, exits so Core's own `wp_version_check` listener runs untouched.
+     * Earlier versions of this method removed Core's priority-10 callback, called
+     * {@see wp_version_check()} inline, then re-added Core's callback. `WP_Hook::do_action()`
+     * resorts active iterations on add, so re-adding mid-iteration caused Core's callback to
+     * run a second time in the same tick. Letting Core's callback run untouched at priority 10
+     * delivers the same behaviour without the double-call.
      *
      * @return void
      */
@@ -178,15 +210,12 @@ final class Updatronix_Cron {
             return;
         }
 
-        remove_action(self::HOOK_WP_CRON_CORE_VERSION_CHECK, 'wp_version_check', 10);
-        if (!function_exists('wp_version_check')) {
+        if (!function_exists('wp_update_plugins')) {
             require_once ABSPATH . 'wp-includes/update.php';
         }
 
         wp_update_plugins();
         wp_update_themes();
-        wp_version_check();
-        add_action(self::HOOK_WP_CRON_CORE_VERSION_CHECK, 'wp_version_check', 10);
     }
 
     /**
@@ -217,6 +246,10 @@ final class Updatronix_Cron {
      * @return void
      */
     public static function maybe_heal_update_check_schedule(): void {
+        if (!self::self_heal_allowed_in_context()) {
+            return;
+        }
+
         if (get_transient(self::UPDATE_CHECK_HEAL_TRANSIENT)) {
             return;
         }

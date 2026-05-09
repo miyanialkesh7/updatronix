@@ -1,7 +1,5 @@
 # Updatronix — development workflow
 
-Updatronix is a WordPress plugin that logs core, plugin, and theme updates with error handling, security, and optional email notifications. End-user documentation lives in **`readme.txt`**. This file is for contributors: tooling, order of checks, and how Local WP ties in.
-
 ## Getting started
 
 ### Prerequisites
@@ -30,9 +28,10 @@ Run these before a commit or release, in order:
 | 4 | `npm run lint:css` | Stylelint on `assets/src/**/*.scss` (`npm run lint:css:fix` to auto-fix) |
 | 5 | `npm run format` | Prettier check on `assets/src/**/*.{js,jsx}` (`npm run format:fix` to write) |
 | 6 | `composer run make:pot` | Regenerate `languages/updatronix.pot` (requires **Local** — see below) |
-| 7 | *(optional)* `bash .config/local-wp-cli.sh integration-test` | **PHPUnit integration tests** (full WordPress + DB; requires Local PHP/mysqli + one-time `bin/install-wp-tests.sh` — see `tests/README.md`) |
+| 7 | *(optional)* `bash .config/local-wp-cli.sh integration-test` | **PHPUnit integration tests** — single-site suite (full WordPress + DB; requires Local PHP/mysqli + one-time `bin/install-wp-tests.sh` — see `tests/README.md`) |
+| 8 | *(optional, multisite)* `WP_TESTS_MULTISITE=1 bash .config/local-wp-cli.sh integration-test --filter Multisite` | **Multisite integration tests** under `tests/Integration/Multisite/` (`MultisiteScheduleAccessTest` self-skips on single-site bootstraps, so it is safe to leave in the default suite) |
 
-WordPress.org suggests using coding standards / static analysis together with [Plugin Check](https://make.wordpress.org/plugins/developers/). This repo uses **PHP CS Fixer** and **PHPStan** for PHP, then Plugin Check for WordPress.org-oriented rules. **PHPUnit** covers pure helpers in `tests/Unit/`; **integration** tests live in `tests/Integration/` and are run locally when the WordPress test library is installed.
+WordPress.org suggests using coding standards / static analysis together with [Plugin Check](https://make.wordpress.org/plugins/developers/). This repo uses **PHP CS Fixer** and **PHPStan** for PHP, then Plugin Check for WordPress.org-oriented rules. **PHPUnit** covers pure helpers in `tests/Unit/`; **integration** tests live in `tests/Integration/` (single-site) and `tests/Integration/Multisite/` and run locally when the WordPress test library is installed. The scenario matrix backing the integration suite is documented in `.cursor/notes/2026-05-09-test-plan-opus-notifications-schedule-features.md`.
 
 Front-end JS follows **`@wordpress/eslint-plugin`**; SCSS follows **`@wordpress/stylelint-config/scss-stylistic`**; Prettier uses **`@wordpress/prettier-config`** (see `package.json`). SCSS is linted with Stylelint, not Prettier, so formatter commands target JS/JSX only.
 
@@ -86,6 +85,20 @@ Runs, in order:
 3. **PHPUnit (unit)** — `.config/phpunit.xml.dist` (`tests/Unit/`)
 
 For integration tests only, see **`tests/README.md`** and `bash .config/local-wp-cli.sh integration-test`.
+
+### Test suites at a glance
+
+| Suite | Path | Bootstrap | What it covers |
+|-------|------|-----------|----------------|
+| Unit | `tests/Unit/` | Stubs only — no WordPress | Pure helpers: `CoreUpdateLogVersions`, `AutomaticUpdateResultNotes` |
+| Integration — REST auth | `tests/Integration/RestSettingsAuthTest.php` | `wordpress-tests-lib` | `permission_callback` + nonce gates on `/wp-json/updatronix/v1/settings` and `/logs` |
+| Integration — Cron unified schedule | `tests/Integration/CronUnifiedScheduleTest.php` | `wordpress-tests-lib` | `Updatronix_Cron::prime_unified_discovery_before_core` runs `wp_version_check` exactly once per cron tick (M1 regression guard) |
+| Integration — Notifications (disabled mode) | `tests/Integration/NotificationsModeDisabledTest.php` | `wordpress-tests-lib` | `notifications_mode === 'disabled'` suppresses every WordPress update email and leaves recovery-mode email recipients untouched |
+| Integration — Recipient sanitisation | `tests/Integration/NotificationsRecipientSanitisationTest.php` | `wordpress-tests-lib` | `updatronix_sanitize_emails()` strips header-injection payloads, dedupes, and caps the recipient list (`UPDATRONIX_NOTIFY_EMAILS_MAX_RECIPIENTS`) |
+| Integration — Post-save action | `tests/Integration/SettingsPostSaveActionTest.php` | `wordpress-tests-lib` | `Updatronix_AutoUpdates::dismiss_constant()` and `set_translations()` route through `updatronix_save_settings_array()` and fire `updatronix_after_save_settings`; unrelated saves do not fire `updatronix_after_save_network_schedule` |
+| Integration — Multisite schedule access | `tests/Integration/Multisite/MultisiteScheduleAccessTest.php` | `wordpress-tests-lib` with `WP_TESTS_MULTISITE=1` | Subsite admin schedule writes are silently ignored (`schedule_ignored: true`); super-admin writes persist into `UPDATRONIX_OPTION_NETWORK_SCHEDULE`; uninstall clears the network option |
+
+Multisite tests **self-skip** when the bootstrap is not in multisite mode, so they stay in the default suite. To exercise them, prepend `WP_TESTS_MULTISITE=1` to the integration-test command (the WordPress test bootstrap reads that env var to spin the install up as a network).
 
 ### Front-end — ESLint, Stylelint, Prettier
 
@@ -143,7 +156,7 @@ Notes:
 
 - `verify:php` replaces a separate `lint:php` + manual `composer test`: it is the canonical PHP gate before front-end checks.
 - `lint:pcp` and `make:pot` rely on Local by Flywheel (see `workflow.md` / `.config/local-wp-cli.sh`).
-- **Integration tests** are **not** part of `build:all` (they need DB + `wordpress-tests-lib`). Run them separately when needed: `bash .config/local-wp-cli.sh integration-test` (see `tests/README.md`).
+- **Integration tests** are **not** part of `build:all` (they need DB + `wordpress-tests-lib`). Run them separately when needed: `bash .config/local-wp-cli.sh integration-test` (single-site) and `WP_TESTS_MULTISITE=1 bash .config/local-wp-cli.sh integration-test --filter Multisite` (network mode). See `tests/README.md`.
 - `npm run build` uses `@wordpress/scripts` to bundle JS (and compile SCSS imports via the entry `assets/src/index.js`) into `assets/build/`.
 
 ## Development workflow

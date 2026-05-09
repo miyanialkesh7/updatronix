@@ -270,13 +270,15 @@ export const SchedulePanel = memo(function SchedulePanel({
 								}}
 							/>
 						</div>
-						<Text
-							variant="muted"
-							as="p"
-							className="updatronix-schedule-time-help"
-						>
+						<Text as="p" className="updatronix-schedule-time-help">
 							{__(
 								'Uses your site timezone from Settings, General.',
+								'updatronix'
+							)}
+						</Text>
+						<Text as="p" className="updatronix-schedule-time-help">
+							{__(
+								'Recurring runs may shift by up to one hour after daylight saving transitions, since WordPress recurrences are fixed-length intervals.',
 								'updatronix'
 							)}
 						</Text>

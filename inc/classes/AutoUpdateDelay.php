@@ -31,8 +31,10 @@ final class Updatronix_AutoUpdateDelay {
     private const MAX_LEDGER_ENTRIES = 384;
 
     /**
-     * Runs after default opt-in / eligibility merges (§3.3). Coordinate **`auto-update-queueing`** hooks
-     * at a documented fixed offset from this priority (recommended: queueing ±5 with explicit QA).
+     * Runs after Core's default opt-in and eligibility merges (`wordpress-native-updates-reference.md` §3.3).
+     *
+     * Sibling features that hook the same `auto_update_{$type}` filter family must document their priority
+     * and the resulting decision-order semantics in their own class docblock and a regression test.
      *
      * @since 1.1.0
      */
