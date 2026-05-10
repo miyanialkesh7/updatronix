@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-05-09T10:55:52+00:00\n"
+"POT-Creation-Date: 2026-05-10T12:50:03+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: updatronix\n"
@@ -184,20 +184,20 @@ msgid "Ask a site administrator who can open Tools → Updatronix to change dela
 msgstr ""
 
 #. translators: 1: number of soak days configured, 2: datetime string when eligibility starts if the update is still offered.
-#: inc/classes/AutoUpdateDelay.php:361
+#: inc/classes/AutoUpdateDelay.php:414
 #, php-format
 msgid "Updatronix deferred this automatic update: soak is %1$d full day(s) after first detection; eligible no earlier than %2$s."
 msgstr ""
 
-#: inc/classes/AutoUpdateDelay.php:397
+#: inc/classes/AutoUpdateDelay.php:450
 msgid "Unknown plugin"
 msgstr ""
 
-#: inc/classes/AutoUpdateDelay.php:417
+#: inc/classes/AutoUpdateDelay.php:470
 msgid "Unknown theme"
 msgstr ""
 
-#: inc/classes/AutoUpdateDelay.php:437
+#: inc/classes/AutoUpdateDelay.php:490
 #: inc/classes/Settings.php:382
 #: inc/classes/Settings.php:390
 #: assets/src/js/components/activityLog/utils.js:130
@@ -205,16 +205,16 @@ msgstr ""
 msgid "WordPress"
 msgstr ""
 
-#: inc/classes/AutoUpdateDelay.php:447
+#: inc/classes/AutoUpdateDelay.php:500
 msgid "unknown-project"
 msgstr ""
 
-#: inc/classes/AutoUpdateDelay.php:448
+#: inc/classes/AutoUpdateDelay.php:501
 msgid "locale-unknown"
 msgstr ""
 
 #. translators: 1: project slug or id, 2: locale code
-#: inc/classes/AutoUpdateDelay.php:452
+#: inc/classes/AutoUpdateDelay.php:505
 #, php-format
 msgid "Translation update (%1$s · %2$s)"
 msgstr ""
