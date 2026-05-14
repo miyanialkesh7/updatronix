@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-05-14T09:42:10+00:00\n"
+"POT-Creation-Date: 2026-05-14T10:00:26+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: updatronix\n"
@@ -86,7 +86,7 @@ msgid "Updatronix"
 msgstr ""
 
 #: inc/admin/menu.php:32
-#: assets/src/js/components/activityLog/ActivityLogPanel.js:381
+#: assets/src/js/components/activityLog/ActivityLogPanel.js:383
 #: assets/src/js/pages/SettingsPage.js:97
 #: assets/src/js/pages/SettingsPage.js:100
 msgid "Update logs"
@@ -343,7 +343,7 @@ msgid "v%1$s → v%2$s"
 msgstr ""
 
 #: inc/classes/Settings.php:450
-#: assets/src/js/components/activityLog/ActivityLogPanel.js:286
+#: assets/src/js/components/activityLog/ActivityLogPanel.js:288
 msgid "The log entry could not be deleted. Try again or check your database connection."
 msgstr ""
 
@@ -472,37 +472,37 @@ msgstr ""
 msgid "View details"
 msgstr ""
 
-#: assets/src/js/components/activityLog/ActivityLogPanel.js:273
-#: assets/src/js/components/activityLog/ActivityLogPanel.js:274
-#: assets/src/js/components/activityLog/ActivityLogPanel.js:315
+#: assets/src/js/components/activityLog/ActivityLogPanel.js:275
+#: assets/src/js/components/activityLog/ActivityLogPanel.js:276
+#: assets/src/js/components/activityLog/ActivityLogPanel.js:317
 msgid "Delete log"
 msgstr ""
 
-#: assets/src/js/components/activityLog/ActivityLogPanel.js:285
+#: assets/src/js/components/activityLog/ActivityLogPanel.js:287
 msgid "Log deleted."
 msgstr ""
 
-#: assets/src/js/components/activityLog/ActivityLogPanel.js:301
+#: assets/src/js/components/activityLog/ActivityLogPanel.js:303
 msgid "Delete this log entry permanently? This action cannot be undone."
 msgstr ""
 
-#: assets/src/js/components/activityLog/ActivityLogPanel.js:308
+#: assets/src/js/components/activityLog/ActivityLogPanel.js:310
 msgid "Cancel"
 msgstr ""
 
-#: assets/src/js/components/activityLog/ActivityLogPanel.js:357
+#: assets/src/js/components/activityLog/ActivityLogPanel.js:359
 msgid "Update logging is off. Turn it on in Settings to keep a history of updates."
 msgstr ""
 
-#: assets/src/js/components/activityLog/ActivityLogPanel.js:384
+#: assets/src/js/components/activityLog/ActivityLogPanel.js:386
 msgid "Review recent updates to WordPress core, plugins, themes, and translations."
 msgstr ""
 
-#: assets/src/js/components/activityLog/ActivityLogPanel.js:400
+#: assets/src/js/components/activityLog/ActivityLogPanel.js:402
 msgid "No update logs yet. Entries appear after WordPress runs an update."
 msgstr ""
 
-#: assets/src/js/components/activityLog/ActivityLogPanel.js:405
+#: assets/src/js/components/activityLog/ActivityLogPanel.js:407
 msgid "Search logs"
 msgstr ""
 

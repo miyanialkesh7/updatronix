@@ -258,7 +258,9 @@ export function ActivityLogPanel({ loggingEnabled = true }) {
 				label: __('View details', 'updatronix'),
 				modalHeader: __('View details', 'updatronix'),
 				modalSize: 'large',
-				modalFocusOnMount: 'firstContentElement',
+				// Default Modal `focusOnMount` (dialog). Avoid `firstContentElement`:
+				// detail UI starts in a loading state with no tabbable nodes, which
+				// leaves focus outside the dialog per wp.components.Modal behaviour.
 				isEligible: (item) => !!item.detail_available,
 				RenderModal: ({ items }) => (
 					<LogDetailsContent

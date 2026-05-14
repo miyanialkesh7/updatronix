@@ -133,6 +133,7 @@ Yes. Each site on the network keeps its own update history.
 * New: Hold automatic updates for a chosen number of days after they appear, with a friendly notice on the Updates, Plugins, and Themes screens explaining the wait.
 * New: One-click switch in Settings to turn off all WordPress update notification emails (recovery mode emails are kept on so you never get locked out).
 * Improvement: Cleaner copy, smoother flow, and a focused accessibility pass across every tab; the WordPress "Automatic update not scheduled" message now stays in sync with your chosen schedule.
+* Fix: Keyboard and screen-reader users can move focus into activity log modals.
 
 = 1.0.6.1 =
 * Fix: Readme.txt text is now naturally wrapped.
