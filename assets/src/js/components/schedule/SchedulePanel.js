@@ -4,15 +4,19 @@
 
 import { memo, useMemo } from '@wordpress/element';
 import {
+	BaseControl,
+	Icon,
 	Notice,
-	CheckboxControl,
+	ToggleControl,
 	Button,
 	SelectControl,
+	useBaseControlProps,
 	// eslint-disable-next-line @wordpress/no-unsafe-wp-apis
 	__experimentalNumberControl as NumberControl,
 	// eslint-disable-next-line @wordpress/no-unsafe-wp-apis
 	__experimentalText as Text,
 } from '@wordpress/components';
+import { pending as pendingIcon, widget as widgetIcon } from '@wordpress/icons';
 import { __, sprintf } from '@wordpress/i18n';
 import { ConstantNotices } from '../autoUpdates/ConstantNotices';
 
@@ -106,6 +110,15 @@ export const SchedulePanel = memo(function SchedulePanel({
 
 	const timeParts = hiToParts(schedule.update_check.time ?? '');
 
+	const preferredTimeBaseControl = useBaseControlProps({
+		__nextHasNoMarginBottom: true,
+		label: __('Preferred time', 'updatronix'),
+		help: __(
+			'Uses your site timezone from Settings, General.',
+			'updatronix'
+		),
+	});
+
 	const scheduleDriver = scheduleMeta.schedule_driver ?? 'wordpress';
 
 	let nextScheduledCopy;
@@ -145,6 +158,7 @@ export const SchedulePanel = memo(function SchedulePanel({
 
 			<div className="updatronix-settings-section">
 				<h3 className="updatronix-settings-section-title">
+					<Icon icon={widgetIcon} size={24} />
 					{__('Update checks', 'updatronix')}
 				</h3>
 				<ConstantNotices
@@ -185,115 +199,126 @@ export const SchedulePanel = memo(function SchedulePanel({
 						})
 					}
 				/>
-				{showClock && (
-					<fieldset className="updatronix-schedule-time">
-						<legend className="updatronix-schedule-time__legend">
-							{__('Preferred time', 'updatronix')}
-						</legend>
-						<div className="updatronix-schedule-time__row">
-							<NumberControl
-								__next40pxDefaultSize
-								__nextHasNoMarginBottom
-								className="updatronix-schedule-time__part"
-								label={__('Hour', 'updatronix')}
-								min={0}
-								max={23}
-								step={1}
-								value={timeParts.hours}
-								onChange={(val) => {
-									const n = Number(val);
-									const hours = Number.isFinite(n)
-										? Math.min(23, Math.max(0, n))
-										: timeParts.hours;
-									setSettings((prev) => {
-										const ps =
-											prev.schedule ?? SCHED_FALLBACK;
-										const { minutes } = hiToParts(
-											ps.update_check.time ?? ''
-										);
-										return {
-											...prev,
-											schedule: {
-												...ps,
-												update_check: {
-													...ps.update_check,
-													time: partsToHi({
-														hours,
-														minutes,
-													}),
+				<div className="updatronix-schedule-time">
+					{showClock && (
+						<BaseControl
+							{...preferredTimeBaseControl.baseControlProps}
+						>
+							<div className="updatronix-schedule-time__row">
+								<NumberControl
+									{...preferredTimeBaseControl.controlProps}
+									__next40pxDefaultSize
+									__nextHasNoMarginBottom
+									className="updatronix-schedule-time__part"
+									label={__('Hour', 'updatronix')}
+									min={0}
+									max={23}
+									step={1}
+									value={timeParts.hours}
+									onChange={(val) => {
+										const n = Number(val);
+										const hours = Number.isFinite(n)
+											? Math.min(23, Math.max(0, n))
+											: timeParts.hours;
+										setSettings((prev) => {
+											const ps =
+												prev.schedule ?? SCHED_FALLBACK;
+											const { minutes } = hiToParts(
+												ps.update_check.time ?? ''
+											);
+											return {
+												...prev,
+												schedule: {
+													...ps,
+													update_check: {
+														...ps.update_check,
+														time: partsToHi({
+															hours,
+															minutes,
+														}),
+													},
 												},
-											},
-										};
-									});
-								}}
-							/>
-							<span
-								className="updatronix-schedule-time__sep"
-								aria-hidden="true"
-							>
-								:
-							</span>
-							<NumberControl
-								__next40pxDefaultSize
-								__nextHasNoMarginBottom
-								className="updatronix-schedule-time__part"
-								label={__('Minute', 'updatronix')}
-								min={0}
-								max={59}
-								step={1}
-								value={timeParts.minutes}
-								onChange={(val) => {
-									const n = Number(val);
-									const minutes = Number.isFinite(n)
-										? Math.min(59, Math.max(0, n))
-										: timeParts.minutes;
-									setSettings((prev) => {
-										const ps =
-											prev.schedule ?? SCHED_FALLBACK;
-										const { hours } = hiToParts(
-											ps.update_check.time ?? ''
-										);
-										return {
-											...prev,
-											schedule: {
-												...ps,
-												update_check: {
-													...ps.update_check,
-													time: partsToHi({
-														hours,
-														minutes,
-													}),
+											};
+										});
+									}}
+								/>
+								<span
+									className="updatronix-schedule-time__sep"
+									aria-hidden="true"
+								>
+									:
+								</span>
+								<NumberControl
+									__next40pxDefaultSize
+									__nextHasNoMarginBottom
+									className="updatronix-schedule-time__part"
+									label={__('Minute', 'updatronix')}
+									min={0}
+									max={59}
+									step={1}
+									value={timeParts.minutes}
+									onChange={(val) => {
+										const n = Number(val);
+										const minutes = Number.isFinite(n)
+											? Math.min(59, Math.max(0, n))
+											: timeParts.minutes;
+										setSettings((prev) => {
+											const ps =
+												prev.schedule ?? SCHED_FALLBACK;
+											const { hours } = hiToParts(
+												ps.update_check.time ?? ''
+											);
+											return {
+												...prev,
+												schedule: {
+													...ps,
+													update_check: {
+														...ps.update_check,
+														time: partsToHi({
+															hours,
+															minutes,
+														}),
+													},
 												},
-											},
-										};
-									});
-								}}
-							/>
-						</div>
-						<Text as="p" className="updatronix-schedule-time-help">
-							{__(
-								'Uses your site timezone from Settings, General.',
-								'updatronix'
-							)}
-						</Text>
-						<Text as="p" className="updatronix-schedule-time-help">
-							{__(
+											};
+										});
+									}}
+								/>
+							</div>
+						</BaseControl>
+					)}
+					<div className="updatronix-schedule-time__note">
+						<BaseControl
+							__nextHasNoMarginBottom
+							help={__(
 								'Recurring runs may shift by up to one hour after daylight saving transitions, since WordPress recurrences are fixed-length intervals.',
 								'updatronix'
 							)}
-						</Text>
-					</fieldset>
-				)}
-				<Notice status="info" isDismissible={false}>
-					{nextScheduledCopy}
-				</Notice>
+						>
+							<BaseControl.VisualLabel>
+								{__(
+									'Next automatic update schedule',
+									'updatronix'
+								)}
+							</BaseControl.VisualLabel>
+							<Notice
+								status="info"
+								isDismissible={false}
+								className="updatronix-schedule-next-check-notice"
+							>
+								{nextScheduledCopy}
+							</Notice>
+						</BaseControl>
+					</div>
+				</div>
 			</div>
 
 			<div className="updatronix-settings-section">
 				<h3 className="updatronix-settings-section-title">
+					<Icon icon={pendingIcon} size={24} />
 					{__('Delay updates', 'updatronix')}
 				</h3>
-				<CheckboxControl
+				<ToggleControl
 					__nextHasNoMarginBottom
 					label={__('Delay updates', 'updatronix')}
 					help={__(

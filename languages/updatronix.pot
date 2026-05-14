@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-05-10T12:50:03+00:00\n"
+"POT-Creation-Date: 2026-05-14T09:42:10+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: updatronix\n"
@@ -717,84 +717,88 @@ msgstr ""
 msgid "WordPress downloads translation updates automatically by default. Turn this off to skip automatic downloads."
 msgstr ""
 
-#: assets/src/js/components/schedule/SchedulePanel.js:100
+#: assets/src/js/components/schedule/SchedulePanel.js:104
 msgid "Use WordPress default schedule"
 msgstr ""
 
+#: assets/src/js/components/schedule/SchedulePanel.js:115
+msgid "Preferred time"
+msgstr ""
+
+#: assets/src/js/components/schedule/SchedulePanel.js:116
+msgid "Uses your site timezone from Settings, General."
+msgstr ""
+
 #. translators: %s: localized date/time of the next scheduled automatic update check
-#: assets/src/js/components/schedule/SchedulePanel.js:119
+#: assets/src/js/components/schedule/SchedulePanel.js:132
 #, js-format
 msgid "Next automatic update check: %s"
 msgstr ""
 
-#: assets/src/js/components/schedule/SchedulePanel.js:123
+#: assets/src/js/components/schedule/SchedulePanel.js:136
 msgid "WordPress picks when update checks and automatic updates run."
 msgstr ""
 
-#: assets/src/js/components/schedule/SchedulePanel.js:128
+#: assets/src/js/components/schedule/SchedulePanel.js:141
 msgid "Save your changes to see the next scheduled time."
 msgstr ""
 
-#: assets/src/js/components/schedule/SchedulePanel.js:137
+#: assets/src/js/components/schedule/SchedulePanel.js:150
 #: assets/src/js/pages/SettingsPage.js:111
 #: assets/src/js/pages/SettingsPage.js:114
 msgid "Schedule"
 msgstr ""
 
-#: assets/src/js/components/schedule/SchedulePanel.js:140
+#: assets/src/js/components/schedule/SchedulePanel.js:153
 msgid "Pick how often WordPress checks for updates and whether automatic installs wait."
 msgstr ""
 
-#: assets/src/js/components/schedule/SchedulePanel.js:148
+#: assets/src/js/components/schedule/SchedulePanel.js:162
 msgid "Update checks"
 msgstr ""
 
-#: assets/src/js/components/schedule/SchedulePanel.js:160
+#: assets/src/js/components/schedule/SchedulePanel.js:174
 msgid "How often"
 msgstr ""
 
-#: assets/src/js/components/schedule/SchedulePanel.js:161
+#: assets/src/js/components/schedule/SchedulePanel.js:175
 msgid "Sets how often WordPress checks for updates and runs automatic updates. WordPress default keeps Core timing. Daily, twice daily, and weekly schedules use the preferred time below."
 msgstr ""
 
-#: assets/src/js/components/schedule/SchedulePanel.js:191
-msgid "Preferred time"
-msgstr ""
-
-#: assets/src/js/components/schedule/SchedulePanel.js:198
+#: assets/src/js/components/schedule/SchedulePanel.js:213
 msgid "Hour"
 msgstr ""
 
-#: assets/src/js/components/schedule/SchedulePanel.js:240
+#: assets/src/js/components/schedule/SchedulePanel.js:255
 msgid "Minute"
 msgstr ""
 
-#: assets/src/js/components/schedule/SchedulePanel.js:274
-msgid "Uses your site timezone from Settings, General."
-msgstr ""
-
-#: assets/src/js/components/schedule/SchedulePanel.js:280
+#: assets/src/js/components/schedule/SchedulePanel.js:293
 msgid "Recurring runs may shift by up to one hour after daylight saving transitions, since WordPress recurrences are fixed-length intervals."
 msgstr ""
 
-#: assets/src/js/components/schedule/SchedulePanel.js:294
-#: assets/src/js/components/schedule/SchedulePanel.js:298
+#: assets/src/js/components/schedule/SchedulePanel.js:299
+msgid "Next automatic update schedule"
+msgstr ""
+
+#: assets/src/js/components/schedule/SchedulePanel.js:319
+#: assets/src/js/components/schedule/SchedulePanel.js:323
 msgid "Delay updates"
 msgstr ""
 
-#: assets/src/js/components/schedule/SchedulePanel.js:299
+#: assets/src/js/components/schedule/SchedulePanel.js:324
 msgid "When enabled, installs wait your chosen full days after WordPress first sees each update. Core, plugins, themes, and translations count separately. Countdowns on Updates, Plugins, and Themes show the next check, not the install moment. See Update logs."
 msgstr ""
 
-#: assets/src/js/components/schedule/SchedulePanel.js:333
+#: assets/src/js/components/schedule/SchedulePanel.js:358
 msgid "Days to wait"
 msgstr ""
 
-#: assets/src/js/components/schedule/SchedulePanel.js:334
+#: assets/src/js/components/schedule/SchedulePanel.js:359
 msgid "Enter a number from 1 to 365."
 msgstr ""
 
-#: assets/src/js/components/schedule/SchedulePanel.js:379
+#: assets/src/js/components/schedule/SchedulePanel.js:404
 #: assets/src/js/components/SettingsPanel.js:255
 msgid "Save settings"
 msgstr ""
