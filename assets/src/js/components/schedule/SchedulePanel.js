@@ -401,7 +401,7 @@ export const SchedulePanel = memo(function SchedulePanel({
 					isBusy={saving}
 					disabled={saving}
 				>
-					{__('Save settings', 'updatronix')}
+					{__('Save Changes', 'updatronix')}
 				</Button>
 			</div>
 		</div>

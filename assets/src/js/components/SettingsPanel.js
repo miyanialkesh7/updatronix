@@ -252,7 +252,7 @@ export const SettingsPanel = memo(function SettingsPanel({
 				>
 					{saving
 						? __('Saving…', 'updatronix')
-						: __('Save settings', 'updatronix')}
+						: __('Save Changes', 'updatronix')}
 				</Button>
 			</div>
 		</div>

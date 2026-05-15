@@ -129,6 +129,8 @@ Yes. Each site on the network keeps its own update history.
 == Changelog ==
 
 = 1.1 =
+* i18n: Save buttons now use "Save Changes" to match native WordPress settings screens.
+* Improvement: Activity log DataViews toolbar includes a compact Export logs control (upload icon, minimal style; wiring TBD).
 * New: Schedule tab — pick how often WordPress checks for updates (every hour, twice a day, daily, or weekly) and a preferred time of day.
 * New: Hold automatic updates for a chosen number of days after they appear, with a friendly notice on the Updates, Plugins, and Themes screens explaining the wait.
 * New: One-click switch in Settings to turn off all WordPress update notification emails (recovery mode emails are kept on so you never get locked out).

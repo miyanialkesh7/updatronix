@@ -13,6 +13,8 @@ import {
 	// eslint-disable-next-line @wordpress/no-unsafe-wp-apis
 	__experimentalText as Text,
 } from '@wordpress/components';
+import { upload } from '@wordpress/icons';
+import { Button as DesignSystemButton } from '@wordpress/ui';
 import { __ } from '@wordpress/i18n';
 import { useLogs } from '../../hooks/useLogs';
 import { LAYOUT_ACTIVITY, LOG_TYPE_PREFIX, ACTION_LABELS } from './constants';
@@ -30,6 +32,9 @@ import { getIconForLogType } from './logTypeIcon';
 import { LogDetailsContent } from './LogDetailsContent';
 
 const FIXED_SORT = { field: 'date', direction: 'desc' };
+
+/** Reserved for future toolbar actions (no-op intentionally). */
+function activityLogToolbarPlaceholderClick() {}
 
 const DELETE_MODAL_STYLE = {
 	display: 'flex',
@@ -92,6 +97,15 @@ export function ActivityLogPanel({ loggingEnabled = true }) {
 				value,
 				label: String(label),
 			})),
+		[]
+	);
+
+	const statusElements = useMemo(
+		() => [
+			{ value: 'success', label: __('Success', 'updatronix') },
+			{ value: 'error', label: __('Error', 'updatronix') },
+			{ value: 'cancelled', label: __('Cancelled', 'updatronix') },
+		],
 		[]
 	);
 
@@ -237,7 +251,8 @@ export function ActivityLogPanel({ loggingEnabled = true }) {
 			{
 				id: 'status',
 				label: __('Status', 'updatronix'),
-				getValue: ({ item }) => getStatusLabel(item.status),
+				getValue: ({ item }) =>
+					item.status ? String(item.status).toLowerCase() : '',
 				render: ({ item }) => (
 					<StatusBadge intent={statusToBadgeIntent(item.status)}>
 						{getStatusLabel(item.status)}
@@ -245,10 +260,12 @@ export function ActivityLogPanel({ loggingEnabled = true }) {
 				),
 				enableSorting: false,
 				enableHiding: false,
-				enableGlobalSearch: true,
+				enableGlobalSearch: false,
+				elements: statusElements,
+				filterBy: { operators: ['is', 'isNot'] },
 			},
 		],
-		[categoryElements, actionTypeElements, userElements]
+		[categoryElements, actionTypeElements, statusElements, userElements]
 	);
 
 	const actions = useMemo(
@@ -403,9 +420,56 @@ export function ActivityLogPanel({ loggingEnabled = true }) {
 					'No update logs yet. Entries appear after WordPress runs an update.',
 					'updatronix'
 				)}
-				search
-				searchLabel={__('Search logs', 'updatronix')}
-			/>
+			>
+				<>
+					<div
+						className="dataviews__view-actions"
+						style={{
+							display: 'flex',
+							flexWrap: 'wrap',
+							alignItems: 'flex-start',
+							justifyContent: 'space-between',
+							gap: 'var(--wpds-dimension-gap-xs, 8px)',
+						}}
+					>
+						<div
+							className="dataviews__search"
+							style={{
+								display: 'flex',
+								flexWrap: 'wrap',
+								alignItems: 'center',
+								gap: 'var(--wpds-dimension-gap-sm, 12px)',
+							}}
+						>
+							<DataViews.Search
+								label={__('Search logs', 'updatronix')}
+							/>
+							<DataViews.FiltersToggle />
+							<DesignSystemButton
+								type="button"
+								variant="minimal"
+								size="compact"
+								onClick={activityLogToolbarPlaceholderClick}
+							>
+								<DesignSystemButton.Icon icon={upload} />
+								{__('Export logs', 'updatronix')}
+							</DesignSystemButton>
+						</div>
+						<div
+							style={{
+								display: 'flex',
+								gap: 'var(--wpds-dimension-gap-xs, 8px)',
+								flexShrink: 0,
+							}}
+						>
+							<DataViews.ViewConfig />
+						</div>
+					</div>
+					<DataViews.FiltersToggled className="dataviews-filters__container" />
+					<DataViews.Layout />
+					<DataViews.Footer />
+				</>
+			</DataViews>
 		</div>
 	);
 }
