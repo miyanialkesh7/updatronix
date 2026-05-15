@@ -1,0 +1,510 @@
+<?php
+
+/**
+ * Validate and normalise POST /logs/export payloads (DataViews-aligned).
+ *
+ * @package updatronix
+ */
+
+if (!defined('ABSPATH')) {
+    exit;
+}
+
+/**
+ * Closed-schema validator for export requests.
+ */
+final class Updatronix_Export_Request_Schema {
+    /**
+     * Validate request JSON and return normalised export context.
+     *
+     * @since 1.1.0
+     *
+     * @param \WP_REST_Request $request REST request.
+     * @return array<string, mixed>|\WP_Error
+     */
+    public static function validate(\WP_REST_Request $request): array|\WP_Error {
+        /** @var mixed $raw_params */
+        $raw_params = $request->get_json_params();
+        if (!is_array($raw_params)) {
+            return new WP_Error('view_invalid', '', ['status' => 400]);
+        }
+
+        /** @var array<string, mixed> $params */
+        $params = $raw_params;
+
+        $allowed_top = ['view', 'merge', 'columns', 'cursor'];
+        foreach (array_keys($params) as $key) {
+            if (!in_array($key, $allowed_top, true)) {
+                return new WP_Error('view_invalid', '', ['status' => 400]);
+            }
+        }
+
+        $view = $params['view'] ?? null;
+        if (!is_array($view)) {
+            return new WP_Error('view_invalid', '', ['status' => 400]);
+        }
+
+        $merge = isset($params['merge']) ? self::sanitize_request_boolean($params['merge']) : true;
+        $columns_in = $params['columns'] ?? null;
+        if (!is_array($columns_in)) {
+            return new WP_Error('view_invalid', '', ['status' => 400]);
+        }
+
+        $columns = [
+            'date' => false,
+            'user' => false,
+            'trigger_type' => false,
+            'run_context' => false,
+        ];
+        foreach ($columns_in as $k => $v) {
+            $key = sanitize_key((string) $k);
+            if (!in_array($key, Updatronix_Export::COLUMN_KEYS, true)) {
+                continue;
+            }
+            /** @var mixed $col_raw */
+            $col_raw = $v;
+            $columns[$key] = self::sanitize_request_boolean($col_raw);
+        }
+
+        $site_requested = isset($view['site_id']) ? absint((string) $view['site_id']) : 0;
+        $site_id = self::resolve_site_id_for_export($site_requested);
+
+        $search = isset($view['search']) && is_string($view['search'])
+            ? sanitize_text_field(wp_unslash($view['search']))
+            : '';
+        $search = wp_check_invalid_utf8($search);
+        if (mb_strlen($search, 'UTF-8') > Updatronix_Export::MAX_SEARCH_LENGTH) {
+            return new WP_Error('view_invalid', '', ['status' => 400]);
+        }
+
+        $sort_field = 'date';
+        $sort_direction = 'desc';
+        if (isset($view['sort']) && is_array($view['sort'])) {
+            if (isset($view['sort']['field']) && is_string($view['sort']['field'])) {
+                $sf = sanitize_key($view['sort']['field']);
+                if (in_array($sf, Updatronix_Export::SORT_FIELDS, true)) {
+                    $sort_field = $sf;
+                } else {
+                    return new WP_Error('view_invalid', '', ['status' => 400]);
+                }
+            }
+            if (isset($view['sort']['direction']) && is_string($view['sort']['direction'])) {
+                $sd = strtolower(sanitize_key($view['sort']['direction']));
+                if (!in_array($sd, Updatronix_Export::SORT_DIRECTIONS, true)) {
+                    return new WP_Error('view_invalid', '', ['status' => 400]);
+                }
+                $sort_direction = $sd;
+            }
+        }
+
+        $sort_column_map = [
+            'date' => 'created_at',
+            'created_at' => 'created_at',
+            'log_type' => 'log_type',
+            'item_name' => 'item_name',
+            'status' => 'status',
+            'performed_as' => 'performed_as',
+        ];
+        $sort_column = $sort_column_map[$sort_field];
+        $sort_dir_sql = strtoupper($sort_direction) === 'ASC' ? 'ASC' : 'DESC';
+
+        $filters_parsed = [];
+        if (isset($view['filters']) && is_array($view['filters'])) {
+            foreach ($view['filters'] as $f) {
+                if (!is_array($f)) {
+                    continue;
+                }
+                $parsed = self::parse_filter_item($f);
+                if ($parsed !== null) {
+                    $filters_parsed[] = $parsed;
+                }
+            }
+        }
+
+        $query = [
+            'site_id' => $site_id,
+            'filters' => $filters_parsed,
+        ];
+
+        $fingerprint_source = [
+            'site_id' => $site_id,
+            'search' => $search,
+            'sort_field' => $sort_field,
+            'sort_direction' => $sort_direction,
+            'filters' => $filters_parsed,
+        ];
+
+        $view_applied = [
+            'search' => $search,
+            'sort' => ['field' => $sort_field, 'direction' => $sort_direction],
+            'filters' => $filters_parsed,
+            'site_id' => $site_id,
+        ];
+
+        return [
+            'site_id' => $site_id,
+            'merge' => $merge,
+            'columns' => $columns,
+            'search' => $search,
+            'sort_column' => $sort_column,
+            'sort_direction' => $sort_dir_sql,
+            'query' => $query,
+            'fingerprint_source' => $fingerprint_source,
+            'view_applied' => $view_applied,
+        ];
+    }
+
+    /**
+     * Resolve multisite export scope from raw JSON params (continuation requests).
+     *
+     * @since 1.1.0
+     *
+     * @param array<string, mixed> $params JSON body (decoded).
+     * @return int Blog ID used for cursor verification and queries.
+     */
+    public static function resolve_site_id_from_params(array $params): int {
+        $view = isset($params['view']) && is_array($params['view']) ? $params['view'] : [];
+        $requested = isset($view['site_id']) ? absint((string) $view['site_id']) : 0;
+
+        return self::resolve_site_id_for_export($requested);
+    }
+
+    /**
+     * Resolve multisite export scope (mirror Settings::resolve_site_id semantics).
+     *
+     * @since 1.1.0
+     *
+     * @param int $requested Requested blog ID from payload (may be 0).
+     * @return int
+     */
+    public static function resolve_site_id_for_export(int $requested): int {
+        $current = (int) get_current_blog_id();
+        if (!is_multisite()) {
+            return $current;
+        }
+        if ($requested > 0 && current_user_can('manage_network_options')) {
+            return $requested;
+        }
+
+        return $current;
+    }
+
+    /**
+     * Parse one DataViews filter object into a DB-oriented clause descriptor.
+     *
+     * @param array<string, mixed> $f Filter item.
+     * @return array<string, mixed>|null
+     */
+    private static function parse_filter_item(array $f): ?array {
+        $field = isset($f['field']) ? sanitize_key((string) $f['field']) : '';
+        $operator = isset($f['operator']) ? sanitize_key((string) $f['operator']) : '';
+
+        if (!in_array($field, Updatronix_Export::FILTER_FIELDS, true)) {
+            return null;
+        }
+
+        return match ($field) {
+            'category' => self::parse_categorical_filter('log_type', $operator, $f['value'] ?? null),
+            'actionType' => self::parse_categorical_filter('action_type', $operator, $f['value'] ?? null),
+            'status' => self::parse_categorical_filter('status', $operator, $f['value'] ?? null),
+            'triggeredBy' => self::parse_categorical_filter('performed_as', $operator, $f['value'] ?? null),
+            'runType' => self::parse_run_context_filter($operator, $f['value'] ?? null),
+            'user' => self::parse_user_filter($operator, $f['value'] ?? null),
+            'date' => self::parse_date_filter($operator, $f['value'] ?? null),
+        };
+    }
+
+    /**
+     * @param string               $column   DB column name.
+     * @param string               $operator Filter operator.
+     * @param mixed                $value    Scalar or list from UI.
+     * @return array<string, mixed>|null
+     */
+    private static function parse_categorical_filter(string $column, string $operator, mixed $value): ?array {
+        if ($operator === 'is' && is_array($value)) {
+            $operator = 'isAny';
+        }
+        if ($operator === 'isAny' && !is_array($value)) {
+            $operator = 'is';
+        }
+
+        if (!in_array($operator, ['is', 'isNot', 'isAny', 'isNone'], true)) {
+            return null;
+        }
+
+        $san = match ($column) {
+            'log_type' => static fn ($v): string => Updatronix_Security::sanitize_log_type((string) $v),
+            'action_type' => static fn ($v): string => Updatronix_Security::sanitize_action_type((string) $v),
+            'status' => static fn ($v): string => Updatronix_Security::sanitize_status((string) $v),
+            'performed_as' => static fn ($v): string => Updatronix_Security::sanitize_performed_as((string) $v),
+            default => static fn ($v): string => sanitize_text_field((string) $v),
+        };
+
+        $values = [];
+        if ($operator === 'is' || $operator === 'isNot') {
+            $values[] = $san($value);
+        } else {
+            $raw = is_array($value) ? $value : [$value];
+            foreach ($raw as $item) {
+                $values[] = $san($item);
+            }
+            $values = array_values(array_unique(array_filter($values, static fn ($x): bool => $x !== '')));
+        }
+
+        if ($values === []) {
+            return null;
+        }
+
+        $filter_type = match ($operator) {
+            'is' => 'eq',
+            'isNot' => 'neq',
+            'isAny' => 'in',
+            'isNone' => 'not_in',
+        };
+
+        return [
+            'type' => $filter_type,
+            'column' => $column,
+            'values' => $values,
+        ];
+    }
+
+    /**
+     * @param string $operator Operator.
+     * @param mixed  $value    Raw filter value (canonical bulk/single keys when normalised client-side).
+     * @return array<string, mixed>|null
+     */
+    private static function parse_run_context_filter(string $operator, mixed $value): ?array {
+        if (!in_array($operator, ['is', 'isNot', 'isAny', 'isNone'], true)) {
+            return null;
+        }
+
+        $norm = static function (mixed $v): string {
+            $s = sanitize_key((string) $v);
+            if ($s === 'bulk' || $s === 'single') {
+                return $s;
+            }
+
+            return '';
+        };
+
+        if ($operator === 'is' && is_array($value)) {
+            $operator = 'isAny';
+        }
+        if ($operator === 'isAny' && !is_array($value)) {
+            $operator = 'is';
+        }
+
+        $vals = [];
+        if ($operator === 'is' || $operator === 'isNot') {
+            $one = $norm($value);
+            if ($one !== '') {
+                $vals[] = $one;
+            }
+        } else {
+            foreach (is_array($value) ? $value : [$value] as $item) {
+                $x = $norm($item);
+                if ($x !== '') {
+                    $vals[] = $x;
+                }
+            }
+            $vals = array_values(array_unique($vals));
+        }
+
+        if ($vals === []) {
+            return null;
+        }
+
+        $filter_type = match ($operator) {
+            'is' => 'eq',
+            'isNot' => 'neq',
+            'isAny' => 'in',
+            'isNone' => 'not_in',
+        };
+
+        return [
+            'type' => $filter_type,
+            'column' => 'update_context',
+            'values' => $vals,
+        ];
+    }
+
+    /**
+     * User dimension: canonical `system` token or numeric user ID (see final checklist §3.8).
+     *
+     * @param string $operator Operator.
+     * @param mixed  $value  Raw filter value (`system` or positive integer).
+     * @return array<string, mixed>|null
+     */
+    private static function parse_user_filter(string $operator, mixed $value): ?array {
+        if (!in_array($operator, ['is', 'isNot'], true)) {
+            return null;
+        }
+
+        $negate = $operator === 'isNot';
+        $mode_system = false;
+        $uid = 0;
+
+        if (is_string($value) && sanitize_key($value) === 'system') {
+            $mode_system = true;
+        } elseif (is_numeric($value)) {
+            $uid = absint((string) $value);
+        } else {
+            return null;
+        }
+
+        if (!$mode_system && $uid <= 0) {
+            return null;
+        }
+
+        return [
+            'type' => $negate ? 'user_neg' : 'user_pos',
+            'mode' => $mode_system ? 'system' : 'user',
+            'user_id' => $uid,
+        ];
+    }
+
+    /**
+     * @param string $operator Date operator from DataViews.
+     * @param mixed  $value    Operator-specific payload.
+     * @return array<string, mixed>|null
+     */
+    private static function parse_date_filter(string $operator, mixed $value): ?array {
+        if (!in_array($operator, Updatronix_Export::DATE_OPERATORS, true)) {
+            return null;
+        }
+
+        $fmt_out = 'Y-m-d H:i:s';
+
+        try {
+            if ($operator === 'between') {
+                if (!is_array($value)) {
+                    return null;
+                }
+                $start = self::parse_iso_datetime(isset($value['start']) ? (string) $value['start'] : '');
+                $end = self::parse_iso_datetime(isset($value['end']) ? (string) $value['end'] : '');
+                if ($start === null || $end === null || $start > $end) {
+                    return null;
+                }
+
+                return [
+                    'type' => 'between_time',
+                    'column' => 'created_at',
+                    'start' => $start->format($fmt_out),
+                    'end' => $end->format($fmt_out),
+                ];
+            }
+
+            if ($operator === 'inThePast' || $operator === 'over') {
+                if (!is_array($value)) {
+                    return null;
+                }
+                $num = isset($value['value']) ? absint((string) $value['value']) : 0;
+                $unit = isset($value['unit']) ? sanitize_key((string) $value['unit']) : 'day';
+                if ($num < 1 || $num > 3650 || !in_array($unit, ['day', 'week', 'month', 'year'], true)) {
+                    return null;
+                }
+                $now = new \DateTimeImmutable('now', wp_timezone());
+
+                return [
+                    'type' => 'between_time',
+                    'column' => 'created_at',
+                    'start' => $now->modify('-' . $num . ' ' . $unit)->format($fmt_out),
+                    'end' => $now->format($fmt_out),
+                ];
+            }
+
+            $dt = null;
+            if (is_string($value)) {
+                $dt = self::parse_iso_datetime($value);
+            }
+            if ($dt === null) {
+                return null;
+            }
+            $bound = $dt->format($fmt_out);
+
+            if ($operator === 'on') {
+                return [
+                    'type' => 'between_time',
+                    'column' => 'created_at',
+                    'start' => $dt->setTime(0, 0, 0)->format($fmt_out),
+                    'end' => $dt->setTime(23, 59, 59)->format($fmt_out),
+                ];
+            }
+
+            if ($operator === 'before') {
+                return ['type' => 'lt_time', 'column' => 'created_at', 'bound' => $bound];
+            }
+
+            if ($operator === 'after') {
+                return ['type' => 'gt_time', 'column' => 'created_at', 'bound' => $bound];
+            }
+
+            if ($operator === 'beforeInc') {
+                return ['type' => 'lte_time', 'column' => 'created_at', 'bound' => $bound];
+            }
+
+            return ['type' => 'gte_time', 'column' => 'created_at', 'bound' => $bound];
+        } catch (\Throwable $e) {
+            return null;
+        }
+    }
+
+    /**
+     * Parse ISO 8601 datetime into immutable UTC-normalised instance clamped to sane range.
+     *
+     * @param string $iso Raw ISO string from DataViews.
+     * @return \DateTimeImmutable|null
+     */
+    private static function parse_iso_datetime(string $iso): ?\DateTimeImmutable {
+        $iso = trim($iso);
+        if ($iso === '') {
+            return null;
+        }
+
+        $dt = \DateTimeImmutable::createFromFormat(\DateTimeInterface::ATOM, $iso, new \DateTimeZone('UTC'));
+        if (!$dt instanceof \DateTimeImmutable) {
+            return null;
+        }
+
+        $min = new \DateTimeImmutable('1970-01-01 00:00:00', wp_timezone());
+        $max = new \DateTimeImmutable('2099-12-31 23:59:59', wp_timezone());
+        if ($dt < $min || $dt > $max) {
+            return null;
+        }
+
+        return $dt->setTimezone(wp_timezone());
+    }
+
+    /**
+     * Normalise JSON / scalar flags without relying on generic-heavy REST helpers.
+     *
+     * @param mixed $value Raw request value.
+     * @return bool
+     */
+    private static function sanitize_request_boolean(mixed $value): bool {
+        if (is_bool($value)) {
+            return $value;
+        }
+
+        if ($value === null || $value === '') {
+            return false;
+        }
+
+        if (is_int($value) || is_float($value)) {
+            return (int) $value !== 0;
+        }
+
+        if (is_string($value)) {
+            $normalised = strtolower(trim($value));
+            if (in_array($normalised, ['1', 'true', 'yes', 'on'], true)) {
+                return true;
+            }
+            if (in_array($normalised, ['0', 'false', 'no', 'off'], true)) {
+                return false;
+            }
+        }
+
+        return (bool) $value;
+    }
+}

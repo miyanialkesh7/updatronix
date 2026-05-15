@@ -30,6 +30,7 @@ final class Updatronix_Bootstrap {
         Updatronix_Update_Logger::register();
         Updatronix_ErrorHandler::register();
         Updatronix_Settings::register();
+        Updatronix_Export::register();
         Updatronix_Notifications::register();
         Updatronix_AutoUpdates::register();
         Updatronix_AutoUpdateDelay::register();
@@ -56,6 +57,14 @@ final class Updatronix_Bootstrap {
             'Settings.php',
             'AutoUpdates.php',
             'AutoUpdateDelay.php',
+            'Export.php',
+            'ExportRequestSchema.php',
+            'ExportQueryBuilder.php',
+            'ExportBodyBuilder.php',
+            'ExportTransientManager.php',
+            'ExportRateLimiter.php',
+            'ExportCursor.php',
+            'ExportAudit.php',
         ];
         foreach ($classes as $file) {
             $path = $dir . '/' . $file;

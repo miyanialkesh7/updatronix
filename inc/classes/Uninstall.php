@@ -101,6 +101,7 @@ final class Updatronix_Uninstall {
                 UPDATRONIX_OPTION_SETTINGS,
                 Updatronix_UpdateLogState::OPTION_STATE,
                 'updatronix_cap_migrated',
+                'updatronix_export_audit',
             ],
             Updatronix_Update_Logger::snapshot_option_keys_for_uninstall(),
             Updatronix_AutoUpdateDelay::uninstall_option_keys()

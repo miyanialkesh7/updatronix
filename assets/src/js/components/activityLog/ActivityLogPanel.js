@@ -6,7 +6,13 @@
  * @see https://developer.wordpress.org/block-editor/reference-guides/packages/packages-dataviews/
  */
 
-import { useMemo, useState, useEffect, useCallback } from '@wordpress/element';
+import {
+	useMemo,
+	useState,
+	useEffect,
+	useCallback,
+	useRef,
+} from '@wordpress/element';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import {
 	Button,
@@ -30,11 +36,9 @@ import {
 import { StatusBadge } from './StatusBadge';
 import { getIconForLogType } from './logTypeIcon';
 import { LogDetailsContent } from './LogDetailsContent';
+import { ExportLogsModal } from './ExportLogsModal';
 
 const FIXED_SORT = { field: 'date', direction: 'desc' };
-
-/** Reserved for future toolbar actions (no-op intentionally). */
-function activityLogToolbarPlaceholderClick() {}
 
 const DELETE_MODAL_STYLE = {
 	display: 'flex',
@@ -57,6 +61,9 @@ export function ActivityLogPanel({ loggingEnabled = true }) {
 		message: '',
 		type: 'polite',
 	});
+
+	const exportTriggerRef = useRef(null);
+	const [exportOpen, setExportOpen] = useState(false);
 
 	const [view, setView] = useState({
 		type: LAYOUT_ACTIVITY,
@@ -445,15 +452,17 @@ export function ActivityLogPanel({ loggingEnabled = true }) {
 								label={__('Search logs', 'updatronix')}
 							/>
 							<DataViews.FiltersToggle />
-							<DesignSystemButton
-								type="button"
-								variant="minimal"
-								size="compact"
-								onClick={activityLogToolbarPlaceholderClick}
-							>
-								<DesignSystemButton.Icon icon={upload} />
-								{__('Export logs', 'updatronix')}
-							</DesignSystemButton>
+							<span ref={exportTriggerRef}>
+								<DesignSystemButton
+									type="button"
+									variant="minimal"
+									size="compact"
+									onClick={() => setExportOpen(true)}
+								>
+									<DesignSystemButton.Icon icon={upload} />
+									{__('Export logs', 'updatronix')}
+								</DesignSystemButton>
+							</span>
 						</div>
 						<div
 							style={{
@@ -470,6 +479,15 @@ export function ActivityLogPanel({ loggingEnabled = true }) {
 					<DataViews.Footer />
 				</>
 			</DataViews>
+			{exportOpen ? (
+				<ExportLogsModal
+					isOpen={exportOpen}
+					onClose={() => setExportOpen(false)}
+					view={view}
+					logs={logs}
+					exportTriggerRef={exportTriggerRef}
+				/>
+			) : null}
 		</div>
 	);
 }
