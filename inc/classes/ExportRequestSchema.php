@@ -53,6 +53,9 @@ final class Updatronix_Export_Request_Schema {
         $columns = [
             'date' => false,
             'user' => false,
+            'category' => false,
+            'status' => false,
+            'action_type' => false,
             'trigger_type' => false,
             'run_context' => false,
         ];
@@ -121,6 +124,11 @@ final class Updatronix_Export_Request_Schema {
             }
         }
 
+        $pagination_ctx = self::parse_dataviews_pagination_slice($view);
+        if (is_wp_error($pagination_ctx)) {
+            return $pagination_ctx;
+        }
+
         $query = [
             'site_id' => $site_id,
             'filters' => $filters_parsed,
@@ -132,6 +140,10 @@ final class Updatronix_Export_Request_Schema {
             'sort_field' => $sort_field,
             'sort_direction' => $sort_direction,
             'filters' => $filters_parsed,
+            'page' => $pagination_ctx['page'],
+            'per_page' => $pagination_ctx['per_page'],
+            'slice_sql_offset' => $pagination_ctx['slice_sql_offset'],
+            'slice_max_rows' => $pagination_ctx['slice_max_rows'],
         ];
 
         $view_applied = [
@@ -139,6 +151,8 @@ final class Updatronix_Export_Request_Schema {
             'sort' => ['field' => $sort_field, 'direction' => $sort_direction],
             'filters' => $filters_parsed,
             'site_id' => $site_id,
+            'page' => $pagination_ctx['page'],
+            'per_page' => $pagination_ctx['per_page'],
         ];
 
         return [
@@ -151,6 +165,57 @@ final class Updatronix_Export_Request_Schema {
             'query' => $query,
             'fingerprint_source' => $fingerprint_source,
             'view_applied' => $view_applied,
+            'slice_sql_offset' => $pagination_ctx['slice_sql_offset'],
+            'slice_max_rows' => $pagination_ctx['slice_max_rows'],
+        ];
+    }
+
+    /**
+     * Map DataViews `page` / `perPage` to SQL OFFSET + hard row cap for the export session.
+     *
+     * Omits slice limits when neither `perPage` nor `per_page` appears in `view`
+     * (export all matched rows subject to MAX_ROWS_TOTAL), preserving legacy payloads.
+     *
+     * @param array<string, mixed> $view View object from POST JSON.
+     * @return array{page:int, per_page:int|null, slice_sql_offset:int, slice_max_rows:int}|\WP_Error
+     */
+    private static function parse_dataviews_pagination_slice(array $view): array|\WP_Error {
+        $page = isset($view['page']) ? absint((string) $view['page']) : 1;
+        if ($page < 1) {
+            $page = 1;
+        }
+
+        $has_explicit_per_page =
+            array_key_exists('perPage', $view) || array_key_exists('per_page', $view);
+
+        if (!$has_explicit_per_page) {
+            return [
+                'page' => $page,
+                'per_page' => null,
+                'slice_sql_offset' => 0,
+                'slice_max_rows' => Updatronix_Export::MAX_ROWS_TOTAL,
+            ];
+        }
+
+        $raw = array_key_exists('perPage', $view) ? $view['perPage'] : ($view['per_page'] ?? null);
+        if (!is_scalar($raw) || is_bool($raw)) {
+            return new WP_Error('view_invalid', '', ['status' => 400]);
+        }
+
+        $per_requested = absint((string) $raw);
+        if ($per_requested < 1) {
+            return new WP_Error('view_invalid', '', ['status' => 400]);
+        }
+
+        $per_clamped = min(Updatronix_Export::MAX_ROWS_TOTAL, max(1, $per_requested));
+        // Offset paging past MAX_ROWS_TOTAL never returns rows — keep SQL sane.
+        $slice_sql_offset = min(Updatronix_Export::MAX_ROWS_TOTAL, ($page - 1) * $per_clamped);
+
+        return [
+            'page' => $page,
+            'per_page' => $per_clamped,
+            'slice_sql_offset' => $slice_sql_offset,
+            'slice_max_rows' => $per_clamped,
         ];
     }
 

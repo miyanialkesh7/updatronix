@@ -199,6 +199,32 @@ function buildFilterSummaryParts(view) {
 		});
 	}
 
+	if (
+		Object.prototype.hasOwnProperty.call(view, 'perPage') ||
+		Object.prototype.hasOwnProperty.call(view, 'per_page')
+	) {
+		const perRaw = Object.prototype.hasOwnProperty.call(view, 'perPage')
+			? view.perPage
+			: view.per_page;
+		const perNum = Number(perRaw);
+		const pageRaw = Number(view.page);
+		const pageNum =
+			Number.isFinite(pageRaw) && pageRaw >= 1 ? Math.trunc(pageRaw) : 1;
+		if (Number.isFinite(perNum) && perNum >= 1) {
+			const perRounded = Math.trunc(perNum);
+			dimensions.push({
+				key: `page-${pageNum}-per-${perRounded}`,
+				label: __('Page', 'updatronix'),
+				text: sprintf(
+					/* translators: 1: Current page number, 2: Items per page. */
+					__('Page %1$d (%2$d per page)', 'updatronix'),
+					pageNum,
+					perRounded
+				),
+			});
+		}
+	}
+
 	const sortField = view.sort?.field ?? 'date';
 	const sortDir = view.sort?.direction ?? 'desc';
 	const sortLabel =
@@ -237,7 +263,10 @@ export function ExportLogsModal({
 }) {
 	const [merge, setMerge] = useState(true);
 	const [cols, setCols] = useState({
-		date: false,
+		date: true,
+		category: true,
+		status: true,
+		action_type: true,
 		user: false,
 		trigger_type: false,
 		run_context: false,
@@ -453,10 +482,12 @@ export function ExportLogsModal({
 					))}
 				</ul>
 			)}
-			<p className="updatronix-export-modal__sort">
-				<strong>{summaryParts.sortLine.label}:</strong>{' '}
-				{summaryParts.sortLine.text}
-			</p>
+			{merge ? null : (
+				<p className="updatronix-export-modal__sort">
+					<strong>{summaryParts.sortLine.label}:</strong>{' '}
+					{summaryParts.sortLine.text}
+				</p>
+			)}
 
 			<ToggleControl
 				label={__('Merge logs for the same item', 'updatronix')}
@@ -481,6 +512,29 @@ export function ExportLogsModal({
 					label={__('Include the date', 'updatronix')}
 					checked={cols.date}
 					onChange={(v) => setCols((s) => ({ ...s, date: !!v }))}
+					disabled={busy}
+					__nextHasNoMarginBottom
+				/>
+				<CheckboxControl
+					label={__('Include the category', 'updatronix')}
+					checked={cols.category}
+					onChange={(v) => setCols((s) => ({ ...s, category: !!v }))}
+					disabled={busy}
+					__nextHasNoMarginBottom
+				/>
+				<CheckboxControl
+					label={__('Include the action', 'updatronix')}
+					checked={cols.action_type}
+					onChange={(v) =>
+						setCols((s) => ({ ...s, action_type: !!v }))
+					}
+					disabled={busy}
+					__nextHasNoMarginBottom
+				/>
+				<CheckboxControl
+					label={__('Include the status', 'updatronix')}
+					checked={cols.status}
+					onChange={(v) => setCols((s) => ({ ...s, status: !!v }))}
 					disabled={busy}
 					__nextHasNoMarginBottom
 				/>

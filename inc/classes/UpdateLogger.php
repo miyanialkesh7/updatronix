@@ -469,6 +469,8 @@ final class Updatronix_Update_Logger {
                             continue;
                         }
                         $name = 'WordPress';
+                        // Align with manual core logs (`log_core_update`) so `item_slug` is never empty.
+                        $slug = 'core';
                         if (isset(self::$pending_logs['core']['core'])) {
                             $pending_core = self::$pending_logs['core']['core'];
                             $event_key = (string) ($pending_core['event_key'] ?? $event_key);

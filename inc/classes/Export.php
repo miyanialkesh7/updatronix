@@ -42,7 +42,15 @@ final class Updatronix_Export {
     public const DATE_OPERATORS = ['on', 'before', 'after', 'beforeInc', 'afterInc', 'inThePast', 'over', 'between'];
 
     /** @var list<string> */
-    public const COLUMN_KEYS = ['date', 'user', 'trigger_type', 'run_context'];
+    public const COLUMN_KEYS = [
+        'date',
+        'user',
+        'category',
+        'status',
+        'action_type',
+        'trigger_type',
+        'run_context',
+    ];
 
     /**
      * Register hooks.
@@ -141,6 +149,7 @@ final class Updatronix_Export {
 
             $site_id_new = (int) ($validated['site_id'] ?? $blog_id);
             $transient_key = Updatronix_Export_Transient_Manager::generate_key($site_id_new, $user_id);
+            $offset = (int) ($validated['slice_sql_offset'] ?? 0);
         } else {
             $decoded = Updatronix_Export_Cursor::verify($cursor_raw, $site_for_cursor, $user_id);
             if (is_wp_error($decoded)) {
@@ -178,15 +187,19 @@ final class Updatronix_Export {
         );
         $max_rows_attempt = max(1, min(10_000_000, $max_rows_attempt));
 
+        $slice_max_rows = (int) ($validated['slice_max_rows'] ?? self::MAX_ROWS_TOTAL);
+        $slice_max_rows = max(1, min(self::MAX_ROWS_TOTAL, $slice_max_rows));
+        $row_cap_job = max(1, min($max_rows_attempt, $slice_max_rows));
+
         $truncated = false;
         $truncation_reason = '';
 
-        if ($total_rows_scanned >= $max_rows_attempt) {
+        if ($total_rows_scanned >= $row_cap_job) {
             $truncated = true;
             $truncation_reason = 'row_cap';
         }
 
-        $remaining_budget = $max_rows_attempt - $total_rows_scanned;
+        $remaining_budget = $row_cap_job - $total_rows_scanned;
         $rows = [];
         $more_in_db = false;
         $chunk_delta = '';
@@ -237,7 +250,7 @@ final class Updatronix_Export {
 
         $needs_continue =
             !$truncated
-            && $total_rows_scanned < $max_rows_attempt
+            && $total_rows_scanned < $row_cap_job
             && strlen($new_accumulated) < self::MAX_BYTES_TOTAL
             && ($more_in_db || $partial_batch);
 
