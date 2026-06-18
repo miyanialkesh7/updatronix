@@ -32,3 +32,18 @@
 .updatronix-activitylog-panel .dataviews-wrapper {
 	max-width: $max-width-content;
 }
+
+.updatronix-export-modal {
+
+	&__output {
+
+		textarea {
+			font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+			font-size: 13px;
+			line-height: 1.5;
+			tab-size: 4;
+			white-space: pre;
+			overflow-x: auto;
+		}
+	}
+}

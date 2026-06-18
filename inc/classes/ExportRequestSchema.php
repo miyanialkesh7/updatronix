@@ -45,10 +45,9 @@ final class Updatronix_Export_Request_Schema {
         }
 
         $merge = isset($params['merge']) ? self::sanitize_request_boolean($params['merge']) : true;
-        $columns_in = $params['columns'] ?? null;
-        if (!is_array($columns_in)) {
-            return new WP_Error('view_invalid', '', ['status' => 400]);
-        }
+        // `columns` is optional: a missing or non-array value falls back to the
+        // server-side defaults applied in Updatronix_Export_Body_Builder::normalize_export_columns().
+        $columns_in = isset($params['columns']) && is_array($params['columns']) ? $params['columns'] : [];
 
         $columns = [
             'date' => false,

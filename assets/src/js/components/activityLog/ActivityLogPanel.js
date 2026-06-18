@@ -23,7 +23,8 @@ import { upload } from '@wordpress/icons';
 import { Button as DesignSystemButton } from '@wordpress/ui';
 import { __ } from '@wordpress/i18n';
 import { useLogs } from '../../hooks/useLogs';
-import { LAYOUT_ACTIVITY, LOG_TYPE_PREFIX, ACTION_LABELS } from './constants';
+import { LAYOUT_ACTIVITY } from './constants';
+import { buildFilterFields, PER_PAGE_SIZES } from './logFilters';
 import {
 	statusToBadgeIntent,
 	getStatusLabel,
@@ -89,48 +90,7 @@ export function ActivityLogPanel({ loggingEnabled = true }) {
 		fetchLogs({ per_page: view.perPage, page: view.page });
 	}, [fetchLogs, view.perPage, view.page]);
 
-	const categoryElements = useMemo(
-		() =>
-			Object.entries(LOG_TYPE_PREFIX).map(([value, label]) => ({
-				value,
-				label: String(label).replace(/:$/, '').trim(),
-			})),
-		[]
-	);
-
-	const actionTypeElements = useMemo(
-		() =>
-			Object.entries(ACTION_LABELS).map(([value, label]) => ({
-				value,
-				label: String(label),
-			})),
-		[]
-	);
-
-	const statusElements = useMemo(
-		() => [
-			{ value: 'success', label: __('Success', 'updatronix') },
-			{ value: 'error', label: __('Error', 'updatronix') },
-			{ value: 'cancelled', label: __('Cancelled', 'updatronix') },
-		],
-		[]
-	);
-
-	const userElements = useMemo(() => {
-		const seen = new Set();
-		return logs
-			.map((item) => item.performed_by_display)
-			.filter(Boolean)
-			.filter((name) => {
-				if (seen.has(name)) {
-					return false;
-				}
-				seen.add(name);
-				return true;
-			})
-			.sort((a, b) => String(a).localeCompare(String(b)))
-			.map((value) => ({ value, label: value }));
-	}, [logs]);
+	const filterFields = useMemo(() => buildFilterFields({ logs }), [logs]);
 
 	const fields = useMemo(
 		() => [
@@ -157,8 +117,7 @@ export function ActivityLogPanel({ loggingEnabled = true }) {
 				enableSorting: false,
 				enableHiding: false,
 				enableGlobalSearch: false,
-				elements: categoryElements,
-				filterBy: { operators: ['is', 'isNot'] },
+				...filterFields.category,
 			},
 			{
 				id: 'actionType',
@@ -167,8 +126,7 @@ export function ActivityLogPanel({ loggingEnabled = true }) {
 				enableSorting: false,
 				enableHiding: false,
 				enableGlobalSearch: false,
-				elements: actionTypeElements,
-				filterBy: { operators: ['is', 'isNot'] },
+				...filterFields.actionType,
 			},
 			{
 				id: 'icon',
@@ -201,18 +159,7 @@ export function ActivityLogPanel({ loggingEnabled = true }) {
 				},
 				enableGlobalSearch: false,
 				enableHiding: false,
-				filterBy: {
-					operators: [
-						'on',
-						'before',
-						'after',
-						'beforeInc',
-						'afterInc',
-						'inThePast',
-						'over',
-						'between',
-					],
-				},
+				...filterFields.date,
 			},
 			{
 				id: 'triggeredBy',
@@ -252,8 +199,7 @@ export function ActivityLogPanel({ loggingEnabled = true }) {
 				enableSorting: false,
 				enableHiding: false,
 				enableGlobalSearch: true,
-				elements: userElements,
-				filterBy: { operators: ['is', 'isNot'] },
+				...filterFields.user,
 			},
 			{
 				id: 'status',
@@ -268,11 +214,10 @@ export function ActivityLogPanel({ loggingEnabled = true }) {
 				enableSorting: false,
 				enableHiding: false,
 				enableGlobalSearch: false,
-				elements: statusElements,
-				filterBy: { operators: ['is', 'isNot'] },
+				...filterFields.status,
 			},
 		],
-		[categoryElements, actionTypeElements, statusElements, userElements]
+		[filterFields]
 	);
 
 	const actions = useMemo(
@@ -422,7 +367,7 @@ export function ActivityLogPanel({ loggingEnabled = true }) {
 				isLoading={loading}
 				paginationInfo={paginationInfo}
 				defaultLayouts={defaultLayouts}
-				config={{ perPageSizes: [10, 25, 50, 100] }}
+				config={{ perPageSizes: PER_PAGE_SIZES }}
 				empty={__(
 					'No update logs yet. Entries appear after WordPress runs an update.',
 					'updatronix'

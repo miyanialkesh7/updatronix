@@ -88,7 +88,6 @@ final class Updatronix_Export {
                         'default' => true,
                     ],
                     'columns' => [
-                        'required' => true,
                         'type' => 'object',
                     ],
                     'cursor' => [

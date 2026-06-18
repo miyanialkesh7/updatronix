@@ -3,10 +3,24 @@
 /**
  * Plain-text export body rendering (locale-aware).
  *
- * Human-readable lines: bullets (`*`), site date & time preferences, optional tight `[Category]` / `[Status]`
- * tags (per export checkboxes), three heading levels: `===` (document) → `==` (section type) → `=` (before bullet runs).
+ * Output is a category-sectioned report. Rows are grouped under `== CORE ==`,
+ * `== PLUGINS ==`, `== THEMES ==`, and `== TRANSLATIONS ==` headings in both
+ * merge modes. Within each section, lines are ordered by date (most recent
+ * activity first), then by action, status, and name as tie-breakers.
  *
- * Merge grouping applies **within each SQL chunk only** (rows passed to {@see render()}).
+ * Each line reads as a short audit sentence (subject → event → detail →
+ * detail → when → how → outcome). Column widths are computed once per chunk from
+ * the longest value in each field so rows align throughout the report:
+ *
+ *     WooCommerce          Update      8.0 → 8.2   2026-06-10 09:00, 2026-06-18 14:03   (manual, bulk)   Success
+ *
+ * The status label matches the admin UI (`Success` / `Error` / `Cancelled`) and
+ * is always the last column. A merged line lists every event date separated by
+ * commas. Trigger and run context (`manual` / `automatic` / `upload`, `bulk` /
+ * `single`) are appended in parentheses only when every row in the line agrees.
+ *
+ * Merge grouping applies **within each SQL chunk only** (rows passed to {@see render()}),
+ * and collapses rows that share entity, action, and status.
  *
  * @package updatronix
  */
@@ -20,15 +34,43 @@ if (!defined('ABSPATH')) {
  */
 final class Updatronix_Export_Body_Builder {
     /**
+     * Section order for the report.
+     *
+     * @var list<string>
+     */
+    private const CATEGORY_ORDER = ['core', 'plugin', 'theme', 'translation'];
+
+    /**
+     * Sort rank per action type (lower sorts first).
+     *
+     * @var array<string, int>
+     */
+    private const ACTION_RANK = [
+        'update' => 0,
+        'same_version' => 1,
+        'downgrade' => 2,
+        'install' => 3,
+        'uninstall' => 4,
+        'delete' => 5,
+        'failed' => 6,
+    ];
+
+    /** Column keys used for per-section width measurement and line assembly. */
+    private const ROW_PART_KEYS = ['name', 'action', 'versions', 'dates', 'context', 'status'];
+
+    /** Optional columns omitted from a section when every row value is empty. */
+    private const OPTIONAL_ROW_PART_KEYS = ['versions', 'context'];
+
+    /**
      * Append formatted rows respecting merge mode and per-chunk byte cap.
      *
      * @since 1.1.0
      *
-     * @param array<int, object>     $rows               Rows from {@see Updatronix_Export_Query_Builder::fetch_rows()}.
-     * @param bool                   $merge              Merge rows that share entity key within this chunk.
-     * @param array<string, bool>    $columns            Column toggles (@see COLUMN_KEYS).
+     * @param array<int, object>     $rows                Rows from {@see Updatronix_Export_Query_Builder::fetch_rows()}.
+     * @param bool                   $merge               Merge rows that share entity, action, and status within this chunk.
+     * @param array<string, bool>    $columns             Reserved for backward compatibility; the report layout is fixed and no longer toggled per column.
      * @param string                 $existing_chunk_body Already emitted bytes for this HTTP chunk.
-     * @param int                    $max_chunk_bytes    Soft max chunk bytes ({@see Updatronix_Export::MAX_BYTES_PER_CHUNK}).
+     * @param int                    $max_chunk_bytes     Soft max chunk bytes ({@see Updatronix_Export::MAX_BYTES_PER_CHUNK}).
      * @return array{body: string, rows_emitted: int, merged_lines_added: int, byte_cap_hit: bool}
      */
     public static function render(
@@ -38,43 +80,12 @@ final class Updatronix_Export_Body_Builder {
         string $existing_chunk_body,
         int $max_chunk_bytes
     ): array {
+        unset($columns);
+
         switch_to_user_locale(get_current_user_id());
 
         try {
-            self::batch_cache_users($rows);
-
-            $columns = self::normalize_export_columns($columns);
-
-            $records = [];
-            if ($merge) {
-                foreach (self::build_sectioned_merge_records($rows, $columns) as $rec) {
-                    $records[] = $rec;
-                }
-            } else {
-                foreach ($rows as $row) {
-                    $records[] = [
-                        'line' => self::format_single_line($row, $columns),
-                        'row_span' => 1,
-                    ];
-                }
-            }
-
-            if ($existing_chunk_body === '') {
-                $lead = [['line' => self::export_document_heading(), 'row_span' => 0]];
-                $lead[] = ['line' => '', 'row_span' => 0];
-                if (!$merge) {
-                    $lead[] = [
-                        'line' => sprintf(
-                            '== %s ==',
-                            /* translators: Non-merge export: chronological list heading. */
-                            __('All entries', 'updatronix')
-                        ),
-                        'row_span' => 0,
-                    ];
-                    $lead[] = ['line' => self::section_detail_rule_heading(), 'row_span' => 0];
-                }
-                $records = array_merge($lead, $records);
-            }
+            $records = self::build_sectioned_records($rows, $merge);
 
             return self::emit_until_cap($records, $existing_chunk_body, $max_chunk_bytes);
         } finally {
@@ -119,55 +130,7 @@ final class Updatronix_Export_Body_Builder {
     }
 
     /**
-     * Merge client toggles with defaults so older payloads and sparse objects stay predictable.
-     *
-     * Keys align with {@see Updatronix_Export::COLUMN_KEYS}; omitted keys inherit defaults below.
-     *
-     * @param array<string, bool> $columns Raw request column toggles.
-     * @return array<string, bool>
-     */
-    private static function normalize_export_columns(array $columns): array {
-        /** @var array<string, bool> */
-        static $defaults = [
-            'date' => true,
-            'category' => true,
-            'status' => true,
-            'action_type' => true,
-            'user' => false,
-            'trigger_type' => false,
-            'run_context' => false,
-        ];
-
-        $out = [];
-        foreach ($defaults as $key => $default_on) {
-            $out[$key] = array_key_exists($key, $columns)
-                ? (bool) $columns[$key]
-                : $default_on;
-        }
-
-        return $out;
-    }
-
-    /**
-     * @param array<int, object> $rows Log rows.
-     * @return void
-     */
-    private static function batch_cache_users(array $rows): void {
-        $ids = [];
-        foreach ($rows as $row) {
-            $uid = (int) ($row->user_id ?? 0);
-            if ($uid > 0) {
-                $ids[] = $uid;
-            }
-        }
-        $ids = array_values(array_unique($ids));
-        if ($ids !== []) {
-            cache_users($ids);
-        }
-    }
-
-    /**
-     * @param array<int, array{line: string, row_span: int}> $records Lines with row consumption counts.
+     * @param array<int, array{line: string, row_span: int}> $records             Lines with row consumption counts.
      * @param string                                          $existing_chunk_body Prefix already counted toward chunk cap.
      * @param int                                             $max_chunk_bytes     Chunk ceiling.
      * @return array{body: string, rows_emitted: int, merged_lines_added: int, byte_cap_hit: bool}
@@ -180,15 +143,17 @@ final class Updatronix_Export_Body_Builder {
 
         foreach ($records as $rec) {
             $line = $rec['line'];
-            $span = max(1, (int) $rec['row_span']);
+            $span = (int) $rec['row_span'];
             $sep = ($body === '') ? '' : "\n";
             $candidate = $body . $sep . $line;
 
             if (strlen($candidate) > $max_chunk_bytes) {
                 if ($body === $existing_chunk_body && $existing_chunk_body === '' && strlen($line) > $max_chunk_bytes) {
                     $body = $line;
-                    $rows_emitted += $span;
-                    $merged_lines_added++;
+                    if ($span > 0) {
+                        $rows_emitted += $span;
+                        $merged_lines_added++;
+                    }
                     $byte_cap_hit = true;
 
                     break;
@@ -199,8 +164,10 @@ final class Updatronix_Export_Body_Builder {
             }
 
             $body = $candidate;
-            $rows_emitted += $span;
-            $merged_lines_added++;
+            if ($span > 0) {
+                $rows_emitted += $span;
+                $merged_lines_added++;
+            }
         }
 
         return [
@@ -212,219 +179,411 @@ final class Updatronix_Export_Body_Builder {
     }
 
     /**
-     * Merge ON: section headings + bullet lines — skip empty sections; A–Z within each section.
+     * Build the category-sectioned record list for a chunk.
      *
-     * @param array<int, object>  $rows    Rows in one SQL chunk.
-     * @param array<string, bool> $columns Segment toggles.
+     * @param array<int, object> $rows  Rows in one SQL chunk.
+     * @param bool               $merge Collapse rows sharing entity, action, and status.
      * @return array<int, array{line: string, row_span: int}>
      */
-    private static function build_sectioned_merge_records(array $rows, array $columns): array {
+    private static function build_sectioned_records(array $rows, bool $merge): array {
         $buckets = [];
-
-        foreach ($rows as $row) {
-            $key = self::merge_key($row);
-            if (!isset($buckets[$key])) {
-                $buckets[$key] = [];
+        if ($merge) {
+            foreach ($rows as $row) {
+                $buckets[self::merge_key($row)][] = $row;
             }
-            $buckets[$key][] = $row;
+        } else {
+            $index = 0;
+            foreach ($rows as $row) {
+                $buckets['row_' . $index++] = [$row];
+            }
         }
 
-        $by_type = [
-            'core' => [],
-            'theme' => [],
-            'plugin' => [],
-            'translation' => [],
-        ];
+        /** @var array<string, array<int, array{sort_ts:int, action_rank:int, status_rank:int, name:string, parts:array{name:string, action:string, versions:string, dates:string, context:string, status:string}, row_span:int}>> $by_category */
+        $by_category = ['core' => [], 'plugin' => [], 'theme' => [], 'translation' => []];
 
-        foreach ($buckets as $key => $group) {
-            $lt = sanitize_key((string) ($group[0]->log_type ?? ''));
-            if (!isset($by_type[$lt])) {
+        foreach ($buckets as $group) {
+            $first = $group[0];
+            $lt = sanitize_key((string) ($first->log_type ?? ''));
+            if (!isset($by_category[$lt])) {
                 continue;
             }
-            $by_type[$lt][$key] = $group;
+
+            $by_category[$lt][] = [
+                'sort_ts' => self::latest_timestamp($group),
+                'action_rank' => self::action_rank(sanitize_key((string) ($first->action_type ?? ''))),
+                'status_rank' => self::status_rank((string) ($first->status ?? '')),
+                'name' => mb_strtolower(self::real_name($first), 'UTF-8'),
+                'parts' => self::build_row_parts($group),
+                'row_span' => count($group),
+            ];
         }
 
         $records = [];
         $has_section = false;
 
-        $core_items = self::sorted_merge_lines($by_type['core'], $columns);
-        if ($core_items !== []) {
-            $records[] = ['line' => self::section_heading_core(), 'row_span' => 0];
-            $records[] = ['line' => self::section_detail_rule_heading(), 'row_span' => 0];
-            foreach ($core_items as $item) {
-                $records[] = $item;
+        /** @var array<int, array{parts: array{name: string, action: string, versions: string, dates: string, context: string, status: string}}> $all_items */
+        $all_items = [];
+        foreach (self::CATEGORY_ORDER as $lt) {
+            foreach ($by_category[$lt] as $item) {
+                $all_items[] = $item;
             }
-            $has_section = true;
         }
+        $widths = self::column_widths_for_rows($all_items);
 
-        $theme_items = self::sorted_merge_lines($by_type['theme'], $columns);
-        if ($theme_items !== []) {
+        foreach (self::CATEGORY_ORDER as $lt) {
+            $items = $by_category[$lt];
+            if ($items === []) {
+                continue;
+            }
+
+            usort(
+                $items,
+                static function (array $a, array $b): int {
+                    // Most recent activity first; action, status, and name break ties.
+                    $by_date = $b['sort_ts'] <=> $a['sort_ts'];
+                    if ($by_date !== 0) {
+                        return $by_date;
+                    }
+
+                    return [$a['action_rank'], $a['status_rank'], $a['name']]
+                        <=> [$b['action_rank'], $b['status_rank'], $b['name']];
+                }
+            );
+
             if ($has_section) {
                 $records[] = ['line' => '', 'row_span' => 0];
             }
-            $records[] = ['line' => self::section_heading_themes(), 'row_span' => 0];
-            $records[] = ['line' => self::section_detail_rule_heading(), 'row_span' => 0];
-            foreach ($theme_items as $item) {
-                $records[] = $item;
+            $records[] = ['line' => self::section_heading_for($lt), 'row_span' => 0];
+            foreach ($items as $item) {
+                $records[] = [
+                    'line' => self::format_row_parts($item['parts'], $widths),
+                    'row_span' => $item['row_span'],
+                ];
             }
             $has_section = true;
-        }
-
-        $plugin_items = self::sorted_merge_lines($by_type['plugin'], $columns);
-        if ($plugin_items !== []) {
-            if ($has_section) {
-                $records[] = ['line' => '', 'row_span' => 0];
-            }
-            $records[] = ['line' => self::section_heading_plugins(), 'row_span' => 0];
-            $records[] = ['line' => self::section_detail_rule_heading(), 'row_span' => 0];
-            foreach ($plugin_items as $item) {
-                $records[] = $item;
-            }
-            $has_section = true;
-        }
-
-        $translation_items = self::sorted_merge_lines($by_type['translation'], $columns);
-        if ($translation_items !== []) {
-            if ($has_section) {
-                $records[] = ['line' => '', 'row_span' => 0];
-            }
-            $records[] = ['line' => self::section_heading_translations(), 'row_span' => 0];
-            $records[] = ['line' => self::section_detail_rule_heading(), 'row_span' => 0];
-            foreach ($translation_items as $item) {
-                $records[] = $item;
-            }
         }
 
         return $records;
     }
 
     /**
-     * Format merged groups as list lines, sorted A–Z by sort label (case-insensitive).
+     * Build the display parts for one aggregate group (merged bucket or single row).
      *
-     * @param array<string, array<int, object>> $type_buckets merge_key => rows.
-     * @param array<string, bool>               $columns      Column toggles.
-     * @return array<int, array{line: string, row_span: int}>
+     * @param array<int, object> $group One or more rows sharing entity, action, and status.
+     * @return array{name: string, action: string, versions: string, dates: string, context: string, status: string}
      */
-    private static function sorted_merge_lines(array $type_buckets, array $columns): array {
-        $items = [];
-        foreach ($type_buckets as $group) {
-            if ($group === []) {
+    private static function build_row_parts(array $group): array {
+        usort(
+            $group,
+            static fn (object $a, object $b): int => strcmp((string) ($a->created_at ?? ''), (string) ($b->created_at ?? ''))
+        );
+        $first = $group[0];
+        $last = $group[count($group) - 1];
+
+        return [
+            'name' => self::real_name($last),
+            'action' => self::action_type_display_label(sanitize_key((string) ($first->action_type ?? ''))),
+            'versions' => self::compact_version_plain($group, $first),
+            'dates' => self::format_dates_list($group),
+            'context' => self::trigger_context_suffix($group),
+            'status' => self::status_label((string) ($first->status ?? '')),
+        ];
+    }
+
+    /**
+     * Measure the widest value per column across all data rows in one chunk.
+     *
+     * Widths are shared by every section so columns stay aligned throughout the
+     * report. Uses multibyte length so accented names and translated labels pad
+     * correctly. Optional columns (`versions`, `context`) are dropped when every
+     * row leaves them empty.
+     *
+     * @param array<int, array{parts: array{name: string, action: string, versions: string, dates: string, context: string, status: string}}> $items Data rows after sorting (section headings excluded).
+     * @return array<string, int> Column key => width in characters (0 means omit optional column).
+     */
+    private static function column_widths_for_rows(array $items): array {
+        $widths = array_fill_keys(self::ROW_PART_KEYS, 0);
+
+        foreach ($items as $item) {
+            foreach (self::ROW_PART_KEYS as $key) {
+                $length = mb_strlen($item['parts'][$key], 'UTF-8');
+                if ($length > $widths[$key]) {
+                    $widths[$key] = $length;
+                }
+            }
+        }
+
+        foreach (self::OPTIONAL_ROW_PART_KEYS as $key) {
+            if ($widths[$key] === 0) {
+                unset($widths[$key]);
+            }
+        }
+
+        return $widths;
+    }
+
+    /**
+     * Assemble one aligned line from row parts and precomputed section widths.
+     *
+     * Status is always the last column. Field order: name → action → versions →
+     * dates → context → status.
+     *
+     * @param array{name: string, action: string, versions: string, dates: string, context: string, status: string} $parts  Row values.
+     * @param array<string, int>                                                                                    $widths Section column widths.
+     * @return string
+     */
+    private static function format_row_parts(array $parts, array $widths): string {
+        $segments = [];
+
+        foreach (self::ROW_PART_KEYS as $key) {
+            if (!isset($widths[$key])) {
                 continue;
             }
-            usort(
-                $group,
-                static function (object $a, object $b): int {
-                    return strcmp((string) ($a->created_at ?? ''), (string) ($b->created_at ?? ''));
-                }
-            );
-            $line = self::format_merged_line($group, $columns);
-            $label = self::sort_label_for_group($group);
-            $items[] = [
-                'sort' => $label,
-                'line' => $line,
-                'row_span' => count($group),
-            ];
-        }
-        usort(
-            $items,
-            static fn (array $a, array $b): int => strcasecmp($a['sort'], $b['sort'])
-        );
-
-        $out = [];
-        foreach ($items as $item) {
-            $out[] = [
-                'line' => $item['line'],
-                'row_span' => $item['row_span'],
-            ];
+            $segments[] = self::pad_column($parts[$key], $widths[$key]);
         }
 
-        return $out;
+        return implode('  ', $segments);
     }
 
     /**
-     * Sort key: lowercased item name or slug (stable for A–Z).
+     * Pad a value to a minimum column width (multibyte-aware; never truncates).
      *
-     * @param array<int, object> $group Merged rows.
+     * @param string $value Field value.
+     * @param int    $width Minimum column width.
      * @return string
      */
-    private static function sort_label_for_group(array $group): string {
-        $row = $group[0] ?? null;
-        if (!is_object($row)) {
-            return '';
+    private static function pad_column(string $value, int $width): string {
+        $length = mb_strlen($value, 'UTF-8');
+        if ($length >= $width) {
+            return $value;
         }
-        $slug = trim((string) ($row->item_slug ?? ''));
-        $name = trim((string) ($row->item_name ?? ''));
-        $raw = $slug !== '' ? $slug : $name;
 
-        return mb_strtolower(self::normalize_field($raw), 'UTF-8');
+        return $value . str_repeat(' ', $width - $length);
     }
 
     /**
-     * Largest export title (first chunk only, via {@see render()}).
+     * Status label matching the admin UI ({@see Updatronix_Settings} and the log filters).
+     *
+     * @param string $status Raw status value.
+     * @return string Localised `Success`, `Error`, or `Cancelled`.
      */
-    private static function export_document_heading(): string {
-        return sprintf(
-            '=== %s ===',
-            __('Update log export', 'updatronix')
-        );
+    private static function status_label(string $status): string {
+        return match (strtolower(sanitize_key($status))) {
+            'error', 'failed', 'errors' => __('Error', 'updatronix'),
+            'cancelled' => __('Cancelled', 'updatronix'),
+            default => __('Success', 'updatronix'),
+        };
     }
 
     /**
-     * Small title line immediately before bullet lines under a section.
+     * Sort rank per status (successes first, failures last).
+     *
+     * @param string $status Raw status value.
+     * @return int
      */
-    private static function section_detail_rule_heading(): string {
-        return sprintf(
-            '= %s =',
-            /* translators: Narrow third-level export heading before bullet list. */
-            __('Updates', 'updatronix')
-        );
+    private static function status_rank(string $status): int {
+        return match (strtolower(sanitize_key($status))) {
+            'error', 'failed', 'errors' => 2,
+            'cancelled' => 1,
+            default => 0,
+        };
     }
 
     /**
-     * @return string
+     * Sort rank per action type.
+     *
+     * @param string $action Sanitized action type.
+     * @return int
      */
-    private static function section_heading_core(): string {
-        /* translators: %s: Core updates section (merged export). */
-        return sprintf('== %s ==', __('CORE', 'updatronix'));
+    private static function action_rank(string $action): int {
+        return self::ACTION_RANK[$action] ?? 99;
     }
 
     /**
-     * @return string
-     */
-    private static function section_heading_plugins(): string {
-        /* translators: %s: Plugin updates section. */
-        return sprintf('== %s ==', __('PLUGINS', 'updatronix'));
-    }
-
-    /**
-     * @return string
-     */
-    private static function section_heading_themes(): string {
-        /* translators: %s: Theme updates section. */
-        return sprintf('== %s ==', __('THEMES', 'updatronix'));
-    }
-
-    /**
-     * @return string
-     */
-    private static function section_heading_translations(): string {
-        /* translators: %s: Translation updates section. */
-        return sprintf('== %s ==', __('TRANSLATIONS', 'updatronix'));
-    }
-
-    /**
-     * Human/slug label for translation identifiers in export (slug preferred; lowercase).
+     * Human-readable item name (real name, not slug).
      *
      * @param object $row Representative row.
      * @return string
      */
-    private static function translation_export_list_label(object $row): string {
-        $slug = trim((string) ($row->item_slug ?? ''));
-        if ($slug !== '') {
-            return self::normalize_field(mb_strtolower($slug, 'UTF-8'));
+    private static function real_name(object $row): string {
+        $lt = sanitize_key((string) ($row->log_type ?? ''));
+        if ($lt === 'core') {
+            return 'WordPress';
         }
 
-        return self::normalize_field((string) ($row->item_name ?? ''));
+        $name = trim((string) ($row->item_name ?? ''));
+        if ($name !== '') {
+            return self::normalize_field($name);
+        }
+
+        $slug = trim((string) ($row->item_slug ?? ''));
+        if ($slug !== '') {
+            return self::normalize_field($slug);
+        }
+
+        return '—';
+    }
+
+    /**
+     * Comma-separated list of each event's date (ascending, de-duplicated),
+     * using site date and time preferences.
+     *
+     * @param array<int, object> $group Rows.
+     * @return string e.g. `2026-06-10 09:00, 2026-06-18 14:03` or `—`.
+     */
+    private static function format_dates_list(array $group): string {
+        $stamps = [];
+        foreach ($group as $row) {
+            $ts = strtotime((string) ($row->created_at ?? ''));
+            if ($ts !== false && $ts > 0) {
+                $stamps[] = $ts;
+            }
+        }
+        sort($stamps);
+
+        $out = [];
+        $seen = [];
+        foreach ($stamps as $ts) {
+            $formatted = self::format_export_datetime((int) $ts);
+            if ($formatted === '' || isset($seen[$formatted])) {
+                continue;
+            }
+            $seen[$formatted] = true;
+            $out[] = $formatted;
+        }
+
+        return $out === [] ? '—' : implode(', ', $out);
+    }
+
+    /**
+     * Most recent `created_at` in a group, for date-based section ordering.
+     *
+     * @param array<int, object> $group Rows.
+     * @return int Unix epoch, or 0 when none parse.
+     */
+    private static function latest_timestamp(array $group): int {
+        $latest = 0;
+        foreach ($group as $row) {
+            $ts = strtotime((string) ($row->created_at ?? ''));
+            if ($ts !== false && $ts > $latest) {
+                $latest = $ts;
+            }
+        }
+
+        return $latest;
+    }
+
+    /**
+     * Trigger and run-context suffix, shown only when every row agrees.
+     *
+     * @param array<int, object> $group Rows.
+     * @return string e.g. `(manual, bulk)` or empty.
+     */
+    private static function trigger_context_suffix(array $group): string {
+        $triggers = [];
+        foreach ($group as $row) {
+            $triggers[sanitize_key((string) ($row->performed_as ?? ''))] = true;
+        }
+        unset($triggers['']);
+
+        $trigger = '';
+        if (count($triggers) === 1) {
+            $trigger = match (array_key_first($triggers)) {
+                'manual' => __('manual', 'updatronix'),
+                'automatic' => __('automatic', 'updatronix'),
+                'upload' => __('upload', 'updatronix'),
+                default => '',
+            };
+        }
+
+        $contexts = [];
+        $all_have_context = true;
+        foreach ($group as $row) {
+            $ctx = sanitize_key((string) ($row->update_context ?? ''));
+            if ($ctx === '') {
+                $all_have_context = false;
+            }
+            $contexts[$ctx] = true;
+        }
+
+        $context = '';
+        if ($all_have_context && count($contexts) === 1) {
+            $context = match (array_key_first($contexts)) {
+                'bulk' => __('bulk', 'updatronix'),
+                'single' => __('single', 'updatronix'),
+                default => '',
+            };
+        }
+
+        $parts = [];
+        if ($trigger !== '') {
+            $parts[] = $trigger;
+        }
+        if ($context !== '') {
+            $parts[] = $context;
+        }
+
+        if ($parts === []) {
+            return '';
+        }
+
+        return '(' . implode(', ', $parts) . ')';
+    }
+
+    /**
+     * Localised action label aligned with {@see Updatronix_Settings::enrich_log_for_display()}.
+     *
+     * @param string $action_type Sanitized action key.
+     * @return string
+     */
+    private static function action_type_display_label(string $action_type): string {
+        return match ($action_type) {
+            'update' => __('Update', 'updatronix'),
+            'downgrade' => __('Rollback', 'updatronix'),
+            'install' => __('Install', 'updatronix'),
+            'same_version' => __('Reinstall', 'updatronix'),
+            'failed' => __('Failed', 'updatronix'),
+            'uninstall' => __('Uninstall', 'updatronix'),
+            default => $action_type !== '' ? $action_type : '',
+        };
+    }
+
+    /**
+     * Section heading for a category.
+     *
+     * @param string $lt Sanitized log type.
+     * @return string
+     */
+    private static function section_heading_for(string $lt): string {
+        return match ($lt) {
+            'core' => sprintf('== %s ==', __('CORE', 'updatronix')),
+            'plugin' => sprintf('== %s ==', __('PLUGINS', 'updatronix')),
+            'theme' => sprintf('== %s ==', __('THEMES', 'updatronix')),
+            'translation' => sprintf('== %s ==', __('TRANSLATIONS', 'updatronix')),
+            default => sprintf('== %s ==', mb_strtoupper($lt, 'UTF-8')),
+        };
+    }
+
+    /**
+     * WordPress Reading → date + time preference (Settings → General), site timezone via {@see wp_date()}.
+     */
+    private static function export_datetime_pattern(): string {
+        $df = wp_unslash((string) get_option('date_format', 'Y-m-d'));
+        $tf = wp_unslash((string) get_option('time_format', 'H:i'));
+
+        return trim($df . ' ' . $tf);
+    }
+
+    /**
+     * @param int $ts Unix epoch (validated).
+     * @return string Localised formatted timestamp; empty on failure.
+     */
+    private static function format_export_datetime(int $ts): string {
+        if ($ts <= 0) {
+            return '';
+        }
+
+        return wp_date(self::export_datetime_pattern(), $ts, wp_timezone()) ?: '';
     }
 
     /**
@@ -444,7 +603,7 @@ final class Updatronix_Export_Body_Builder {
         // Plugin updates sometimes log the main PHP file (`dir/plugin.php`). Folder is the canonical slug.
         if ($lt === 'plugin' && str_contains($slug, '/')) {
             $folder = dirname($slug);
-            if ($folder !== '' && $folder !== '.') {
+            if ($folder !== '.') {
                 $slug = $folder;
             }
         }
@@ -453,14 +612,26 @@ final class Updatronix_Export_Body_Builder {
     }
 
     /**
-     * Stable merge key for log rows within a chunk.
-     *
-     * Translation rows split per slug/name so lists can enumerate packages.
+     * Stable merge key: entity, then action type, then status, so a merged line is
+     * homogeneous and can be sorted and tagged unambiguously.
      *
      * @param object $row Row object.
      * @return string Non-readable delimiter-separated key.
      */
     private static function merge_key(object $row): string {
+        $action = sanitize_key((string) ($row->action_type ?? ''));
+        $status = strtolower(sanitize_key((string) ($row->status ?? '')));
+
+        return self::merge_entity_key($row) . "\x00" . $action . "\x00" . $status;
+    }
+
+    /**
+     * Entity portion of the merge key (per plugin, theme, core release, or translation package).
+     *
+     * @param object $row Row object.
+     * @return string
+     */
+    private static function merge_entity_key(object $row): string {
         $lt = sanitize_key((string) ($row->log_type ?? ''));
 
         // Core: manual completion logs `item_slug` as "core"; automatic completion often leaves it empty.
@@ -493,273 +664,6 @@ final class Updatronix_Export_Body_Builder {
         }
 
         return $lt . "\x00_";
-    }
-
-    /**
-     * @param object               $row     Row.
-     * @param array<string, bool>  $columns toggles.
-     * @return string
-     */
-    private static function format_single_line(object $row, array $columns): string {
-        return self::format_aggregate_line([$row], $columns);
-    }
-
-    /**
-     * @param array<int, object>  $group   Rows sharing merge key (sorted chronologically).
-     * @param array<string, bool> $columns Segment toggles.
-     * @return string
-     */
-    private static function format_merged_line(array $group, array $columns): string {
-        usort(
-            $group,
-            static function (object $a, object $b): int {
-                return strcmp((string) ($a->created_at ?? ''), (string) ($b->created_at ?? ''));
-            }
-        );
-
-        return self::format_aggregate_line($group, $columns);
-    }
-
-    /**
-     * @param array<int, object>  $group   One or more rows (sorted ASC by created_at).
-     * @param array<string, bool> $columns Segment toggles.
-     * @return string Single bullet-prefixed line.
-     */
-    private static function format_aggregate_line(array $group, array $columns): string {
-        $first = $group[0];
-        $last = $group[count($group) - 1];
-
-        $chunks = [];
-
-        if (!empty($columns['date'])) {
-            $chunks[] = self::export_datetime_bracket($group, $first, $last);
-        }
-
-        if (!empty($columns['category'])) {
-            $chunks[] = self::export_category_bracket($last);
-        }
-
-        if (!empty($columns['status'])) {
-            $chunks[] = self::export_status_bracket_for_group($group);
-        }
-
-        if (!empty($columns['action_type'])) {
-            $chunks[] = self::export_action_bracket_for_group($group);
-        }
-
-        $chunks[] = self::export_human_identifier($last);
-        $chunks[] = self::compact_version_plain($group, $first);
-
-        $chunks = array_filter(array_map(static fn ($p): ?string => $p !== '' ? $p : null, $chunks));
-        $main = implode(' ', $chunks);
-
-        $suffix = self::human_export_optional_suffix($group, $columns);
-        if ($suffix !== '') {
-            $main .= ' ' . $suffix;
-        }
-
-        return '* ' . self::normalize_field($main);
-    }
-
-    /**
-     * WordPress Reading → date + time preference (Settings → General), site timezone via {@see wp_date()}.
-     */
-    private static function export_datetime_pattern(): string {
-        $df = wp_unslash((string) get_option('date_format', 'Y-m-d'));
-        $tf = wp_unslash((string) get_option('time_format', 'H:i'));
-
-        return trim($df . ' ' . $tf);
-    }
-
-    /**
-     * @param int $ts Unix epoch (validated).
-     * @return string Localised formatted timestamp; empty on failure.
-     */
-    private static function format_export_datetime(int $ts): string {
-        if ($ts <= 0) {
-            return '';
-        }
-
-        return wp_date(self::export_datetime_pattern(), $ts, wp_timezone()) ?: '';
-    }
-
-    /**
-     * @param array<int, object> $group Rows.
-     * @param object               $first First chronologically.
-     * @param object               $last  Last chronologically.
-     * @return string Bracketed single time or localized range `[a → b]`.
-     */
-    private static function export_datetime_bracket(array $group, object $first, object $last): string {
-        $ts_min = strtotime((string) ($first->created_at ?? ''));
-        $ts_max = strtotime((string) ($last->created_at ?? ''));
-
-        if ($ts_min === false) {
-            $ts_min = 0;
-        }
-        if ($ts_max === false) {
-            $ts_max = $ts_min;
-        }
-        if ($ts_min <= 0) {
-            $ts_min = $ts_max > 0 ? $ts_max : 0;
-        }
-        if ($ts_max <= 0) {
-            $ts_max = $ts_min;
-        }
-
-        $fmin = self::format_export_datetime((int) $ts_min);
-        $fmax = self::format_export_datetime((int) $ts_max);
-
-        $one = $fmin !== '' ? $fmin : $fmax;
-        $two = $fmax !== '' ? $fmax : $fmin;
-
-        if ($one === '' && $two === '') {
-            return '[' . _x('?', 'Placeholder when exported log row timestamp is unreadable', 'updatronix') . ']';
-        }
-
-        if ($one === $two || count($group) === 1) {
-            return '[' . $one . ']';
-        }
-
-        return sprintf(
-            /* translators: 1: Start datetime (site preferences). 2: End datetime. */
-            __('[%1$s → %2$s]', 'updatronix'),
-            $one,
-            $two
-        );
-    }
-
-    /**
-     * @param object $representative Typical last row chronologically within the merge bucket.
-     * @return string e.g. "[PLUGIN]".
-     */
-    private static function export_category_bracket(object $representative): string {
-        $lt = sanitize_key((string) ($representative->log_type ?? ''));
-
-        $label = match ($lt) {
-            'core' => _x('CORE', 'Compressed log-export category label', 'updatronix'),
-            'plugin' => _x('PLUGIN', 'Compressed log-export category label', 'updatronix'),
-            'theme' => _x('THEME', 'Compressed log-export category label', 'updatronix'),
-            'translation' => _x('TRANSLATION', 'Compressed log-export category label', 'updatronix'),
-            default => mb_strtoupper($lt !== '' ? mb_substr($lt, 0, 13, 'UTF-8') : '—', 'UTF-8'),
-        };
-
-        return '[' . $label . ']';
-    }
-
-    /**
-     * Status bracket when every row agrees (activity log wording); mixed rows → omitted.
-     *
-     * @param array<int, object> $group Rows in one merged or single-row group.
-     * @return string e.g. "[Success]" or empty.
-     */
-    private static function export_status_bracket_for_group(array $group): string {
-        $by_flat = [];
-        foreach ($group as $row) {
-            $raw = trim((string) ($row->status ?? ''));
-            if ($raw === '') {
-                continue;
-            }
-            $flat = strtolower(sanitize_key($raw));
-            $by_flat[$flat] = $raw;
-        }
-
-        if (count($by_flat) !== 1) {
-            return '';
-        }
-
-        $flat = array_key_first($by_flat);
-        $sample_raw = $by_flat[$flat];
-
-        $label = match ($flat) {
-            'success', 'updated', 'ok' => __('Success', 'updatronix'),
-            'warning', 'warn' => __('Warning', 'updatronix'),
-            'error', 'failed', 'errors' => __('Error', 'updatronix'),
-            'cancelled' => __('Cancelled', 'updatronix'),
-            default => '',
-        };
-
-        if ($label === '') {
-            $label = $sample_raw;
-        }
-
-        return '[' . $label . ']';
-    }
-
-    /**
-     * Action type label when all rows share the same action (matches log list / details).
-     *
-     * @param array<int, object> $group Rows.
-     * @return string e.g. "[Update]" or empty.
-     */
-    private static function export_action_bracket_for_group(array $group): string {
-        $uniq = [];
-        foreach ($group as $row) {
-            $k = sanitize_key((string) ($row->action_type ?? ''));
-            if ($k !== '') {
-                $uniq[$k] = true;
-            }
-        }
-
-        if (count($uniq) !== 1) {
-            return '';
-        }
-
-        $label = self::action_type_display_label(array_key_first($uniq));
-
-        return $label !== '' ? '[' . $label . ']' : '';
-    }
-
-    /**
-     * Localised action label aligned with {@see Updatronix_Settings::enrich_log_for_display()}.
-     *
-     * @param string $action_type Sanitized action key.
-     * @return string
-     */
-    private static function action_type_display_label(string $action_type): string {
-        return match ($action_type) {
-            'update' => __('Update', 'updatronix'),
-            'downgrade' => __('Rollback', 'updatronix'),
-            'install' => __('Install', 'updatronix'),
-            'same_version' => __('Reinstall', 'updatronix'),
-            'failed' => __('Failed', 'updatronix'),
-            'uninstall' => __('Uninstall', 'updatronix'),
-            default => $action_type !== '' ? $action_type : '',
-        };
-    }
-
-    /**
-     * Slug-like lowercase token for the exported line (`woocommerce`, `wordpress`, …).
-     *
-     * @param object $representative Representative row for category/slug/name.
-     * @return string
-     */
-    private static function export_human_identifier(object $representative): string {
-        $lt = sanitize_key((string) ($representative->log_type ?? ''));
-
-        if ($lt === 'core') {
-            return 'wordpress';
-        }
-
-        $slug_raw = trim((string) ($representative->item_slug ?? ''));
-        if ($slug_raw !== '') {
-            $tok = self::normalise_item_slug_token_for_merge($slug_raw, $lt);
-            if ($tok !== '') {
-                return strtolower($tok);
-            }
-        }
-
-        if ($lt === 'translation') {
-            return self::translation_export_list_label($representative);
-        }
-
-        return strtolower(
-            self::normalize_field(
-                (string) (
-                    $representative->item_name
-                    ?: _x('item', 'Fallback export slug when neither slug nor translation label exists', 'updatronix')
-                )
-            )
-        );
     }
 
     /**
@@ -839,152 +743,5 @@ final class Updatronix_Export_Body_Builder {
         }
 
         return $from;
-    }
-
-    /**
-     * @param array<int, object>  $group   Rows.
-     * @param array<string, bool> $columns Optional detail toggles.
-     * @return string Space-prefixed optional suffix (empty → none).
-     */
-    private static function human_export_optional_suffix(array $group, array $columns): string {
-        $extras = [];
-
-        $trig = self::segment_trigger($group, !empty($columns['trigger_type']));
-        if ($trig !== '') {
-            $extras[] = $trig;
-        }
-
-        $run = self::segment_run_context($group, !empty($columns['run_context']));
-        if ($run !== '') {
-            $extras[] = $run;
-        }
-
-        $usr = self::segment_user($group, !empty($columns['user']));
-        if ($usr !== '') {
-            $extras[] = $usr;
-        }
-
-        if ($extras === []) {
-            return '';
-        }
-
-        return implode(' ', $extras);
-    }
-
-    /**
-     * @param array<int, object> $group            Rows.
-     * @param bool               $column_requested Checkbox enabled.
-     * @return string
-     */
-    private static function segment_trigger(array $group, bool $column_requested): string {
-        if (!$column_requested) {
-            return '';
-        }
-
-        $uniq = [];
-        foreach ($group as $row) {
-            $uniq[sanitize_key((string) ($row->performed_as ?? ''))] = true;
-        }
-        unset($uniq['']);
-
-        if (count($uniq) !== 1) {
-            return '';
-        }
-
-        $as = array_key_first($uniq);
-        $label = match ($as) {
-            'manual' => __('manual', 'updatronix'),
-            'automatic' => __('automatic', 'updatronix'),
-            'upload' => __('upload', 'updatronix'),
-            default => '',
-        };
-
-        return $label !== '' ? '(' . $label . ')' : '';
-    }
-
-    /**
-     * @param array<int, object> $group            Rows.
-     * @param bool               $column_requested Checkbox enabled.
-     * @return string
-     */
-    private static function segment_run_context(array $group, bool $column_requested): string {
-        if (!$column_requested) {
-            return '';
-        }
-
-        foreach ($group as $row) {
-            $ctx = sanitize_key((string) ($row->update_context ?? ''));
-            if ($ctx === '') {
-                return '';
-            }
-        }
-
-        $uniq = [];
-        foreach ($group as $row) {
-            $ctx = sanitize_key((string) ($row->update_context ?? ''));
-            $uniq[$ctx] = true;
-        }
-
-        if (count($uniq) !== 1) {
-            return '';
-        }
-
-        $ctx = array_key_first($uniq);
-
-        return match ($ctx) {
-            'bulk' => '[' . __('bulk', 'updatronix') . ']',
-            'single' => '[' . __('single', 'updatronix') . ']',
-            default => '',
-        };
-    }
-
-    /**
-     * @param array<int, object> $group            Rows.
-     * @param bool               $column_requested Checkbox enabled.
-     * @return string
-     */
-    private static function segment_user(array $group, bool $column_requested): string {
-        if (!$column_requested) {
-            return '';
-        }
-
-        $labels = [];
-        foreach ($group as $row) {
-            $labels[] = self::user_token_for_row($row);
-        }
-        $labels = array_values(array_unique($labels));
-
-        if (count($labels) !== 1) {
-            return '';
-        }
-
-        return sprintf(
-            /* translators: %s: User display name or localized "system". */
-            __('by %s', 'updatronix'),
-            $labels[0]
-        );
-    }
-
-    /**
-     * @param object $row Row.
-     * @return string Normalised token (never empty for valid rows).
-     */
-    private static function user_token_for_row(object $row): string {
-        $pb = sanitize_key((string) ($row->performed_by ?? ''));
-        $uid = (int) ($row->user_id ?? 0);
-
-        if ($pb === 'system' || $uid <= 0) {
-            return __('system', 'updatronix');
-        }
-
-        $user = get_userdata($uid);
-
-        return $user
-            ? self::normalize_field((string) $user->display_name)
-            : sprintf(
-                /* translators: %d: WordPress user ID when display name is not available */
-                __('User #%d', 'updatronix'),
-                $uid
-            );
     }
 }

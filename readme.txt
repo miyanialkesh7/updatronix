@@ -131,6 +131,8 @@ Yes. Each site on the network keeps its own update history.
 = 1.1 =
 * i18n: Save buttons now use "Save Changes" to match native WordPress settings screens.
 * Improvement: Activity log DataViews toolbar includes a compact Export logs control (upload icon, minimal style; wiring TBD).
+* Change: Streamlined the Update logs export modal — removed the optional "Details to include in each line" toggles; exports keep the standard date, category, status, and action details. Filter handling now flows from a single shared registry.
+* Change: Redesigned the export report — each entry is grouped by category (Core, Plugins, Themes, Translations) in both merge modes and sorted by date (most recent first). Lines read as a short audit sentence: real item name, action, status (Success, Error, Cancelled), version change, the date of each event, and the trigger and run context when available. Merged entries list every event date. Removed the document title and the per-section "Updates" heading.
 * New: Schedule tab — pick how often WordPress checks for updates (every hour, twice a day, daily, or weekly) and a preferred time of day.
 * New: Hold automatic updates for a chosen number of days after they appear, with a friendly notice on the Updates, Plugins, and Themes screens explaining the wait.
 * New: One-click switch in Settings to turn off all WordPress update notification emails (recovery mode emails are kept on so you never get locked out).

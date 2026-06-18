@@ -8,240 +8,11 @@ import {
 	Modal,
 	Button,
 	ToggleControl,
-	CheckboxControl,
 	TextareaControl,
 	Notice,
 } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
-
-/**
- * Clone view + coerce categorical filters so REST receives canonical stored keys (not translated labels).
- *
- * @param {Object} view DataViews view snapshot.
- * @param {Array}  logs Raw logs from REST (for resolving display-name filters).
- * @return {Object} Deep-cloned view safe for POST export.
- */
-export function normalizeViewForExport(view, logs = []) {
-	const clone =
-		view && typeof view === 'object'
-			? JSON.parse(JSON.stringify(view))
-			: { filters: [], search: '', sort: {} };
-
-	if (!Array.isArray(clone.filters)) {
-		clone.filters = [];
-	}
-
-	const bulkLabel = __('Bulk action', 'updatronix');
-	const singleLabel = __('Single action', 'updatronix');
-
-	const normalizeScalarRunType = (raw) => {
-		const s = String(raw ?? '').trim();
-		if (!s) {
-			return s;
-		}
-		const lower = s.toLowerCase();
-		if (lower === 'bulk' || lower === 'single') {
-			return lower;
-		}
-		if (s === bulkLabel || lower === String(bulkLabel).toLowerCase()) {
-			return 'bulk';
-		}
-		if (s === singleLabel || lower === String(singleLabel).toLowerCase()) {
-			return 'single';
-		}
-
-		return sanitizeExportKey(s);
-	};
-
-	const normalizeTriggeredScalar = (raw) => {
-		const lower = String(raw ?? '')
-			.trim()
-			.toLowerCase();
-		if (['manual', 'automatic', 'upload'].includes(lower)) {
-			return lower;
-		}
-
-		return sanitizeExportKey(raw);
-	};
-
-	const normalizeUserScalar = (raw) => {
-		const key = String(raw ?? '')
-			.trim()
-			.toLowerCase();
-		if (key === 'system') {
-			return 'system';
-		}
-
-		const numeric = Number.parseInt(String(raw ?? '').trim(), 10);
-		if (!Number.isNaN(numeric) && numeric > 0) {
-			return numeric;
-		}
-
-		const row = logs.find(
-			(log) =>
-				String(log.performed_by_display ?? '') ===
-				String(raw ?? '').trim()
-		);
-		if (row && String(row.performed_by ?? '') === 'system') {
-			return 'system';
-		}
-		if (row && Number(row.user_id) > 0) {
-			return Number(row.user_id);
-		}
-
-		return raw;
-	};
-
-	clone.filters = clone.filters.map((f) => {
-		if (!f || typeof f !== 'object') {
-			return f;
-		}
-		const field = String(f.field ?? '');
-		const out = { ...f };
-
-		if (field === 'runType') {
-			const val = out.value;
-			if (Array.isArray(val)) {
-				out.value = val.map(normalizeScalarRunType);
-			} else {
-				out.value = normalizeScalarRunType(val);
-			}
-		}
-
-		if (field === 'triggeredBy') {
-			const val = out.value;
-			if (Array.isArray(val)) {
-				out.value = val.map(normalizeTriggeredScalar);
-			} else {
-				out.value = normalizeTriggeredScalar(val);
-			}
-		}
-
-		if (field === 'user') {
-			out.value = normalizeUserScalar(out.value);
-		}
-
-		return out;
-	});
-
-	return clone;
-}
-
-/**
- * Normalise categorical tokens for strict REST allowlists.
- *
- * @param {unknown} raw Filter value fragment.
- * @return {string} Normalised lowercase token.
- */
-function sanitizeExportKey(raw) {
-	return String(raw ?? '')
-		.trim()
-		.toLowerCase()
-		.replace(/[^a-z0-9_-]/g, '');
-}
-
-/**
- * Active dimension summaries for the modal (React text nodes only).
- *
- * @param {Object} view Normalised export view.
- * @return {{ dimensions: Array<{ key: string, label: string, text: string }>, sortLine: { label: string, text: string } }} Dimension rows and the locked sort row.
- */
-function buildFilterSummaryParts(view) {
-	const dimensions = [];
-
-	if (view.search && String(view.search).trim() !== '') {
-		dimensions.push({
-			key: 'search',
-			label: __('Search', 'updatronix'),
-			text: `"${String(view.search)}"`,
-		});
-	}
-
-	const fieldLabels = {
-		category: __('Category', 'updatronix'),
-		actionType: __('Action type', 'updatronix'),
-		status: __('Status', 'updatronix'),
-		triggeredBy: __('Triggered by', 'updatronix'),
-		runType: __('Run type', 'updatronix'),
-		user: __('User', 'updatronix'),
-		date: __('Date', 'updatronix'),
-	};
-
-	const describeValues = (values) =>
-		Array.isArray(values)
-			? values.map((v) => String(v)).join(', ')
-			: String(values ?? '');
-
-	for (const f of view.filters ?? []) {
-		if (!f || typeof f !== 'object') {
-			continue;
-		}
-		const field = String(f.field ?? '');
-		const label = fieldLabels[field];
-		if (!label) {
-			continue;
-		}
-
-		let text = '';
-		const op = String(f.operator ?? '');
-		const val = f.value;
-
-		if (field === 'date') {
-			text = `${op}: ${describeValues(val)}`;
-		} else {
-			text = describeValues(val);
-		}
-
-		dimensions.push({
-			key: `${field}-${op}-${JSON.stringify(val)}`,
-			label,
-			text,
-		});
-	}
-
-	if (
-		Object.prototype.hasOwnProperty.call(view, 'perPage') ||
-		Object.prototype.hasOwnProperty.call(view, 'per_page')
-	) {
-		const perRaw = Object.prototype.hasOwnProperty.call(view, 'perPage')
-			? view.perPage
-			: view.per_page;
-		const perNum = Number(perRaw);
-		const pageRaw = Number(view.page);
-		const pageNum =
-			Number.isFinite(pageRaw) && pageRaw >= 1 ? Math.trunc(pageRaw) : 1;
-		if (Number.isFinite(perNum) && perNum >= 1) {
-			const perRounded = Math.trunc(perNum);
-			dimensions.push({
-				key: `page-${pageNum}-per-${perRounded}`,
-				label: __('Page', 'updatronix'),
-				text: sprintf(
-					/* translators: 1: Current page number, 2: Items per page. */
-					__('Page %1$d (%2$d per page)', 'updatronix'),
-					pageNum,
-					perRounded
-				),
-			});
-		}
-	}
-
-	const sortField = view.sort?.field ?? 'date';
-	const sortDir = view.sort?.direction ?? 'desc';
-	const sortLabel =
-		sortField === 'date' ? __('Date', 'updatronix') : String(sortField);
-
-	const dirLabel =
-		sortDir === 'asc'
-			? __('oldest first', 'updatronix')
-			: __('newest first', 'updatronix');
-
-	const sortLine = {
-		label: __('Sort', 'updatronix'),
-		text: `${sortLabel} (${dirLabel})`,
-	};
-
-	return { dimensions, sortLine };
-}
+import { normalizeViewForExport, summarizeView } from './logFilters';
 
 /**
  * Export modal entrypoint.
@@ -262,15 +33,6 @@ export function ExportLogsModal({
 	exportTriggerRef,
 }) {
 	const [merge, setMerge] = useState(true);
-	const [cols, setCols] = useState({
-		date: true,
-		category: true,
-		status: true,
-		action_type: true,
-		user: false,
-		trigger_type: false,
-		run_context: false,
-	});
 	const [busy, setBusy] = useState(false);
 	const [body, setBody] = useState('');
 	const [notice, setNotice] = useState(null);
@@ -283,7 +45,7 @@ export function ExportLogsModal({
 	);
 
 	const summaryParts = useMemo(
-		() => buildFilterSummaryParts(normalizedView),
+		() => summarizeView(normalizedView),
 		[normalizedView]
 	);
 
@@ -342,18 +104,16 @@ export function ExportLogsModal({
 
 		try {
 			while (true) {
-				/** @type {{ cursor?: string, view?: Object, merge?: boolean, columns?: Object }} */
+				/** @type {{ cursor?: string, view?: Object, merge?: boolean }} */
 				const payload = cursor
 					? {
 							cursor,
 							view: normalizedView,
 							merge,
-							columns: cols,
 						}
 					: {
 							view: normalizedView,
 							merge,
-							columns: cols,
 						};
 
 				const response = await apiFetch({
@@ -441,7 +201,7 @@ export function ExportLogsModal({
 		} finally {
 			setBusy(false);
 		}
-	}, [cols, mapExportError, merge, normalizedView, resetOutput]);
+	}, [mapExportError, merge, normalizedView, resetOutput]);
 
 	if (!isOpen) {
 		return null;
@@ -501,70 +261,6 @@ export function ExportLogsModal({
 				__nextHasNoMarginBottom
 			/>
 
-			<fieldset className="updatronix-export-modal__segments">
-				<legend>
-					{__(
-						'Optional details to include in each line',
-						'updatronix'
-					)}
-				</legend>
-				<CheckboxControl
-					label={__('Include the date', 'updatronix')}
-					checked={cols.date}
-					onChange={(v) => setCols((s) => ({ ...s, date: !!v }))}
-					disabled={busy}
-					__nextHasNoMarginBottom
-				/>
-				<CheckboxControl
-					label={__('Include the category', 'updatronix')}
-					checked={cols.category}
-					onChange={(v) => setCols((s) => ({ ...s, category: !!v }))}
-					disabled={busy}
-					__nextHasNoMarginBottom
-				/>
-				<CheckboxControl
-					label={__('Include the action', 'updatronix')}
-					checked={cols.action_type}
-					onChange={(v) =>
-						setCols((s) => ({ ...s, action_type: !!v }))
-					}
-					disabled={busy}
-					__nextHasNoMarginBottom
-				/>
-				<CheckboxControl
-					label={__('Include the status', 'updatronix')}
-					checked={cols.status}
-					onChange={(v) => setCols((s) => ({ ...s, status: !!v }))}
-					disabled={busy}
-					__nextHasNoMarginBottom
-				/>
-				<CheckboxControl
-					label={__('Include the user', 'updatronix')}
-					checked={cols.user}
-					onChange={(v) => setCols((s) => ({ ...s, user: !!v }))}
-					disabled={busy}
-					__nextHasNoMarginBottom
-				/>
-				<CheckboxControl
-					label={__('Include the trigger type', 'updatronix')}
-					checked={cols.trigger_type}
-					onChange={(v) =>
-						setCols((s) => ({ ...s, trigger_type: !!v }))
-					}
-					disabled={busy}
-					__nextHasNoMarginBottom
-				/>
-				<CheckboxControl
-					label={__('Include the run type', 'updatronix')}
-					checked={cols.run_context}
-					onChange={(v) =>
-						setCols((s) => ({ ...s, run_context: !!v }))
-					}
-					disabled={busy}
-					__nextHasNoMarginBottom
-				/>
-			</fieldset>
-
 			<div className="updatronix-export-modal__actions">
 				<Button
 					variant="primary"
@@ -598,6 +294,7 @@ export function ExportLogsModal({
 
 			{notice?.status === 'info' ? null : (
 				<TextareaControl
+					className="updatronix-export-modal__output"
 					label={__('Export output', 'updatronix')}
 					help={__(
 						'Select all and copy this report to save it. The export expires after 15 minutes.',
