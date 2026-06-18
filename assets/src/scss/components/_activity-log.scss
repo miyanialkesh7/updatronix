@@ -46,4 +46,11 @@
 			overflow-x: auto;
 		}
 	}
+
+	&__copy-actions {
+		display: flex;
+		flex-wrap: wrap;
+		gap: var(--wpds-dimension-gap-sm);
+		margin-top: var(--wpds-dimension-gap-sm);
+	}
 }

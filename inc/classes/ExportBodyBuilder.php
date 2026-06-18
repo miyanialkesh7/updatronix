@@ -8,16 +8,18 @@
  * merge modes. Within each section, lines are ordered by date (most recent
  * activity first), then by action, status, and name as tie-breakers.
  *
- * Each line reads as a short audit sentence (subject → event → detail →
- * detail → when → how → outcome). Column widths are computed once per chunk from
- * the longest value in each field so rows align throughout the report:
+ * Each line reads as a short audit sentence (subject → event → detail → when →
+ * how → user → outcome). Column widths are computed once per chunk from the
+ * longest value in each field so rows align throughout the report:
  *
- *     WooCommerce          Update      8.0 → 8.2   2026-06-10 09:00, 2026-06-18 14:03   (manual, bulk)   Success
+ *     Element                Action      Version          Date                     Run context        User     Status
+ *     ---------------------- ----------- ---------------- ------------------------ ------------------ -------- ---------
+ *     WooCommerce            Update      8.0 → 8.2        2026-06-10 09:00, …      (manual, bulk)     admin    Success
  *
- * The status label matches the admin UI (`Success` / `Error` / `Cancelled`) and
- * is always the last column. A merged line lists every event date separated by
- * commas. Trigger and run context (`manual` / `automatic` / `upload`, `bulk` /
- * `single`) are appended in parentheses only when every row in the line agrees.
+ * The user column shows the WordPress display name or `System` for automatic
+ * updates. Merged lines list distinct users separated by commas. The status
+ * label matches the admin UI (`Success` / `Error` / `Cancelled`) and is always
+ * the last column. A merged line lists every event date separated by commas.
  *
  * Merge grouping applies **within each SQL chunk only** (rows passed to {@see render()}),
  * and collapses rows that share entity, action, and status.
@@ -56,10 +58,16 @@ final class Updatronix_Export_Body_Builder {
     ];
 
     /** Column keys used for per-section width measurement and line assembly. */
-    private const ROW_PART_KEYS = ['name', 'action', 'versions', 'dates', 'context', 'status'];
+    private const ROW_PART_KEYS = ['name', 'action', 'versions', 'dates', 'context', 'user', 'status'];
 
     /** Optional columns omitted from a section when every row value is empty. */
     private const OPTIONAL_ROW_PART_KEYS = ['versions', 'context'];
+
+    /** Non-breaking space — padding and gaps survive rich-text paste (Word, email). */
+    private const PAD_CHAR = "\u{00A0}";
+
+    /** Two NBSPs between columns; regular spaces collapse in HTML paste targets. */
+    private const COLUMN_GAP = "\u{00A0}\u{00A0}";
 
     /**
      * Append formatted rows respecting merge mode and per-chunk byte cap.
@@ -85,6 +93,7 @@ final class Updatronix_Export_Body_Builder {
         switch_to_user_locale(get_current_user_id());
 
         try {
+            self::prime_user_cache($rows);
             $records = self::build_sectioned_records($rows, $merge);
 
             return self::emit_until_cap($records, $existing_chunk_body, $max_chunk_bytes);
@@ -254,6 +263,8 @@ final class Updatronix_Export_Body_Builder {
                 $records[] = ['line' => '', 'row_span' => 0];
             }
             $records[] = ['line' => self::section_heading_for($lt), 'row_span' => 0];
+            $records[] = ['line' => self::format_column_header_row($widths), 'row_span' => 0];
+            $records[] = ['line' => self::format_column_separator_row($widths), 'row_span' => 0];
             foreach ($items as $item) {
                 $records[] = [
                     'line' => self::format_row_parts($item['parts'], $widths),
@@ -270,7 +281,7 @@ final class Updatronix_Export_Body_Builder {
      * Build the display parts for one aggregate group (merged bucket or single row).
      *
      * @param array<int, object> $group One or more rows sharing entity, action, and status.
-     * @return array{name: string, action: string, versions: string, dates: string, context: string, status: string}
+     * @return array{name: string, action: string, versions: string, dates: string, context: string, user: string, status: string}
      */
     private static function build_row_parts(array $group): array {
         usort(
@@ -286,8 +297,79 @@ final class Updatronix_Export_Body_Builder {
             'versions' => self::compact_version_plain($group, $first),
             'dates' => self::format_dates_list($group),
             'context' => self::trigger_context_suffix($group),
+            'user' => self::format_users_list($group),
             'status' => self::status_label((string) ($first->status ?? '')),
         ];
+    }
+
+    /**
+     * Warm the user cache for every numeric `user_id` in an export chunk.
+     *
+     * @param array<int, object> $rows Rows from {@see Updatronix_Export_Query_Builder::fetch_rows()}.
+     * @return void
+     */
+    private static function prime_user_cache(array $rows): void {
+        $user_ids = [];
+        foreach ($rows as $row) {
+            $uid = (int) ($row->user_id ?? 0);
+            if ($uid > 0) {
+                $user_ids[$uid] = true;
+            }
+        }
+
+        if ($user_ids !== []) {
+            cache_users(array_map('intval', array_keys($user_ids)));
+        }
+    }
+
+    /**
+     * Display label for the user who performed one log row.
+     *
+     * Mirrors {@see Updatronix_Settings::enrich_log_for_display()}.
+     *
+     * @param object $row Log row.
+     * @return string Localised display name or `System`.
+     */
+    private static function user_label_for_row(object $row): string {
+        $user_id = (int) ($row->user_id ?? 0);
+        $performed_by = (string) ($row->performed_by ?? 'system');
+
+        if ($performed_by === 'system' || $user_id <= 0) {
+            return __('System', 'updatronix');
+        }
+
+        $user = get_userdata($user_id);
+        if ($user) {
+            return self::normalize_field((string) $user->display_name);
+        }
+
+        return sprintf(
+            /* translators: %d: WordPress user ID when display name is not available */
+            __('User #%d', 'updatronix'),
+            $user_id
+        );
+    }
+
+    /**
+     * Comma-separated distinct user labels for a merged group (chronological first-seen order).
+     *
+     * @param array<int, object> $group Rows sorted ascending by `created_at`.
+     * @return string
+     */
+    private static function format_users_list(array $group): string {
+        $labels = [];
+        $seen = [];
+
+        foreach ($group as $row) {
+            $label = self::user_label_for_row($row);
+            if (isset($seen[$label])) {
+                continue;
+            }
+            $seen[$label] = true;
+            $labels[] = $label;
+        }
+
+        return $labels === [] ? '—' : implode(', ', $labels);
     }
 
     /**
@@ -298,7 +380,7 @@ final class Updatronix_Export_Body_Builder {
      * correctly. Optional columns (`versions`, `context`) are dropped when every
      * row leaves them empty.
      *
-     * @param array<int, array{parts: array{name: string, action: string, versions: string, dates: string, context: string, status: string}}> $items Data rows after sorting (section headings excluded).
+     * @param array<int, array{parts: array{name: string, action: string, versions: string, dates: string, context: string, user: string, status: string}}> $items Data rows after sorting (section headings excluded).
      * @return array<string, int> Column key => width in characters (0 means omit optional column).
      */
     private static function column_widths_for_rows(array $items): array {
@@ -319,16 +401,90 @@ final class Updatronix_Export_Body_Builder {
             }
         }
 
+        foreach (array_keys($widths) as $key) {
+            $heading_len = mb_strlen(self::column_heading_for($key), 'UTF-8');
+            if ($heading_len > $widths[$key]) {
+                $widths[$key] = $heading_len;
+            }
+        }
+
         return $widths;
+    }
+
+    /**
+     * Localised column heading aligned with the activity log UI labels.
+     *
+     * @param string $key Column key from {@see ROW_PART_KEYS}.
+     * @return string
+     */
+    private static function column_heading_for(string $key): string {
+        return match ($key) {
+            'name' => __('Element', 'updatronix'),
+            'action' => __('Action', 'updatronix'),
+            'versions' => __('Version', 'updatronix'),
+            'dates' => __('Date', 'updatronix'),
+            'context' => __('Run context', 'updatronix'),
+            'user' => __('User', 'updatronix'),
+            'status' => __('Status', 'updatronix'),
+            default => '',
+        };
+    }
+
+    /**
+     * Header row for the aligned column layout.
+     *
+     * @param array<string, int> $widths Column widths keyed by {@see ROW_PART_KEYS} entry.
+     * @return string
+     */
+    private static function format_column_header_row(array $widths): string {
+        $segments = [];
+
+        foreach (self::ROW_PART_KEYS as $key) {
+            if (!isset($widths[$key])) {
+                continue;
+            }
+            $segments[] = self::pad_column(self::column_heading_for($key), $widths[$key]);
+        }
+
+        return self::join_columns($segments);
+    }
+
+    /**
+     * Dash separator row under the column headings (one hyphen per column character).
+     *
+     * @param array<string, int> $widths Column widths keyed by {@see ROW_PART_KEYS} entry.
+     * @return string
+     */
+    private static function format_column_separator_row(array $widths): string {
+        $segments = [];
+
+        foreach (self::ROW_PART_KEYS as $key) {
+            if (!isset($widths[$key])) {
+                continue;
+            }
+            $segments[] = str_repeat('-', $widths[$key]);
+        }
+
+        return self::join_columns($segments);
+    }
+
+    /**
+     * Join column segments with a non-collapsing gap.
+     *
+     * @param list<string> $segments Column cell values.
+     * @return string
+     */
+    private static function join_columns(array $segments): string {
+        return implode(self::COLUMN_GAP, $segments);
     }
 
     /**
      * Assemble one aligned line from row parts and precomputed section widths.
      *
      * Status is always the last column. Field order: name → action → versions →
-     * dates → context → status.
+     * dates → context → user → status.
      *
-     * @param array{name: string, action: string, versions: string, dates: string, context: string, status: string} $parts  Row values.
+     * @param array{name: string, action: string, versions: string, dates: string, context: string, user: string, status: string} $parts  Row values.
      * @param array<string, int>                                                                                    $widths Section column widths.
      * @return string
      */
@@ -342,11 +498,14 @@ final class Updatronix_Export_Body_Builder {
             $segments[] = self::pad_column($parts[$key], $widths[$key]);
         }
 
-        return implode('  ', $segments);
+        return self::join_columns($segments);
     }
 
     /**
      * Pad a value to a minimum column width (multibyte-aware; never truncates).
+     *
+     * Padding uses non-breaking spaces so column alignment survives clipboard
+     * paste into rich-text applications.
      *
      * @param string $value Field value.
      * @param int    $width Minimum column width.
@@ -358,7 +517,7 @@ final class Updatronix_Export_Body_Builder {
             return $value;
         }
 
-        return $value . str_repeat(' ', $width - $length);
+        return $value . str_repeat(self::PAD_CHAR, $width - $length);
     }
 
     /**

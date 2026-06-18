@@ -12,7 +12,13 @@ import {
 	Notice,
 } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
+import { copySmall } from '@wordpress/icons';
 import { normalizeViewForExport, summarizeView } from './logFilters';
+import {
+	copyFormattedToClipboard,
+	copyTextToClipboard,
+	stripExportFormatting,
+} from './exportCopyUtils';
 
 /**
  * Export modal entrypoint.
@@ -182,7 +188,7 @@ export function ExportLogsModal({
 					} else {
 						setLiveRegion(
 							__(
-								'Export ready. Select all and copy from the export output below.',
+								'Export ready. Copy the report to save it. It expires after 15 minutes.',
 								'updatronix'
 							)
 						);
@@ -202,6 +208,44 @@ export function ExportLogsModal({
 			setBusy(false);
 		}
 	}, [mapExportError, merge, normalizedView, resetOutput]);
+
+	const copyExport = useCallback(
+		async (mode) => {
+			if (!body.trim()) {
+				return;
+			}
+
+			try {
+				if (mode === 'plain') {
+					await copyTextToClipboard(stripExportFormatting(body));
+				} else {
+					await copyFormattedToClipboard(body);
+				}
+				setLiveRegion(
+					mode === 'plain'
+						? __(
+								'Plain export copied to the clipboard.',
+								'updatronix'
+							)
+						: __(
+								'Formatted export copied to the clipboard.',
+								'updatronix'
+							)
+				);
+			} catch {
+				setNotice({
+					status: 'error',
+					message: __(
+						'Could not copy to the clipboard. Select the export output and copy it manually.',
+						'updatronix'
+					),
+				});
+			}
+		},
+		[body]
+	);
+
+	const hasExportBody = body.trim() !== '';
 
 	if (!isOpen) {
 		return null;
@@ -273,9 +317,6 @@ export function ExportLogsModal({
 						? __('Generating the export…', 'updatronix')
 						: __('Generate export', 'updatronix')}
 				</Button>
-				<Button variant="secondary" onClick={handleClose}>
-					{__('Close', 'updatronix')}
-				</Button>
 			</div>
 
 			{notice ? (
@@ -293,18 +334,37 @@ export function ExportLogsModal({
 			</div>
 
 			{notice?.status === 'info' ? null : (
-				<TextareaControl
-					className="updatronix-export-modal__output"
-					label={__('Export output', 'updatronix')}
-					help={__(
-						'Select all and copy this report to save it. The export expires after 15 minutes.',
-						'updatronix'
-					)}
-					value={body}
-					readOnly
-					onChange={() => {}}
-					rows={14}
-				/>
+				<>
+					<TextareaControl
+						className="updatronix-export-modal__output"
+						label={__('Export output', 'updatronix')}
+						help={__(
+							'Copy the report to save it. It expires after 15 minutes.',
+							'updatronix'
+						)}
+						value={body}
+						readOnly
+						onChange={() => {}}
+						rows={14}
+					/>
+					<div className="updatronix-export-modal__copy-actions">
+						<Button
+							variant="secondary"
+							icon={copySmall}
+							onClick={() => copyExport('formatted')}
+							disabled={!hasExportBody || busy}
+						>
+							{__('Copy with formatting', 'updatronix')}
+						</Button>
+						<Button
+							variant="tertiary"
+							onClick={() => copyExport('plain')}
+							disabled={!hasExportBody || busy}
+						>
+							{__('Copy without formatting', 'updatronix')}
+						</Button>
+					</div>
+				</>
 			)}
 		</Modal>
 	);
