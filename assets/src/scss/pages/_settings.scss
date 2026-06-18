@@ -161,7 +161,7 @@
 		}
 
 		&-title-text-made-with {
-			font-size: var(--wpds-font-size-xs);
+			font-size: var(--wpds-typography-font-size-xs);
 			color: var(--wpds-color-fg-content-neutral-weak);
 			line-height: 1;
 		}
@@ -175,7 +175,7 @@
 			gap: 6px;
 
 			.updatronix-label-made-with {
-				font-size: var(--wpds-font-size-xs);
+				font-size: var(--wpds-typography-font-size-xs);
 				color: var(--wpds-color-bg-surface-neutral-strong);
 				line-height: 1;
 				white-space: nowrap;
@@ -317,7 +317,7 @@
 		h3,
 		h4 {
 			margin: 0 0 var(--wpds-dimension-gap-sm);
-			font-size: var(--wpds-font-size-md);
+			font-size: var(--wpds-typography-font-size-md);
 		}
 	}
 
@@ -352,7 +352,7 @@
 
 	.updatronix-notes-summary__term {
 		color: var(--wpds-color-fg-content-neutral-weak);
-		font-weight: var(--wpds-font-weight-medium);
+		font-weight: var(--wpds-typography-font-weight-medium);
 	}
 
 	.updatronix-notes-summary__description {
@@ -367,8 +367,8 @@
 		border-radius: var(--wpds-border-radius-lg);
 		max-height: 300px;
 		overflow: auto;
-		font-family: var(--wpds-font-family-mono);
-		font-size: var(--wpds-font-size-sm);
+		font-family: var(--wpds-typography-font-family-mono);
+		font-size: var(--wpds-typography-font-size-sm);
 		line-height: 1.5;
 	}
 
@@ -378,8 +378,8 @@
 
 	.updatronix-notes-toggle {
 		cursor: pointer;
-		font-weight: var(--wpds-font-weight-medium);
-		font-size: var(--wpds-font-size-md);
+		font-weight: var(--wpds-typography-font-weight-medium);
+		font-size: var(--wpds-typography-font-size-md);
 		padding: var(--wpds-dimension-padding-sm) 0;
 		color: var(--wpds-color-fg-interactive-brand);
 		user-select: none;
@@ -433,7 +433,7 @@
 
 		.updatronix-settings-help {
 			color: var(--wpds-color-fg-content-neutral-weak);
-			font-size: var(--wpds-font-size-md);
+			font-size: var(--wpds-typography-font-size-md);
 			margin-bottom: var(--wpds-dimension-gap-sm);
 		}
 	}

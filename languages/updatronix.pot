@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-06-18T09:32:47+00:00\n"
+"POT-Creation-Date: 2026-06-18T14:13:58+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: updatronix\n"
@@ -237,185 +237,183 @@ msgstr ""
 msgid "The core update encountered a redirect error (HTTP %d). Check your server configuration."
 msgstr ""
 
-#. translators: Non-merge export: chronological list heading.
-#: inc/classes/ExportBodyBuilder.php:70
-msgid "All entries"
-msgstr ""
-
 #. translators: 1: Rows included in the export. 2: Rows matched before truncation.
-#: inc/classes/ExportBodyBuilder.php:97
+#: inc/classes/ExportBodyBuilder.php:120
 #, php-format
 msgid "— Truncated: %1$d of %2$d rows. Narrow your filters to include the rest. —"
 msgstr ""
 
-#: inc/classes/ExportBodyBuilder.php:368
-msgid "Update log export"
+#: inc/classes/ExportBodyBuilder.php:383
+msgid "Core"
 msgstr ""
 
-#. translators: Narrow third-level export heading before bullet list.
-#: inc/classes/ExportBodyBuilder.php:379
-msgid "Updates"
+#: inc/classes/ExportBodyBuilder.php:384
+#: assets/src/js/components/autoUpdates/AutoUpdatesPanel.js:110
+msgid "Plugin"
 msgstr ""
 
-#. translators: %s: Core updates section (merged export).
-#: inc/classes/ExportBodyBuilder.php:388
-msgid "CORE"
+#: inc/classes/ExportBodyBuilder.php:385
+#: assets/src/js/components/autoUpdates/AutoUpdatesPanel.js:96
+msgid "Theme"
 msgstr ""
 
-#. translators: %s: Plugin updates section.
-#: inc/classes/ExportBodyBuilder.php:396
-msgid "PLUGINS"
+#: inc/classes/ExportBodyBuilder.php:386
+msgid "Translation"
 msgstr ""
 
-#. translators: %s: Theme updates section.
-#: inc/classes/ExportBodyBuilder.php:404
-msgid "THEMES"
-msgstr ""
-
-#. translators: %s: Translation updates section.
-#: inc/classes/ExportBodyBuilder.php:412
-msgid "TRANSLATIONS"
-msgstr ""
-
-#: inc/classes/ExportBodyBuilder.php:616
-msgctxt "Placeholder when exported log row timestamp is unreadable"
-msgid "?"
-msgstr ""
-
-#. translators: 1: Start datetime (site preferences). 2: End datetime.
-#: inc/classes/ExportBodyBuilder.php:625
-#, php-format
-msgid "[%1$s → %2$s]"
-msgstr ""
-
-#: inc/classes/ExportBodyBuilder.php:639
-msgctxt "Compressed log-export category label"
-msgid "CORE"
-msgstr ""
-
-#: inc/classes/ExportBodyBuilder.php:640
-msgctxt "Compressed log-export category label"
-msgid "PLUGIN"
-msgstr ""
-
-#: inc/classes/ExportBodyBuilder.php:641
-msgctxt "Compressed log-export category label"
-msgid "THEME"
-msgstr ""
-
-#: inc/classes/ExportBodyBuilder.php:642
-msgctxt "Compressed log-export category label"
-msgid "TRANSLATION"
-msgstr ""
-
-#: inc/classes/ExportBodyBuilder.php:674
-#: assets/src/js/components/activityLog/logFilters.js:207
-#: assets/src/js/components/activityLog/utils.js:45
-msgid "Success"
-msgstr ""
-
-#: inc/classes/ExportBodyBuilder.php:675
-#: assets/src/js/components/activityLog/utils.js:48
-msgid "Warning"
-msgstr ""
-
-#: inc/classes/ExportBodyBuilder.php:676
-#: assets/src/js/components/activityLog/logFilters.js:208
-#: assets/src/js/components/activityLog/utils.js:51
-msgid "Error"
-msgstr ""
-
-#: inc/classes/ExportBodyBuilder.php:677
-#: assets/src/js/components/activityLog/logFilters.js:209
-#: assets/src/js/components/activityLog/utils.js:54
-msgid "Cancelled"
-msgstr ""
-
-#: inc/classes/ExportBodyBuilder.php:720
-#: inc/classes/Settings.php:338
-#: assets/src/js/components/activityLog/constants.js:19
-msgid "Update"
-msgstr ""
-
-#: inc/classes/ExportBodyBuilder.php:721
-#: inc/classes/Settings.php:339
-#: assets/src/js/components/activityLog/constants.js:20
-msgid "Rollback"
-msgstr ""
-
-#: inc/classes/ExportBodyBuilder.php:722
-#: inc/classes/Settings.php:340
-#: assets/src/js/components/activityLog/constants.js:21
-msgid "Install"
-msgstr ""
-
-#: inc/classes/ExportBodyBuilder.php:723
-#: inc/classes/Settings.php:341
-#: assets/src/js/components/activityLog/constants.js:22
-msgid "Reinstall"
-msgstr ""
-
-#: inc/classes/ExportBodyBuilder.php:724
-#: inc/classes/Settings.php:342
-#: assets/src/js/components/activityLog/constants.js:23
-msgid "Failed"
-msgstr ""
-
-#: inc/classes/ExportBodyBuilder.php:725
-#: inc/classes/Settings.php:343
-#: assets/src/js/components/activityLog/constants.js:24
-msgid "Uninstall"
-msgstr ""
-
-#: inc/classes/ExportBodyBuilder.php:759
-msgctxt "Fallback export slug when neither slug nor translation label exists"
-msgid "item"
-msgstr ""
-
-#: inc/classes/ExportBodyBuilder.php:896
-msgid "manual"
-msgstr ""
-
-#: inc/classes/ExportBodyBuilder.php:897
-msgid "automatic"
-msgstr ""
-
-#: inc/classes/ExportBodyBuilder.php:898
-msgid "upload"
-msgstr ""
-
-#: inc/classes/ExportBodyBuilder.php:935
-msgid "bulk"
-msgstr ""
-
-#: inc/classes/ExportBodyBuilder.php:936
-msgid "single"
-msgstr ""
-
-#. translators: %s: User display name or localized "system".
-#: inc/classes/ExportBodyBuilder.php:963
-#, php-format
-msgid "by %s"
-msgstr ""
-
-#: inc/classes/ExportBodyBuilder.php:977
-msgid "system"
+#: inc/classes/ExportBodyBuilder.php:424
+#: inc/classes/Settings.php:318
+msgid "System"
 msgstr ""
 
 #. translators: %d: WordPress user ID when display name is not available
-#: inc/classes/ExportBodyBuilder.php:986
+#: inc/classes/ExportBodyBuilder.php:434
 #: inc/classes/Settings.php:323
 #, php-format
 msgid "User #%d"
 msgstr ""
 
+#: inc/classes/ExportBodyBuilder.php:510
+#: assets/src/js/components/activityLog/ActivityLogPanel.js:115
+#: assets/src/js/components/activityLog/LogDetailsContent.js:58
+#: assets/src/js/components/activityLog/logFilters.js:177
+msgid "Category"
+msgstr ""
+
+#: inc/classes/ExportBodyBuilder.php:511
+msgid "Element"
+msgstr ""
+
+#: inc/classes/ExportBodyBuilder.php:512
+#: assets/src/js/components/activityLog/ActivityLogPanel.js:124
+#: assets/src/js/components/activityLog/LogDetailsContent.js:60
+msgid "Action"
+msgstr ""
+
+#: inc/classes/ExportBodyBuilder.php:513
+#: assets/src/js/components/autoUpdates/ItemsDataViewSection.js:225
+msgid "Version"
+msgstr ""
+
+#: inc/classes/ExportBodyBuilder.php:514
+#: assets/src/js/components/activityLog/ActivityLogPanel.js:150
+#: assets/src/js/components/activityLog/LogDetailsContent.js:74
+#: assets/src/js/components/activityLog/logFilters.js:241
+#: assets/src/js/components/activityLog/logFilters.js:406
+msgid "Date"
+msgstr ""
+
+#: inc/classes/ExportBodyBuilder.php:515
+msgid "Run context"
+msgstr ""
+
+#: inc/classes/ExportBodyBuilder.php:516
+#: assets/src/js/components/activityLog/ActivityLogPanel.js:183
+#: assets/src/js/components/activityLog/logFilters.js:216
+msgid "User"
+msgstr ""
+
+#: inc/classes/ExportBodyBuilder.php:517
+#: assets/src/js/components/activityLog/ActivityLogPanel.js:206
+#: assets/src/js/components/activityLog/LogDetailsContent.js:63
+#: assets/src/js/components/activityLog/logFilters.js:203
+#: assets/src/js/components/autoUpdates/ItemsDataViewSection.js:205
+msgid "Status"
+msgstr ""
+
+#: inc/classes/ExportBodyBuilder.php:623
+#: assets/src/js/components/activityLog/logFilters.js:208
+#: assets/src/js/components/activityLog/utils.js:51
+msgid "Error"
+msgstr ""
+
+#: inc/classes/ExportBodyBuilder.php:624
+#: assets/src/js/components/activityLog/logFilters.js:209
+#: assets/src/js/components/activityLog/utils.js:54
+msgid "Cancelled"
+msgstr ""
+
+#: inc/classes/ExportBodyBuilder.php:625
+#: assets/src/js/components/activityLog/logFilters.js:207
+#: assets/src/js/components/activityLog/utils.js:45
+msgid "Success"
+msgstr ""
+
+#: inc/classes/ExportBodyBuilder.php:752
+msgid "manual"
+msgstr ""
+
+#: inc/classes/ExportBodyBuilder.php:753
+msgid "automatic"
+msgstr ""
+
+#: inc/classes/ExportBodyBuilder.php:754
+msgid "upload"
+msgstr ""
+
+#: inc/classes/ExportBodyBuilder.php:772
+msgid "bulk"
+msgstr ""
+
+#: inc/classes/ExportBodyBuilder.php:773
+msgid "single"
+msgstr ""
+
+#: inc/classes/ExportBodyBuilder.php:801
+#: inc/classes/Settings.php:338
+#: assets/src/js/components/activityLog/constants.js:19
+msgid "Update"
+msgstr ""
+
+#: inc/classes/ExportBodyBuilder.php:802
+#: inc/classes/Settings.php:339
+#: assets/src/js/components/activityLog/constants.js:20
+msgid "Rollback"
+msgstr ""
+
+#: inc/classes/ExportBodyBuilder.php:803
+#: inc/classes/Settings.php:340
+#: assets/src/js/components/activityLog/constants.js:21
+msgid "Install"
+msgstr ""
+
+#: inc/classes/ExportBodyBuilder.php:804
+#: inc/classes/Settings.php:341
+#: assets/src/js/components/activityLog/constants.js:22
+msgid "Reinstall"
+msgstr ""
+
+#: inc/classes/ExportBodyBuilder.php:805
+#: inc/classes/Settings.php:342
+#: assets/src/js/components/activityLog/constants.js:23
+msgid "Failed"
+msgstr ""
+
+#: inc/classes/ExportBodyBuilder.php:806
+#: inc/classes/Settings.php:343
+#: assets/src/js/components/activityLog/constants.js:24
+msgid "Uninstall"
+msgstr ""
+
+#: inc/classes/ExportBodyBuilder.php:819
+msgid "CORE"
+msgstr ""
+
+#: inc/classes/ExportBodyBuilder.php:820
+msgid "PLUGINS"
+msgstr ""
+
+#: inc/classes/ExportBodyBuilder.php:821
+msgid "THEMES"
+msgstr ""
+
+#: inc/classes/ExportBodyBuilder.php:822
+msgid "TRANSLATIONS"
+msgstr ""
+
 #: inc/classes/Settings.php:298
 #: inc/classes/Settings.php:444
 msgid "The requested log entry could not be found."
-msgstr ""
-
-#: inc/classes/Settings.php:318
-msgid "System"
 msgstr ""
 
 #: inc/classes/Settings.php:329
@@ -564,27 +562,9 @@ msgstr ""
 msgid "Details"
 msgstr ""
 
-#: assets/src/js/components/activityLog/ActivityLogPanel.js:115
-#: assets/src/js/components/activityLog/LogDetailsContent.js:58
-#: assets/src/js/components/activityLog/logFilters.js:177
-msgid "Category"
-msgstr ""
-
-#: assets/src/js/components/activityLog/ActivityLogPanel.js:124
-#: assets/src/js/components/activityLog/LogDetailsContent.js:60
-msgid "Action"
-msgstr ""
-
 #: assets/src/js/components/activityLog/ActivityLogPanel.js:133
 #: assets/src/js/components/autoUpdates/ItemsDataViewSection.js:165
 msgid "Icon"
-msgstr ""
-
-#: assets/src/js/components/activityLog/ActivityLogPanel.js:150
-#: assets/src/js/components/activityLog/LogDetailsContent.js:74
-#: assets/src/js/components/activityLog/logFilters.js:241
-#: assets/src/js/components/activityLog/logFilters.js:406
-msgid "Date"
 msgstr ""
 
 #: assets/src/js/components/activityLog/ActivityLogPanel.js:166
@@ -597,18 +577,6 @@ msgstr ""
 #: assets/src/js/components/activityLog/LogDetailsContent.js:71
 #: assets/src/js/components/activityLog/logFilters.js:262
 msgid "Run type"
-msgstr ""
-
-#: assets/src/js/components/activityLog/ActivityLogPanel.js:183
-#: assets/src/js/components/activityLog/logFilters.js:216
-msgid "User"
-msgstr ""
-
-#: assets/src/js/components/activityLog/ActivityLogPanel.js:206
-#: assets/src/js/components/activityLog/LogDetailsContent.js:63
-#: assets/src/js/components/activityLog/logFilters.js:203
-#: assets/src/js/components/autoUpdates/ItemsDataViewSection.js:205
-msgid "Status"
 msgstr ""
 
 #: assets/src/js/components/activityLog/ActivityLogPanel.js:227
@@ -675,74 +643,90 @@ msgstr ""
 msgid "Delete"
 msgstr ""
 
-#: assets/src/js/components/activityLog/ExportLogsModal.js:79
+#: assets/src/js/components/activityLog/ExportLogsModal.js:85
 msgid "Too many exports started recently. Wait a minute, and then try again."
 msgstr ""
 
-#: assets/src/js/components/activityLog/ExportLogsModal.js:86
+#: assets/src/js/components/activityLog/ExportLogsModal.js:92
 msgid "This export session has expired. Start a new export."
 msgstr ""
 
-#: assets/src/js/components/activityLog/ExportLogsModal.js:92
+#: assets/src/js/components/activityLog/ExportLogsModal.js:98
 msgid "The export could not be generated. Try again, or adjust your filters and try again."
 msgstr ""
 
 #. translators: 1: Rows included in export. 2: Rows matched before truncation.
-#: assets/src/js/components/activityLog/ExportLogsModal.js:163
+#: assets/src/js/components/activityLog/ExportLogsModal.js:169
 #, js-format
 msgid "The export was truncated to %1$d of %2$d rows. Narrow your filters to include the rest."
 msgstr ""
 
-#: assets/src/js/components/activityLog/ExportLogsModal.js:177
+#: assets/src/js/components/activityLog/ExportLogsModal.js:183
 msgid "No logs match the current filters. The export is empty."
 msgstr ""
 
-#: assets/src/js/components/activityLog/ExportLogsModal.js:184
-msgid "Export ready. Select all and copy from the export output below."
+#: assets/src/js/components/activityLog/ExportLogsModal.js:190
+msgid "Export ready. Copy the report to save it. It expires after 15 minutes."
 msgstr ""
 
-#: assets/src/js/components/activityLog/ExportLogsModal.js:213
+#: assets/src/js/components/activityLog/ExportLogsModal.js:226
+msgid "Plain export copied to the clipboard."
+msgstr ""
+
+#: assets/src/js/components/activityLog/ExportLogsModal.js:230
+msgid "Formatted export copied to the clipboard."
+msgstr ""
+
+#: assets/src/js/components/activityLog/ExportLogsModal.js:238
+msgid "Could not copy to the clipboard. Select the export output and copy it manually."
+msgstr ""
+
+#: assets/src/js/components/activityLog/ExportLogsModal.js:257
 msgid "Export update logs"
 msgstr ""
 
-#: assets/src/js/components/activityLog/ExportLogsModal.js:220
+#: assets/src/js/components/activityLog/ExportLogsModal.js:264
 msgid "Generate a plain-text summary of the logs that match your current filters and sort. Dimensions without a filter include all values."
 msgstr ""
 
-#: assets/src/js/components/activityLog/ExportLogsModal.js:227
+#: assets/src/js/components/activityLog/ExportLogsModal.js:271
 msgid "Filters applied"
 msgstr ""
 
-#: assets/src/js/components/activityLog/ExportLogsModal.js:231
+#: assets/src/js/components/activityLog/ExportLogsModal.js:275
 msgid "No filters applied — all logs in the current view are included."
 msgstr ""
 
-#: assets/src/js/components/activityLog/ExportLogsModal.js:253
+#: assets/src/js/components/activityLog/ExportLogsModal.js:297
 msgid "Merge logs for the same item"
 msgstr ""
 
-#: assets/src/js/components/activityLog/ExportLogsModal.js:254
+#: assets/src/js/components/activityLog/ExportLogsModal.js:298
 msgid "Combine repeated updates of the same plugin, theme, core release, or translation into a single line with the earliest and latest versions."
 msgstr ""
 
-#: assets/src/js/components/activityLog/ExportLogsModal.js:273
+#: assets/src/js/components/activityLog/ExportLogsModal.js:317
 msgid "Generating the export…"
 msgstr ""
 
-#: assets/src/js/components/activityLog/ExportLogsModal.js:274
+#: assets/src/js/components/activityLog/ExportLogsModal.js:318
 msgid "Generate export"
 msgstr ""
 
-#: assets/src/js/components/activityLog/ExportLogsModal.js:277
-msgid "Close"
-msgstr ""
-
-#: assets/src/js/components/activityLog/ExportLogsModal.js:297
+#: assets/src/js/components/activityLog/ExportLogsModal.js:340
 msgid "Export output"
 msgstr ""
 
-#: assets/src/js/components/activityLog/ExportLogsModal.js:298
-msgid "Select all and copy this report to save it. The export expires after 15 minutes."
+#: assets/src/js/components/activityLog/ExportLogsModal.js:341
+msgid "Copy the report to save it. It expires after 15 minutes."
+msgstr ""
+
+#: assets/src/js/components/activityLog/ExportLogsModal.js:357
+msgid "Copy with formatting"
+msgstr ""
+
+#: assets/src/js/components/activityLog/ExportLogsModal.js:364
+msgid "Copy without formatting"
 msgstr ""
 
 #: assets/src/js/components/activityLog/LogDetailsContent.js:47
@@ -813,6 +797,10 @@ msgctxt "empty value fallback"
 msgid "—"
 msgstr ""
 
+#: assets/src/js/components/activityLog/utils.js:48
+msgid "Warning"
+msgstr ""
+
 #: assets/src/js/components/autoUpdates/AutoUpdatesPanel.js:53
 msgid "Loading auto-update settings…"
 msgstr ""
@@ -831,20 +819,12 @@ msgstr ""
 msgid "Themes"
 msgstr ""
 
-#: assets/src/js/components/autoUpdates/AutoUpdatesPanel.js:96
-msgid "Theme"
-msgstr ""
-
 #: assets/src/js/components/autoUpdates/AutoUpdatesPanel.js:97
 msgid "Search themes"
 msgstr ""
 
 #: assets/src/js/components/autoUpdates/AutoUpdatesPanel.js:109
 msgid "Plugins"
-msgstr ""
-
-#: assets/src/js/components/autoUpdates/AutoUpdatesPanel.js:110
-msgid "Plugin"
 msgstr ""
 
 #: assets/src/js/components/autoUpdates/AutoUpdatesPanel.js:111
@@ -922,10 +902,6 @@ msgstr ""
 
 #: assets/src/js/components/autoUpdates/ItemsDataViewSection.js:214
 msgid "Inactive"
-msgstr ""
-
-#: assets/src/js/components/autoUpdates/ItemsDataViewSection.js:225
-msgid "Version"
 msgstr ""
 
 #: assets/src/js/components/autoUpdates/ItemsDataViewSection.js:238
