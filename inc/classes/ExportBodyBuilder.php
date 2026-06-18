@@ -3,10 +3,10 @@
 /**
  * Plain-text export body rendering (locale-aware).
  *
- * Output is a category-sectioned report. Rows are grouped under `== CORE ==`,
- * `== PLUGINS ==`, `== THEMES ==`, and `== TRANSLATIONS ==` headings in both
- * merge modes. Within each section, lines are ordered by date (most recent
- * activity first), then by action, status, and name as tie-breakers.
+ * Output is a category-sectioned report when merge mode is on. Rows are grouped
+ * under `== CORE ==`, `== PLUGINS ==`, `== THEMES ==`, and `== TRANSLATIONS ==`
+ * headings and ordered by date (most recent first). With merge off, all actions
+ * appear in one flat list sorted by date only, with a leading Category column.
  *
  * Each line reads as a short audit sentence (subject → event → detail → when →
  * how → user → outcome). Column widths are computed once per chunk from the
@@ -57,8 +57,11 @@ final class Updatronix_Export_Body_Builder {
         'failed' => 6,
     ];
 
-    /** Column keys used for per-section width measurement and line assembly. */
+    /** Column keys for merged (sectioned) export rows. */
     private const ROW_PART_KEYS = ['name', 'action', 'versions', 'dates', 'context', 'user', 'status'];
+
+    /** Column keys for flat (non-merged) export rows — category first. */
+    private const ROW_PART_KEYS_FLAT = ['category', 'name', 'action', 'versions', 'dates', 'context', 'user', 'status'];
 
     /** Optional columns omitted from a section when every row value is empty. */
     private const OPTIONAL_ROW_PART_KEYS = ['versions', 'context'];
@@ -200,13 +203,73 @@ final class Updatronix_Export_Body_Builder {
             foreach ($rows as $row) {
                 $buckets[self::merge_key($row)][] = $row;
             }
-        } else {
-            $index = 0;
-            foreach ($rows as $row) {
-                $buckets['row_' . $index++] = [$row];
-            }
+
+            return self::build_merged_sectioned_records($buckets);
         }
 
+        foreach ($rows as $row) {
+            $buckets[] = [$row];
+        }
+
+        return self::build_flat_records($buckets);
+    }
+
+    /**
+     * Flat export (merge off): one table, all log types, sorted by date only.
+     *
+     * @param array<int, array<int, object>> $buckets One row per bucket.
+     * @return array<int, array{line: string, row_span: int}>
+     */
+    private static function build_flat_records(array $buckets): array {
+        $items = [];
+
+        foreach ($buckets as $group) {
+            $first = $group[0];
+            $lt = sanitize_key((string) ($first->log_type ?? ''));
+            if (!in_array($lt, self::CATEGORY_ORDER, true)) {
+                continue;
+            }
+
+            $items[] = [
+                'sort_ts' => self::latest_timestamp($group),
+                'parts' => self::build_row_parts($group, true),
+                'row_span' => count($group),
+            ];
+        }
+
+        usort(
+            $items,
+            static fn (array $a, array $b): int => $b['sort_ts'] <=> $a['sort_ts']
+        );
+
+        if ($items === []) {
+            return [];
+        }
+
+        $keys = self::ROW_PART_KEYS_FLAT;
+        $widths = self::column_widths_for_rows($items, $keys);
+        $records = [
+            ['line' => self::format_column_header_row($widths, $keys), 'row_span' => 0],
+            ['line' => self::format_column_separator_row($widths, $keys), 'row_span' => 0],
+        ];
+
+        foreach ($items as $item) {
+            $records[] = [
+                'line' => self::format_row_parts($item['parts'], $widths, $keys),
+                'row_span' => $item['row_span'],
+            ];
+        }
+
+        return $records;
+    }
+
+    /**
+     * Sectioned export (merge on): category headings with date-sorted rows per section.
+     *
+     * @param array<string, array<int, object>> $buckets Merge groups keyed by {@see merge_key()}.
+     * @return array<int, array{line: string, row_span: int}>
+     */
+    private static function build_merged_sectioned_records(array $buckets): array {
         /** @var array<string, array<int, array{sort_ts:int, action_rank:int, status_rank:int, name:string, parts:array{name:string, action:string, versions:string, dates:string, context:string, status:string}, row_span:int}>> $by_category */
         $by_category = ['core' => [], 'plugin' => [], 'theme' => [], 'translation' => []];
 
@@ -237,7 +300,7 @@ final class Updatronix_Export_Body_Builder {
                 $all_items[] = $item;
             }
         }
-        $widths = self::column_widths_for_rows($all_items);
+        $widths = self::column_widths_for_rows($all_items, self::ROW_PART_KEYS);
 
         foreach (self::CATEGORY_ORDER as $lt) {
             $items = $by_category[$lt];
@@ -263,11 +326,11 @@ final class Updatronix_Export_Body_Builder {
                 $records[] = ['line' => '', 'row_span' => 0];
             }
             $records[] = ['line' => self::section_heading_for($lt), 'row_span' => 0];
-            $records[] = ['line' => self::format_column_header_row($widths), 'row_span' => 0];
-            $records[] = ['line' => self::format_column_separator_row($widths), 'row_span' => 0];
+            $records[] = ['line' => self::format_column_header_row($widths, self::ROW_PART_KEYS), 'row_span' => 0];
+            $records[] = ['line' => self::format_column_separator_row($widths, self::ROW_PART_KEYS), 'row_span' => 0];
             foreach ($items as $item) {
                 $records[] = [
-                    'line' => self::format_row_parts($item['parts'], $widths),
+                    'line' => self::format_row_parts($item['parts'], $widths, self::ROW_PART_KEYS),
                     'row_span' => $item['row_span'],
                 ];
             }
@@ -281,9 +344,10 @@ final class Updatronix_Export_Body_Builder {
      * Build the display parts for one aggregate group (merged bucket or single row).
      *
      * @param array<int, object> $group One or more rows sharing entity, action, and status.
-     * @return array{name: string, action: string, versions: string, dates: string, context: string, user: string, status: string}
+     * @param bool               $flat  Include a leading category column (non-merged export).
+     * @return array{category?: string, name: string, action: string, versions: string, dates: string, context: string, user: string, status: string}
      */
-    private static function build_row_parts(array $group): array {
+    private static function build_row_parts(array $group, bool $flat = false): array {
         usort(
             $group,
             static fn (object $a, object $b): int => strcmp((string) ($a->created_at ?? ''), (string) ($b->created_at ?? ''))
@@ -291,7 +355,7 @@ final class Updatronix_Export_Body_Builder {
         $first = $group[0];
         $last = $group[count($group) - 1];
 
-        return [
+        $parts = [
             'name' => self::real_name($last),
             'action' => self::action_type_display_label(sanitize_key((string) ($first->action_type ?? ''))),
             'versions' => self::compact_version_plain($group, $first),
@@ -300,6 +364,28 @@ final class Updatronix_Export_Body_Builder {
             'user' => self::format_users_list($group),
             'status' => self::status_label((string) ($first->status ?? '')),
         ];
+
+        if ($flat) {
+            return ['category' => self::category_label_for((string) ($first->log_type ?? ''))] + $parts;
+        }
+
+        return $parts;
+    }
+
+    /**
+     * Localised log category label for the flat export column.
+     *
+     * @param string $log_type Sanitized `log_type` value.
+     * @return string
+     */
+    private static function category_label_for(string $log_type): string {
+        return match (sanitize_key($log_type)) {
+            'core' => __('Core', 'updatronix'),
+            'plugin' => __('Plugin', 'updatronix'),
+            'theme' => __('Theme', 'updatronix'),
+            'translation' => __('Translation', 'updatronix'),
+            default => self::normalize_field($log_type),
+        };
     }
 
     /**
@@ -380,15 +466,17 @@ final class Updatronix_Export_Body_Builder {
      * correctly. Optional columns (`versions`, `context`) are dropped when every
      * row leaves them empty.
      *
-     * @param array<int, array{parts: array{name: string, action: string, versions: string, dates: string, context: string, user: string, status: string}}> $items Data rows after sorting (section headings excluded).
+     * @param array<int, array{parts: array<string, string>}> $items Data rows after sorting.
+     * @param list<string>                                    $keys  Column keys for this export layout.
      * @return array<string, int> Column key => width in characters (0 means omit optional column).
      */
-    private static function column_widths_for_rows(array $items): array {
-        $widths = array_fill_keys(self::ROW_PART_KEYS, 0);
+    private static function column_widths_for_rows(array $items, array $keys): array {
+        $widths = array_fill_keys($keys, 0);
 
         foreach ($items as $item) {
-            foreach (self::ROW_PART_KEYS as $key) {
-                $length = mb_strlen($item['parts'][$key], 'UTF-8');
+            foreach ($keys as $key) {
+                $value = $item['parts'][$key] ?? '';
+                $length = mb_strlen($value, 'UTF-8');
                 if ($length > $widths[$key]) {
                     $widths[$key] = $length;
                 }
@@ -396,7 +484,7 @@ final class Updatronix_Export_Body_Builder {
         }
 
         foreach (self::OPTIONAL_ROW_PART_KEYS as $key) {
-            if ($widths[$key] === 0) {
+            if (isset($widths[$key]) && $widths[$key] === 0) {
                 unset($widths[$key]);
             }
         }
@@ -419,6 +507,7 @@ final class Updatronix_Export_Body_Builder {
      */
     private static function column_heading_for(string $key): string {
         return match ($key) {
+            'category' => __('Category', 'updatronix'),
             'name' => __('Element', 'updatronix'),
             'action' => __('Action', 'updatronix'),
             'versions' => __('Version', 'updatronix'),
@@ -433,13 +522,14 @@ final class Updatronix_Export_Body_Builder {
     /**
      * Header row for the aligned column layout.
      *
-     * @param array<string, int> $widths Column widths keyed by {@see ROW_PART_KEYS} entry.
+     * @param array<string, int> $widths Column widths keyed by column name.
+     * @param list<string>       $keys   Column order for this export layout.
      * @return string
      */
-    private static function format_column_header_row(array $widths): string {
+    private static function format_column_header_row(array $widths, array $keys): string {
         $segments = [];
 
-        foreach (self::ROW_PART_KEYS as $key) {
+        foreach ($keys as $key) {
             if (!isset($widths[$key])) {
                 continue;
             }
@@ -452,13 +542,14 @@ final class Updatronix_Export_Body_Builder {
     /**
      * Dash separator row under the column headings (one hyphen per column character).
      *
-     * @param array<string, int> $widths Column widths keyed by {@see ROW_PART_KEYS} entry.
+     * @param array<string, int> $widths Column widths keyed by column name.
+     * @param list<string>       $keys   Column order for this export layout.
      * @return string
      */
-    private static function format_column_separator_row(array $widths): string {
+    private static function format_column_separator_row(array $widths, array $keys): string {
         $segments = [];
 
-        foreach (self::ROW_PART_KEYS as $key) {
+        foreach ($keys as $key) {
             if (!isset($widths[$key])) {
                 continue;
             }
@@ -484,18 +575,19 @@ final class Updatronix_Export_Body_Builder {
      * Status is always the last column. Field order: name → action → versions →
      * dates → context → user → status.
      *
-     * @param array{name: string, action: string, versions: string, dates: string, context: string, user: string, status: string} $parts  Row values.
-     * @param array<string, int>                                                                                    $widths Section column widths.
+     * @param array<string, string> $parts  Row values keyed by column name.
+     * @param array<string, int>    $widths Column widths keyed by column name.
+     * @param list<string>          $keys   Column order for this export layout.
      * @return string
      */
-    private static function format_row_parts(array $parts, array $widths): string {
+    private static function format_row_parts(array $parts, array $widths, array $keys): string {
         $segments = [];
 
-        foreach (self::ROW_PART_KEYS as $key) {
+        foreach ($keys as $key) {
             if (!isset($widths[$key])) {
                 continue;
             }
-            $segments[] = self::pad_column($parts[$key], $widths[$key]);
+            $segments[] = self::pad_column($parts[$key] ?? '', $widths[$key]);
         }
 
         return self::join_columns($segments);
@@ -559,7 +651,7 @@ final class Updatronix_Export_Body_Builder {
     }
 
     /**
-     * Human-readable item name (real name, not slug).
+     * Element label for the export (real name for core/plugins/themes; slug for translations).
      *
      * @param object $row Representative row.
      * @return string
@@ -568,6 +660,15 @@ final class Updatronix_Export_Body_Builder {
         $lt = sanitize_key((string) ($row->log_type ?? ''));
         if ($lt === 'core') {
             return 'WordPress';
+        }
+
+        if ($lt === 'translation') {
+            $slug = trim((string) ($row->item_slug ?? ''));
+            if ($slug !== '') {
+                return self::normalize_field($slug);
+            }
+
+            return '—';
         }
 
         $name = trim((string) ($row->item_name ?? ''));
