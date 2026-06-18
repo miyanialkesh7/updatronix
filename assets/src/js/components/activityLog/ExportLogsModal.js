@@ -8,6 +8,7 @@ import {
 	Modal,
 	Button,
 	ToggleControl,
+	CheckboxControl,
 	TextareaControl,
 	Notice,
 } from '@wordpress/components';
@@ -19,6 +20,39 @@ import {
 	copyTextToClipboard,
 	stripExportFormatting,
 } from './exportCopyUtils';
+import {
+	loadExportPreferences,
+	saveExportPreferences,
+	columnsToApiPayload,
+} from './exportPreferences';
+
+/** @type {ReadonlyArray<{ id: string, label: string }>} */
+const COLUMN_OPTIONS = [
+	{
+		id: 'headingTable',
+		label: __('Heading table', 'updatronix'),
+	},
+	{
+		id: 'action',
+		label: __('Action', 'updatronix'),
+	},
+	{
+		id: 'runContext',
+		label: __('Run context', 'updatronix'),
+	},
+	{
+		id: 'user',
+		label: __('User', 'updatronix'),
+	},
+	{
+		id: 'status',
+		label: __('Status', 'updatronix'),
+	},
+	{
+		id: 'category',
+		label: __('Category', 'updatronix'),
+	},
+];
 
 /**
  * Export modal entrypoint.
@@ -38,7 +72,9 @@ export function ExportLogsModal({
 	logs,
 	exportTriggerRef,
 }) {
-	const [merge, setMerge] = useState(true);
+	const storedPrefs = useMemo(() => loadExportPreferences(), []);
+	const [merge, setMerge] = useState(storedPrefs.merge);
+	const [columns, setColumns] = useState(storedPrefs.columns);
 	const [busy, setBusy] = useState(false);
 	const [body, setBody] = useState('');
 	const [notice, setNotice] = useState(null);
@@ -53,6 +89,34 @@ export function ExportLogsModal({
 	const summaryParts = useMemo(
 		() => summarizeView(normalizedView),
 		[normalizedView]
+	);
+
+	const apiColumns = useMemo(() => columnsToApiPayload(columns), [columns]);
+
+	const persistPreferences = useCallback((nextMerge, nextColumns) => {
+		saveExportPreferences({
+			merge: nextMerge,
+			columns: nextColumns,
+		});
+	}, []);
+
+	const handleMergeChange = useCallback(
+		(checked) => {
+			setMerge(checked);
+			persistPreferences(checked, columns);
+		},
+		[columns, persistPreferences]
+	);
+
+	const handleColumnChange = useCallback(
+		(columnId, checked) => {
+			setColumns((prev) => {
+				const next = { ...prev, [columnId]: checked };
+				persistPreferences(merge, next);
+				return next;
+			});
+		},
+		[merge, persistPreferences]
 	);
 
 	const resetOutput = useCallback(() => {
@@ -120,6 +184,7 @@ export function ExportLogsModal({
 					: {
 							view: normalizedView,
 							merge,
+							columns: apiColumns,
 						};
 
 				const response = await apiFetch({
@@ -207,7 +272,7 @@ export function ExportLogsModal({
 		} finally {
 			setBusy(false);
 		}
-	}, [mapExportError, merge, normalizedView, resetOutput]);
+	}, [apiColumns, mapExportError, merge, normalizedView, resetOutput]);
 
 	const copyExport = useCallback(
 		async (mode) => {
@@ -267,31 +332,41 @@ export function ExportLogsModal({
 				)}
 			</p>
 
-			<p>
-				<strong>{__('Filters applied', 'updatronix')}</strong>
-			</p>
-			{summaryParts.dimensions.length === 0 ? (
-				<p>
-					{__(
-						'No filters applied — all logs in the current view are included.',
-						'updatronix'
-					)}
+			<div className="updatronix-export-modal__filters-section">
+				<p className="updatronix-export-modal__section-title">
+					<strong>{__('Filters applied', 'updatronix')}</strong>
 				</p>
-			) : (
-				<ul className="updatronix-export-modal__filters">
-					{summaryParts.dimensions.map(({ key, label, text }) => (
-						<li key={key}>
-							<strong>{label}:</strong> {text}
-						</li>
-					))}
-				</ul>
-			)}
-			{merge ? null : (
-				<p className="updatronix-export-modal__sort">
-					<strong>{summaryParts.sortLine.label}:</strong>{' '}
-					{summaryParts.sortLine.text}
-				</p>
-			)}
+				{summaryParts.dimensions.length === 0 ? (
+					<p className="updatronix-export-modal__filters-empty">
+						{__(
+							'No filters applied — all logs in the current view are included.',
+							'updatronix'
+						)}
+					</p>
+				) : (
+					<ul className="updatronix-export-modal__filters">
+						{summaryParts.dimensions.map(({ key, label, text }) => (
+							<li
+								key={key}
+								className="updatronix-export-modal__filter-chip"
+							>
+								<span className="updatronix-export-modal__filter-chip-name">
+									{label}
+								</span>
+								<span className="updatronix-export-modal__filter-chip-value">
+									{text}
+								</span>
+							</li>
+						))}
+					</ul>
+				)}
+				{merge ? null : (
+					<p className="updatronix-export-modal__sort">
+						<strong>{summaryParts.sortLine.label}:</strong>{' '}
+						{summaryParts.sortLine.text}
+					</p>
+				)}
+			</div>
 
 			<ToggleControl
 				label={__('Merge logs for the same item', 'updatronix')}
@@ -300,10 +375,34 @@ export function ExportLogsModal({
 					'updatronix'
 				)}
 				checked={merge}
-				onChange={setMerge}
+				onChange={handleMergeChange}
 				disabled={busy}
 				__nextHasNoMarginBottom
 			/>
+
+			<fieldset className="updatronix-export-modal__columns">
+				<legend>{__('Report columns', 'updatronix')}</legend>
+				<p className="updatronix-export-modal__columns-help">
+					{__(
+						'Choose which parts of the report to include. Element, version, and date columns are always shown.',
+						'updatronix'
+					)}
+				</p>
+				<div className="updatronix-export-modal__columns-grid">
+					{COLUMN_OPTIONS.map(({ id, label }) => (
+						<CheckboxControl
+							key={id}
+							label={label}
+							checked={columns[id]}
+							onChange={(checked) =>
+								handleColumnChange(id, checked)
+							}
+							disabled={busy}
+							__nextHasNoMarginBottom
+						/>
+					))}
+				</div>
+			</fieldset>
 
 			<div className="updatronix-export-modal__actions">
 				<Button

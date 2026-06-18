@@ -21,8 +21,26 @@ final class Updatronix_Export {
     public const SOFT_TIME_SECONDS = 8;
     public const HARD_TIME_SECONDS = 15;
     public const TRANSIENT_TTL = 900;
-    public const RATE_LIMIT_PER_MINUTE = 6;
-    public const RATE_LIMIT_PER_HOUR = 60;
+
+    /**
+     * Default export starts allowed per rolling minute, per user and site.
+     *
+     * Overridable via the `updatronix_export_rate_limit_per_minute` filter
+     * (see {@see Updatronix_Export_Rate_Limiter::consume()}).
+     *
+     * @since 1.1.0
+     */
+    public const RATE_LIMIT_PER_MINUTE = 30;
+
+    /**
+     * Default export starts allowed per rolling hour, per user and site.
+     *
+     * Overridable via the `updatronix_export_rate_limit_per_hour` filter
+     * (see {@see Updatronix_Export_Rate_Limiter::consume()}).
+     *
+     * @since 1.1.0
+     */
+    public const RATE_LIMIT_PER_HOUR = 300;
     public const MAX_SEARCH_LENGTH = 200;
     public const PAYLOAD_VERSION = 1;
 
@@ -43,13 +61,12 @@ final class Updatronix_Export {
 
     /** @var list<string> */
     public const COLUMN_KEYS = [
-        'date',
-        'user',
-        'category',
-        'status',
+        'table_heading',
         'action_type',
-        'trigger_type',
         'run_context',
+        'user',
+        'status',
+        'category',
     ];
 
     /**

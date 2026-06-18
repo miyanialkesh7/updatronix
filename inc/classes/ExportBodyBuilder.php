@@ -72,6 +72,120 @@ final class Updatronix_Export_Body_Builder {
     /** Two NBSPs between columns; regular spaces collapse in HTML paste targets. */
     private const COLUMN_GAP = "\u{00A0}\u{00A0}";
 
+    /** Maps export row part keys to REST `columns` toggle keys. */
+    private const ROW_PART_COLUMN_MAP = [
+        'category' => 'category',
+        'action' => 'action_type',
+        'context' => 'run_context',
+        'user' => 'user',
+        'status' => 'status',
+    ];
+
+    /**
+     * Server-side defaults when `columns` is absent or partial (all visible).
+     *
+     * @return array<string, bool>
+     */
+    public static function default_export_columns(): array {
+        return [
+            'table_heading' => true,
+            'action_type' => true,
+            'run_context' => true,
+            'user' => true,
+            'status' => true,
+            'category' => true,
+        ];
+    }
+
+    /**
+     * Merge a partial `columns` object with defaults and coerce booleans.
+     *
+     * @param array<string, mixed> $columns_in Raw request `columns`.
+     * @return array<string, bool>
+     */
+    public static function normalize_export_columns(array $columns_in): array {
+        $columns = self::default_export_columns();
+
+        foreach ($columns_in as $k => $v) {
+            $key = sanitize_key((string) $k);
+            if (!in_array($key, Updatronix_Export::COLUMN_KEYS, true)) {
+                continue;
+            }
+            $columns[$key] = self::sanitize_column_boolean($v);
+        }
+
+        return $columns;
+    }
+
+    /**
+     * @param mixed $value Raw request value.
+     * @return bool
+     */
+    private static function sanitize_column_boolean(mixed $value): bool {
+        if (is_bool($value)) {
+            return $value;
+        }
+
+        if ($value === null || $value === '') {
+            return false;
+        }
+
+        if (is_int($value) || is_float($value)) {
+            return (int) $value !== 0;
+        }
+
+        if (is_string($value)) {
+            $normalised = strtolower(trim($value));
+            if (in_array($normalised, ['1', 'true', 'yes', 'on'], true)) {
+                return true;
+            }
+            if (in_array($normalised, ['0', 'false', 'no', 'off'], true)) {
+                return false;
+            }
+        }
+
+        return (bool) $value;
+    }
+
+    /**
+     * @param list<string>       $base_keys Column order for this export layout.
+     * @param array<string, bool> $columns  Normalised column toggles.
+     * @return list<string>
+     */
+    private static function filter_row_keys(array $base_keys, array $columns): array {
+        $filtered = [];
+
+        foreach ($base_keys as $key) {
+            if (!isset(self::ROW_PART_COLUMN_MAP[$key])) {
+                $filtered[] = $key;
+                continue;
+            }
+
+            $toggle = self::ROW_PART_COLUMN_MAP[$key];
+            if ($columns[$toggle] ?? true) {
+                $filtered[] = $key;
+            }
+        }
+
+        return $filtered;
+    }
+
+    /**
+     * @param array<string, bool> $columns Normalised column toggles.
+     * @return bool
+     */
+    private static function show_table_heading(array $columns): bool {
+        return $columns['table_heading'] ?? true;
+    }
+
+    /**
+     * @param array<string, bool> $columns Normalised column toggles.
+     * @return bool
+     */
+    private static function show_category_headings(array $columns): bool {
+        return $columns['category'] ?? true;
+    }
+
     /**
      * Append formatted rows respecting merge mode and per-chunk byte cap.
      *
@@ -79,7 +193,7 @@ final class Updatronix_Export_Body_Builder {
      *
      * @param array<int, object>     $rows                Rows from {@see Updatronix_Export_Query_Builder::fetch_rows()}.
      * @param bool                   $merge               Merge rows that share entity, action, and status within this chunk.
-     * @param array<string, bool>    $columns             Reserved for backward compatibility; the report layout is fixed and no longer toggled per column.
+     * @param array<string, bool>    $columns             Column visibility toggles ({@see normalize_export_columns()}).
      * @param string                 $existing_chunk_body Already emitted bytes for this HTTP chunk.
      * @param int                    $max_chunk_bytes     Soft max chunk bytes ({@see Updatronix_Export::MAX_BYTES_PER_CHUNK}).
      * @return array{body: string, rows_emitted: int, merged_lines_added: int, byte_cap_hit: bool}
@@ -91,13 +205,13 @@ final class Updatronix_Export_Body_Builder {
         string $existing_chunk_body,
         int $max_chunk_bytes
     ): array {
-        unset($columns);
+        $columns = self::normalize_export_columns($columns);
 
         switch_to_user_locale(get_current_user_id());
 
         try {
             self::prime_user_cache($rows);
-            $records = self::build_sectioned_records($rows, $merge);
+            $records = self::build_sectioned_records($rows, $merge, $columns);
 
             return self::emit_until_cap($records, $existing_chunk_body, $max_chunk_bytes);
         } finally {
@@ -193,34 +307,36 @@ final class Updatronix_Export_Body_Builder {
     /**
      * Build the category-sectioned record list for a chunk.
      *
-     * @param array<int, object> $rows  Rows in one SQL chunk.
-     * @param bool               $merge Collapse rows sharing entity, action, and status.
+     * @param array<int, object>  $rows    Rows in one SQL chunk.
+     * @param bool                $merge   Collapse rows sharing entity, action, and status.
+     * @param array<string, bool> $columns Normalised column toggles.
      * @return array<int, array{line: string, row_span: int}>
      */
-    private static function build_sectioned_records(array $rows, bool $merge): array {
+    private static function build_sectioned_records(array $rows, bool $merge, array $columns): array {
         $buckets = [];
         if ($merge) {
             foreach ($rows as $row) {
                 $buckets[self::merge_key($row)][] = $row;
             }
 
-            return self::build_merged_sectioned_records($buckets);
+            return self::build_merged_sectioned_records($buckets, $columns);
         }
 
         foreach ($rows as $row) {
             $buckets[] = [$row];
         }
 
-        return self::build_flat_records($buckets);
+        return self::build_flat_records($buckets, $columns);
     }
 
     /**
      * Flat export (merge off): one table, all log types, sorted by date only.
      *
      * @param array<int, array<int, object>> $buckets One row per bucket.
+     * @param array<string, bool>            $columns Normalised column toggles.
      * @return array<int, array{line: string, row_span: int}>
      */
-    private static function build_flat_records(array $buckets): array {
+    private static function build_flat_records(array $buckets, array $columns): array {
         $items = [];
 
         foreach ($buckets as $group) {
@@ -246,12 +362,14 @@ final class Updatronix_Export_Body_Builder {
             return [];
         }
 
-        $keys = self::ROW_PART_KEYS_FLAT;
+        $keys = self::filter_row_keys(self::ROW_PART_KEYS_FLAT, $columns);
         $widths = self::column_widths_for_rows($items, $keys);
-        $records = [
-            ['line' => self::format_column_header_row($widths, $keys), 'row_span' => 0],
-            ['line' => self::format_column_separator_row($widths, $keys), 'row_span' => 0],
-        ];
+        $records = [];
+
+        if (self::show_table_heading($columns)) {
+            $records[] = ['line' => self::format_column_header_row($widths, $keys), 'row_span' => 0];
+            $records[] = ['line' => self::format_column_separator_row($widths, $keys), 'row_span' => 0];
+        }
 
         foreach ($items as $item) {
             $records[] = [
@@ -267,9 +385,10 @@ final class Updatronix_Export_Body_Builder {
      * Sectioned export (merge on): category headings with date-sorted rows per section.
      *
      * @param array<string, array<int, object>> $buckets Merge groups keyed by {@see merge_key()}.
+     * @param array<string, bool>               $columns Normalised column toggles.
      * @return array<int, array{line: string, row_span: int}>
      */
-    private static function build_merged_sectioned_records(array $buckets): array {
+    private static function build_merged_sectioned_records(array $buckets, array $columns): array {
         /** @var array<string, array<int, array{sort_ts:int, action_rank:int, status_rank:int, name:string, parts:array{name:string, action:string, versions:string, dates:string, context:string, status:string}, row_span:int}>> $by_category */
         $by_category = ['core' => [], 'plugin' => [], 'theme' => [], 'translation' => []];
 
@@ -300,7 +419,8 @@ final class Updatronix_Export_Body_Builder {
                 $all_items[] = $item;
             }
         }
-        $widths = self::column_widths_for_rows($all_items, self::ROW_PART_KEYS);
+        $keys = self::filter_row_keys(self::ROW_PART_KEYS, $columns);
+        $widths = self::column_widths_for_rows($all_items, $keys);
 
         foreach (self::CATEGORY_ORDER as $lt) {
             $items = $by_category[$lt];
@@ -325,12 +445,16 @@ final class Updatronix_Export_Body_Builder {
             if ($has_section) {
                 $records[] = ['line' => '', 'row_span' => 0];
             }
-            $records[] = ['line' => self::section_heading_for($lt), 'row_span' => 0];
-            $records[] = ['line' => self::format_column_header_row($widths, self::ROW_PART_KEYS), 'row_span' => 0];
-            $records[] = ['line' => self::format_column_separator_row($widths, self::ROW_PART_KEYS), 'row_span' => 0];
+            if (self::show_category_headings($columns)) {
+                $records[] = ['line' => self::section_heading_for($lt), 'row_span' => 0];
+            }
+            if (self::show_table_heading($columns)) {
+                $records[] = ['line' => self::format_column_header_row($widths, $keys), 'row_span' => 0];
+                $records[] = ['line' => self::format_column_separator_row($widths, $keys), 'row_span' => 0];
+            }
             foreach ($items as $item) {
                 $records[] = [
-                    'line' => self::format_row_parts($item['parts'], $widths, self::ROW_PART_KEYS),
+                    'line' => self::format_row_parts($item['parts'], $widths, $keys),
                     'row_span' => $item['row_span'],
                 ];
             }

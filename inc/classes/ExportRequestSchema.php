@@ -49,24 +49,7 @@ final class Updatronix_Export_Request_Schema {
         // server-side defaults applied in Updatronix_Export_Body_Builder::normalize_export_columns().
         $columns_in = isset($params['columns']) && is_array($params['columns']) ? $params['columns'] : [];
 
-        $columns = [
-            'date' => false,
-            'user' => false,
-            'category' => false,
-            'status' => false,
-            'action_type' => false,
-            'trigger_type' => false,
-            'run_context' => false,
-        ];
-        foreach ($columns_in as $k => $v) {
-            $key = sanitize_key((string) $k);
-            if (!in_array($key, Updatronix_Export::COLUMN_KEYS, true)) {
-                continue;
-            }
-            /** @var mixed $col_raw */
-            $col_raw = $v;
-            $columns[$key] = self::sanitize_request_boolean($col_raw);
-        }
+        $columns = Updatronix_Export_Body_Builder::normalize_export_columns($columns_in);
 
         $site_requested = isset($view['site_id']) ? absint((string) $view['site_id']) : 0;
         $site_id = self::resolve_site_id_for_export($site_requested);
