@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-06-18T15:14:36+00:00\n"
+"POT-Creation-Date: 2026-06-19T11:48:49+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: updatronix\n"
@@ -649,7 +649,7 @@ msgid "Delete"
 msgstr ""
 
 #: assets/src/js/components/activityLog/ExportLogsModal.js:33
-msgid "Heading table"
+msgid "Column headings"
 msgstr ""
 
 #: assets/src/js/components/activityLog/ExportLogsModal.js:149
@@ -695,7 +695,7 @@ msgid "Export update logs"
 msgstr ""
 
 #: assets/src/js/components/activityLog/ExportLogsModal.js:329
-msgid "Generate a plain-text summary of the logs that match your current filters and sort. Dimensions without a filter include all values."
+msgid "Generate a plain-text summary of the logs that match your current filters and sort. Filters you have not set include all values."
 msgstr ""
 
 #: assets/src/js/components/activityLog/ExportLogsModal.js:337

@@ -480,7 +480,19 @@ function updatronix_sanitize_emails(mixed $value): string {
         $raw = substr($raw, 0, UPDATRONIX_NOTIFY_EMAILS_MAX_BYTES);
     }
     $emails = [];
-    foreach (explode(',', $raw) as $candidate) {
+    // Split on newlines as well as commas so a header-injection payload
+    // (e.g. "victim@example.com\r\nBcc: attacker@example.invalid") becomes a
+    // separate candidate instead of contaminating the legitimate address.
+    $candidates = preg_split('/[\r\n,]+/', $raw);
+    $candidates = is_array($candidates) ? $candidates : [];
+    foreach ($candidates as $candidate) {
+        $candidate = trim($candidate);
+        // Validate before sanitize_email() coerces: tokens that are not already a
+        // valid address (e.g. "Bcc: attacker@example.invalid", which has a space)
+        // are rejected outright rather than mangled into a deceptive address.
+        if ($candidate === '' || !is_email($candidate)) {
+            continue;
+        }
         $clean = sanitize_email($candidate);
         if ($clean === '') {
             continue;

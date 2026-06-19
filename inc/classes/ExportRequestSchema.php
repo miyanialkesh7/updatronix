@@ -262,20 +262,53 @@ final class Updatronix_Export_Request_Schema {
     }
 
     /**
+     * Reconcile a categorical operator with its value shape (`is`⇄`isAny`).
+     *
+     * A scalar `isAny` collapses to `is`, and a list `is` promotes to `isAny`, so the
+     * downstream clause type matches the value the UI actually sent. Operators outside
+     * the swap pair are returned unchanged.
+     *
+     * @param string $operator Raw operator token.
+     * @param mixed  $value    Filter value (scalar or list).
+     * @return string Reconciled operator.
+     */
+    private static function normalize_categorical_operator(string $operator, mixed $value): string {
+        if ($operator === 'is' && is_array($value)) {
+            return 'isAny';
+        }
+        if ($operator === 'isAny' && !is_array($value)) {
+            return 'is';
+        }
+
+        return $operator;
+    }
+
+    /**
+     * Map a validated categorical operator to its DB clause type.
+     *
+     * @param string $operator Operator already confirmed in {@see Updatronix_Export::CATEGORICAL_OPERATORS}.
+     * @return string Clause type (`eq`, `neq`, `in`, `not_in`); empty for an unknown operator.
+     */
+    private static function filter_type_for_operator(string $operator): string {
+        return match ($operator) {
+            'is' => 'eq',
+            'isNot' => 'neq',
+            'isAny' => 'in',
+            'isNone' => 'not_in',
+            default => '',
+        };
+    }
+
+    /**
      * @param string               $column   DB column name.
      * @param string               $operator Filter operator.
      * @param mixed                $value    Scalar or list from UI.
      * @return array<string, mixed>|null
      */
     private static function parse_categorical_filter(string $column, string $operator, mixed $value): ?array {
-        if ($operator === 'is' && is_array($value)) {
-            $operator = 'isAny';
-        }
-        if ($operator === 'isAny' && !is_array($value)) {
-            $operator = 'is';
-        }
+        $operator = self::normalize_categorical_operator($operator, $value);
 
-        if (!in_array($operator, ['is', 'isNot', 'isAny', 'isNone'], true)) {
+        if (!in_array($operator, Updatronix_Export::CATEGORICAL_OPERATORS, true)) {
             return null;
         }
 
@@ -302,15 +335,8 @@ final class Updatronix_Export_Request_Schema {
             return null;
         }
 
-        $filter_type = match ($operator) {
-            'is' => 'eq',
-            'isNot' => 'neq',
-            'isAny' => 'in',
-            'isNone' => 'not_in',
-        };
-
         return [
-            'type' => $filter_type,
+            'type' => self::filter_type_for_operator($operator),
             'column' => $column,
             'values' => $values,
         ];
@@ -322,7 +348,9 @@ final class Updatronix_Export_Request_Schema {
      * @return array<string, mixed>|null
      */
     private static function parse_run_context_filter(string $operator, mixed $value): ?array {
-        if (!in_array($operator, ['is', 'isNot', 'isAny', 'isNone'], true)) {
+        $operator = self::normalize_categorical_operator($operator, $value);
+
+        if (!in_array($operator, Updatronix_Export::CATEGORICAL_OPERATORS, true)) {
             return null;
         }
 
@@ -334,13 +362,6 @@ final class Updatronix_Export_Request_Schema {
 
             return '';
         };
-
-        if ($operator === 'is' && is_array($value)) {
-            $operator = 'isAny';
-        }
-        if ($operator === 'isAny' && !is_array($value)) {
-            $operator = 'is';
-        }
 
         $vals = [];
         if ($operator === 'is' || $operator === 'isNot') {
@@ -362,15 +383,8 @@ final class Updatronix_Export_Request_Schema {
             return null;
         }
 
-        $filter_type = match ($operator) {
-            'is' => 'eq',
-            'isNot' => 'neq',
-            'isAny' => 'in',
-            'isNone' => 'not_in',
-        };
-
         return [
-            'type' => $filter_type,
+            'type' => self::filter_type_for_operator($operator),
             'column' => 'update_context',
             'values' => $vals,
         ];

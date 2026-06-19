@@ -18,7 +18,6 @@ final class Updatronix_Export {
     public const MAX_ROWS_TOTAL = 250000;
     public const MAX_BYTES_PER_CHUNK = 1048576;
     public const MAX_BYTES_TOTAL = 8388608;
-    public const SOFT_TIME_SECONDS = 8;
     public const HARD_TIME_SECONDS = 15;
     public const TRANSIENT_TTL = 900;
 
@@ -426,9 +425,11 @@ final class Updatronix_Export {
     }
 
     /**
-     * Attach Retry-After header for rate limiting.
+     * Attach a `Retry-After` header to a rate-limit error response.
      *
-     * @param \WP_Error $error Error from rate limiter.
+     * @since 1.1.0
+     *
+     * @param \WP_Error $error Error from the rate limiter.
      * @return \WP_REST_Response
      */
     private static function decorate_rate_limit_response(\WP_Error $error): \WP_REST_Response {

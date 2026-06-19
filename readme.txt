@@ -133,6 +133,7 @@ Yes. Each site on the network keeps its own update history.
 * Improvement: Activity log DataViews toolbar includes a compact Export logs control (upload icon, minimal style; wiring TBD).
 * Change: Streamlined the Update logs export modal — removed the optional "Details to include in each line" toggles; exports keep the standard date, category, status, and action details. Filter handling now flows from a single shared registry.
 * Change: Redesigned the export report — merged exports group entries by category (Core, Plugins, Themes, Translations) and sort by date within each section. Non-merged exports use a single flat list sorted by date with a Category column. Each section or list includes aligned column headings with a dash separator. Translation rows show the package slug instead of the display name. The export modal adds copy buttons for formatted and plain-text clipboard output.
+* Change: Clearer export modal wording — the "Heading table" column option is now "Column headings", and the modal intro explains in plain language that filters you have not set include all values.
 * New: Schedule tab — pick how often WordPress checks for updates (every hour, twice a day, daily, or weekly) and a preferred time of day.
 * New: Hold automatic updates for a chosen number of days after they appear, with a friendly notice on the Updates, Plugins, and Themes screens explaining the wait.
 * New: One-click switch in Settings to turn off all WordPress update notification emails (recovery mode emails are kept on so you never get locked out).

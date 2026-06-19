@@ -69,6 +69,24 @@ Test with browser DevTools **Network** tab on the settings page, or `curl` with 
 - [ ] **Filtering** — On a list with several entries, filter by **Category**, **Action**, **Date**, and **User**; confirm each filter narrows the list correctly and clearing the filter restores it.
 - [ ] **Per-row delete** — Use the per-row delete action; confirm the entry disappears from the list and the DB row is gone.
 
+### Export update logs `[changed in 1.1]`
+
+Run from the **Export update logs** modal (the **Export** button above the logs list). Seed several entries across core, plugins, themes, and translations, including at least one multi-event item and one failure, before testing.
+
+- [ ] **Filters applied summary** — Apply Category, Action, Date, and User filters in the list, then open the modal; confirm the **Filters applied** summary reflects exactly those filters and the sort line shows the active sort.
+- [ ] **Generate export (merge on)** — With **Merge logs for the same item** on, generate the export; confirm rows are grouped under `== CORE ==` / `== PLUGINS ==` / `== THEMES ==` / `== TRANSLATIONS ==`, ordered most-recent-first, with version spans and comma-separated dates for merged items.
+- [ ] **Generate export (merge off)** — Turn merge off; confirm a single flat list sorted by date with a leading **Category** column, and that the sort line appears.
+- [ ] **Report columns** — Uncheck each of the six column toggles in turn and regenerate; confirm the corresponding column (heading row, action, run context, user, status, category) disappears and Element/Version/Date always remain. Reopen the modal; confirm the toggle state persisted (localStorage).
+- [ ] **Translation element name** — Confirm translation rows show the slug (e.g. `akismet`), not a display name.
+- [ ] **User column** — Confirm manual updates show the operator's display name and automatic updates show `System`; a merged item touched by two users shows both, comma-separated.
+- [ ] **Copy with formatting → code editor** — Click **Copy with formatting**, paste into a monospace code editor; confirm columns stay aligned (NBSP padding) and the dash separator row is intact.
+- [ ] **Copy with formatting → Word / Gmail** — Paste into Microsoft Word and a Gmail compose window; confirm the monospace `<pre>` block preserves alignment in both rich-text targets.
+- [ ] **Copy without formatting → email plain text** — Click **Copy without formatting**, paste into a plain-text field; confirm fields are double-spaced with no dash rules or fixed-width padding, and section headings are preserved.
+- [ ] **Screen-reader announcement** — After generating, confirm assistive tech announces "Export ready. Copy the report to save it. It expires after 15 minutes."; after each copy, confirm the formatted/plain copied announcement fires.
+- [ ] **Empty result** — Apply a filter that matches no logs and generate; confirm the info notice "No logs match the current filters. The export is empty." appears and no output textarea is shown.
+- [ ] **Expiry** — Generate an export, wait > 15 minutes, then attempt a continuation (large export): confirm the session-expired path surfaces "This export session has expired. Start a new export."
+- [ ] **Rate limit** — Start many exports in quick succession; confirm the "Too many exports started recently…" notice eventually appears (HTTP 429 with `Retry-After`).
+
 ## 5. Auto-updates tab
 
 - [ ] **Core mode switch** — Move between *every release*, *security and minor only*, and *fully manual*; reload and confirm the choice persists. Each choice flips the right `auto_update_*` site option.

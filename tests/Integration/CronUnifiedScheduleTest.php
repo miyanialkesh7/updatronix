@@ -63,8 +63,12 @@ final class CronUnifiedScheduleTest extends WP_UnitTestCase {
      * callback (`wp_version_check()`) to run twice in a single `do_action( 'wp_version_check' )` tick.
      *
      * The plugin's listener primes plugin/theme transients at priority 9 and lets Core's listener
-     * run untouched at priority 10. Counting filter dispatches on `pre_set_site_transient_update_core`
-     * is a tight proxy: `wp_version_check()` always sets that transient before returning.
+     * run untouched at priority 10. The proxy counts `core_version_check_locale`, a filter
+     * `wp_version_check()` fires exactly once per non-short-circuited run (before the API request);
+     * the plugin primer calls `wp_update_plugins()` / `wp_update_themes()`, which do not fire it.
+     * (`pre_set_site_transient_update_core` is unusable here: WordPress 7.0's `wp_version_check()`
+     * sets the `update_core` transient twice within a single run — a defensive early set plus the
+     * result set — so it no longer maps 1:1 to a run.)
      *
      * @return void
      */
@@ -76,23 +80,23 @@ final class CronUnifiedScheduleTest extends WP_UnitTestCase {
 
         self::assertTrue(Updatronix_Cron::is_unified_schedule_active());
 
-        $core_set_transient_calls = 0;
-        $listener = static function ($value) use (&$core_set_transient_calls) {
-            $core_set_transient_calls++;
+        $core_check_runs = 0;
+        $listener = static function ($locale) use (&$core_check_runs) {
+            $core_check_runs++;
 
-            return $value;
+            return $locale;
         };
-        add_filter('pre_set_site_transient_update_core', $listener, 99);
+        add_filter('core_version_check_locale', $listener, 99);
 
         try {
             do_action('wp_version_check');
         } finally {
-            remove_filter('pre_set_site_transient_update_core', $listener, 99);
+            remove_filter('core_version_check_locale', $listener, 99);
         }
 
         self::assertSame(
             1,
-            $core_set_transient_calls,
+            $core_check_runs,
             'wp_version_check() must run exactly once per cron tick when unified scheduling is active.'
         );
     }

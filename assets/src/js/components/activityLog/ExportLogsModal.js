@@ -30,7 +30,7 @@ import {
 const COLUMN_OPTIONS = [
 	{
 		id: 'headingTable',
-		label: __('Heading table', 'updatronix'),
+		label: __('Column headings', 'updatronix'),
 	},
 	{
 		id: 'action',
@@ -327,7 +327,7 @@ export function ExportLogsModal({
 		>
 			<p id="updatronix-export-modal-desc">
 				{__(
-					'Generate a plain-text summary of the logs that match your current filters and sort. Dimensions without a filter include all values.',
+					'Generate a plain-text summary of the logs that match your current filters and sort. Filters you have not set include all values.',
 					'updatronix'
 				)}
 			</p>

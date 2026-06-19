@@ -61,10 +61,12 @@ final class NotificationsModeDisabledTest extends WP_UnitTestCase {
     public function test_disabled_mode_returns_false_for_plugin_and_theme_send_email(): void {
         $this->enable_disabled_mode();
 
-        $send_plugin = apply_filters('auto_plugin_update_send_email', true, 'success', []);
+        // Core fires these with the update-results array as the second argument
+        // (see WP_Automatic_Updater::send_plugin_theme_email()), not a $type string.
+        $send_plugin = apply_filters('auto_plugin_update_send_email', true, []);
         self::assertFalse($send_plugin, 'Disabled mode must suppress the plugin update batch email.');
 
-        $send_theme = apply_filters('auto_theme_update_send_email', true, 'success', []);
+        $send_theme = apply_filters('auto_theme_update_send_email', true, []);
         self::assertFalse($send_theme, 'Disabled mode must suppress the theme update batch email.');
     }
 

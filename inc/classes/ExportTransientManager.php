@@ -22,6 +22,16 @@ final class Updatronix_Export_Transient_Manager {
     public const POINTER_META_KEY = 'updatronix_export_last_key';
 
     /**
+     * Canonical export transient-key shape produced by {@see self::generate_key()}.
+     *
+     * Single source of truth shared with {@see Updatronix_Export_Cursor::verify()} so the
+     * key format is validated identically wherever a key crosses a trust boundary.
+     *
+     * @var string
+     */
+    public const KEY_PATTERN = '/^updatronix_log_export_\d+_\d+_[a-f0-9]{32}$/';
+
+    /**
      * Mint a new transient key bound to `(site_id, user_id)`.
      *
      * @since 1.1.0
@@ -54,14 +64,14 @@ final class Updatronix_Export_Transient_Manager {
             return new WP_Error('internal', '', ['status' => 500]);
         }
 
-        if (!preg_match('/^updatronix_log_export_\d+_\d+_[a-f0-9]{32}$/', $new_key)) {
+        if (!preg_match(self::KEY_PATTERN, $new_key)) {
             return new WP_Error('internal', '', ['status' => 500]);
         }
 
         $prior = get_user_meta($user_id, self::POINTER_META_KEY, true);
         $prior = is_string($prior) ? $prior : '';
 
-        if ($prior !== '' && preg_match('/^updatronix_log_export_\d+_\d+_[a-f0-9]{32}$/', $prior)) {
+        if ($prior !== '' && preg_match(self::KEY_PATTERN, $prior)) {
             $deleted = delete_transient($prior);
             if (!$deleted && defined('WP_DEBUG_LOG') && WP_DEBUG_LOG) {
                 // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log -- gated diagnostic only.
