@@ -46,7 +46,7 @@ Run these before a commit or release, in order:
 | 5 | `npm run format` | Prettier check on `assets/src/**/*.{js,jsx}` (`npm run format:fix` to write) |
 | 6 | `composer run make:pot` | Regenerate `languages/updatronix.pot` (requires **Local** — see below) |
 | 7 | `composer run test:integration` | **PHPUnit integration tests** — single-site suite (full WordPress + DB; routes through `.config/local-wp-cli.sh`, so it uses Local's PHP/mysqli automatically after `bin/setup-dev.sh`) |
-| 8 | *(multisite)* `WP_TESTS_MULTISITE=1 bash .config/local-wp-cli.sh integration-test --filter Multisite` | **Multisite integration tests** under `tests/Integration/Multisite/` (`MultisiteScheduleAccessTest` self-skips on single-site bootstraps, so it is safe to leave in the default suite) |
+| 8 | *(multisite)* `WP_MULTISITE=1 bash .config/local-wp-cli.sh integration-test --filter Multisite` | **Multisite integration tests** under `tests/Integration/Multisite/` (`MultisiteNetworkOnlyTest` self-skips on single-site bootstraps, so it is safe to leave in the default suite) |
 
 To run **everything at once** (all linters + unit + integration tests, no build):
 
@@ -125,9 +125,9 @@ For integration tests only, see **`tests/README.md`** and `bash .config/local-wp
 | Integration — Notifications (disabled mode) | `tests/Integration/NotificationsModeDisabledTest.php` | `wordpress-tests-lib` | `notifications_mode === 'disabled'` suppresses every WordPress update email and leaves recovery-mode email recipients untouched |
 | Integration — Recipient sanitisation | `tests/Integration/NotificationsRecipientSanitisationTest.php` | `wordpress-tests-lib` | `updatronix_sanitize_emails()` strips header-injection payloads, dedupes, and caps the recipient list (`UPDATRONIX_NOTIFY_EMAILS_MAX_RECIPIENTS`) |
 | Integration — Post-save action | `tests/Integration/SettingsPostSaveActionTest.php` | `wordpress-tests-lib` | `Updatronix_AutoUpdates::dismiss_constant()` and `set_translations()` route through `updatronix_save_settings_array()` and fire `updatronix_after_save_settings`; unrelated saves do not fire `updatronix_after_save_network_schedule` |
-| Integration — Multisite schedule access | `tests/Integration/Multisite/MultisiteScheduleAccessTest.php` | `wordpress-tests-lib` with `WP_TESTS_MULTISITE=1` | Subsite admin schedule writes are silently ignored (`schedule_ignored: true`); super-admin writes persist into `UPDATRONIX_OPTION_NETWORK_SCHEDULE`; uninstall clears the network option |
+| Integration — Multisite network-only | `tests/Integration/Multisite/MultisiteNetworkOnlyTest.php` | `wordpress-tests-lib` with `WP_MULTISITE=1` | Subsite context bails via `updatronix_should_load()`; settings live in site options network-wide; Super Admin REST saves schedule; uninstall clears network options |
 
-Multisite tests **self-skip** when the bootstrap is not in multisite mode, so they stay in the default suite. To exercise them, prepend `WP_TESTS_MULTISITE=1` to the integration-test command (the WordPress test bootstrap reads that env var to spin the install up as a network).
+Multisite tests **self-skip** when the bootstrap is not in multisite mode, so they stay in the default suite. To exercise them, prepend `WP_MULTISITE=1` to the integration-test command (the WordPress test bootstrap reads that env var to spin the install up as a network).
 
 ### Front-end — ESLint, Stylelint, Prettier
 
@@ -198,7 +198,7 @@ Notes:
   (see `.config/local-wp-cli.sh`). On a fresh machine, `composer install` +
   `npm install` + `bash bin/setup-dev.sh` is all that is required.
 - Multisite integration tests are not part of the default run; exercise them with
-  `WP_TESTS_MULTISITE=1 bash .config/local-wp-cli.sh integration-test --filter Multisite`.
+  `WP_MULTISITE=1 bash .config/local-wp-cli.sh integration-test --filter Multisite`.
 - `npm run build` uses `@wordpress/scripts` to bundle JS (and compile SCSS imports via the entry `assets/src/index.js`) into `assets/build/`.
 
 ## Development workflow

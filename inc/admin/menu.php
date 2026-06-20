@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Admin menu: Updatronix under Tools and Dashboard.
+ * Admin menu: Updatronix under Tools and Dashboard (single-site) or Network Admin (Multisite).
  *
  * @package updatronix
  */
@@ -10,7 +10,12 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-add_action('admin_menu', 'updatronix_add_option_page');
+if (is_multisite()) {
+    add_action('network_admin_menu', 'updatronix_add_network_option_page');
+} else {
+    add_action('admin_menu', 'updatronix_add_option_page');
+}
+
 /**
  * Registers **Tools → Updatronix** and **Dashboard → Update logs**, both opening the same app shell.
  *
@@ -37,6 +42,29 @@ function updatronix_add_option_page(): void {
 }
 
 /**
+ * Registers the Updatronix top-level menu in Network Admin (Super Admin only).
+ *
+ * @since 1.1.0
+ *
+ * @return void
+ */
+function updatronix_add_network_option_page(): void {
+    if (!is_super_admin()) {
+        return;
+    }
+
+    add_menu_page(
+        __('Updatronix', 'updatronix'),
+        __('Updatronix', 'updatronix'),
+        UPDATRONIX_CAP_MANAGE,
+        'updatronix',
+        'updatronix_options_page',
+        'dashicons-update',
+        30
+    );
+}
+
+/**
  * Outputs the admin page shell; the React app mounts into `#updatronix-settings`.
  *
  * @since 1.0.0
@@ -44,6 +72,10 @@ function updatronix_add_option_page(): void {
  * @return void
  */
 function updatronix_options_page(): void {
+    if (is_multisite() && !is_super_admin()) {
+        return;
+    }
+
     $plugin_data = get_file_data(updatronix_PLUGIN_FILE, ['Version' => 'Version'], 'plugin');
     $plugin_version = $plugin_data['Version'] ?? '';
     $logo_rel_path = 'assets/img/logo-60x60.webp';

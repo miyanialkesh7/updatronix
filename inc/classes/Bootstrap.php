@@ -34,6 +34,11 @@ final class Updatronix_Bootstrap {
         Updatronix_Notifications::register();
         Updatronix_AutoUpdates::register();
         Updatronix_AutoUpdateDelay::register();
+
+        // Network-global log table: purge a deleted subsite's rows so stale site_id tags don't linger.
+        if (is_multisite()) {
+            add_action('wp_delete_site', ['Updatronix_Logger', 'on_delete_site']);
+        }
     }
 
     /**
@@ -80,7 +85,7 @@ final class Updatronix_Bootstrap {
      * @return void
      */
     private static function on_activation_create_table(): void {
-        $version = get_option(Updatronix_Database::OPTION_DB_VERSION, '');
+        $version = updatronix_get_plugin_option(Updatronix_Database::OPTION_DB_VERSION, '');
         if ($version === Updatronix_Database::DB_VERSION && Updatronix_Database::table_exists()) {
             return;
         }

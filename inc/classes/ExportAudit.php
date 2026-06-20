@@ -58,11 +58,11 @@ final class Updatronix_Export_Audit {
                 }
             }
 
-            if (false === get_option(self::OPTION_NAME, false)) {
+            if (false === updatronix_get_plugin_option(self::OPTION_NAME, false)) {
                 add_option(self::OPTION_NAME, [], '', false);
             }
 
-            $list = get_option(self::OPTION_NAME, []);
+            $list = updatronix_get_plugin_option(self::OPTION_NAME, []);
             if (!is_array($list)) {
                 $list = [];
             }
@@ -73,7 +73,7 @@ final class Updatronix_Export_Audit {
                 $list = array_slice($list, -self::MAX_ENTRIES);
             }
 
-            update_option(self::OPTION_NAME, $list, false);
+            updatronix_update_plugin_option(self::OPTION_NAME, $list, false);
         } catch (\Throwable $e) {
             if (defined('WP_DEBUG_LOG') && WP_DEBUG_LOG) {
                 // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log -- gated diagnostic only.

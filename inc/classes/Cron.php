@@ -71,7 +71,21 @@ final class Updatronix_Cron {
      */
     private static function self_heal_allowed_in_context(): bool {
         if (wp_doing_cron()) {
+            if (is_multisite()) {
+                return (int) get_current_blog_id() === (int) get_main_site_id();
+            }
+
             return true;
+        }
+        if (is_multisite()) {
+            if (is_network_admin()) {
+                return true;
+            }
+            if (defined('WP_CLI') && WP_CLI) {
+                return true;
+            }
+
+            return false;
         }
         if (is_admin()) {
             return true;
@@ -96,11 +110,11 @@ final class Updatronix_Cron {
             return;
         }
 
-        if (get_transient(self::SELF_HEAL_TRANSIENT)) {
+        if (updatronix_get_plugin_transient(self::SELF_HEAL_TRANSIENT)) {
             return;
         }
 
-        set_transient(self::SELF_HEAL_TRANSIENT, '1', DAY_IN_SECONDS);
+        updatronix_set_plugin_transient(self::SELF_HEAL_TRANSIENT, '1', DAY_IN_SECONDS);
         self::schedule_if_needed();
     }
 
@@ -250,11 +264,11 @@ final class Updatronix_Cron {
             return;
         }
 
-        if (get_transient(self::UPDATE_CHECK_HEAL_TRANSIENT)) {
+        if (updatronix_get_plugin_transient(self::UPDATE_CHECK_HEAL_TRANSIENT)) {
             return;
         }
 
-        set_transient(self::UPDATE_CHECK_HEAL_TRANSIENT, '1', HOUR_IN_SECONDS);
+        updatronix_set_plugin_transient(self::UPDATE_CHECK_HEAL_TRANSIENT, '1', HOUR_IN_SECONDS);
 
         $settings = updatronix_get_settings();
         $schedule = $settings['schedule'];
@@ -292,8 +306,46 @@ final class Updatronix_Cron {
      * @return void
      */
     public static function delete_plugin_transients(): void {
-        delete_transient(self::SELF_HEAL_TRANSIENT);
-        delete_transient(self::UPDATE_CHECK_HEAL_TRANSIENT);
+        updatronix_delete_plugin_transient(self::SELF_HEAL_TRANSIENT);
+        updatronix_delete_plugin_transient(self::UPDATE_CHECK_HEAL_TRANSIENT);
+    }
+
+    /**
+     * Remove duplicate cron events from subsites after network-only upgrade.
+     *
+     * @return void
+     */
+    public static function clear_subsite_cron_artifacts(): void {
+        if (!is_multisite()) {
+            return;
+        }
+
+        $main_id = (int) get_main_site_id();
+        $batch = 200;
+        $offset = 0;
+        do {
+            $site_ids = get_sites(
+                [
+                    'fields' => 'ids',
+                    'number' => $batch,
+                    'offset' => $offset,
+                ]
+            );
+            foreach ($site_ids as $blog_id) {
+                $blog_id = (int) $blog_id;
+                if ($blog_id === $main_id) {
+                    continue;
+                }
+                switch_to_blog($blog_id);
+                try {
+                    wp_clear_scheduled_hook(self::HOOK_CLEANUP);
+                    wp_clear_scheduled_hook(self::HOOK_WP_CRON_CORE_VERSION_CHECK);
+                } finally {
+                    restore_current_blog();
+                }
+            }
+            $offset += $batch;
+        } while (count($site_ids) === $batch);
     }
 
     /**

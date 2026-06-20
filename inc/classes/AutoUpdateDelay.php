@@ -284,7 +284,7 @@ final class Updatronix_AutoUpdateDelay {
             return self::$ledger_cache;
         }
 
-        $raw = get_option(self::OPTION_LEDGER, '');
+        $raw = updatronix_get_plugin_option(self::OPTION_LEDGER, '');
         if ($raw === '' || !is_string($raw)) {
             self::$ledger_cache = [];
 
@@ -320,7 +320,7 @@ final class Updatronix_AutoUpdateDelay {
             }
         }
 
-        update_option(self::OPTION_LEDGER, wp_json_encode($ledger) ?: '{}', false);
+        updatronix_update_plugin_option(self::OPTION_LEDGER, wp_json_encode($ledger) ?: '{}', false);
         self::$ledger_cache = $ledger;
     }
 

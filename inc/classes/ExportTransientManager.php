@@ -72,20 +72,20 @@ final class Updatronix_Export_Transient_Manager {
         $prior = is_string($prior) ? $prior : '';
 
         if ($prior !== '' && preg_match(self::KEY_PATTERN, $prior)) {
-            $deleted = delete_transient($prior);
+            $deleted = updatronix_delete_plugin_transient($prior);
             if (!$deleted && defined('WP_DEBUG_LOG') && WP_DEBUG_LOG) {
                 // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log -- gated diagnostic only.
                 error_log('[updatronix] export transient delete prior returned false');
             }
         }
 
-        if (!set_transient($new_key, $payload, Updatronix_Export::TRANSIENT_TTL)) {
+        if (!updatronix_set_plugin_transient($new_key, $payload, Updatronix_Export::TRANSIENT_TTL)) {
             return new WP_Error('internal', '', ['status' => 500]);
         }
 
         $updated = update_user_meta($user_id, self::POINTER_META_KEY, $new_key);
         if ($updated === false) {
-            delete_transient($new_key);
+            updatronix_delete_plugin_transient($new_key);
 
             return new WP_Error('internal', '', ['status' => 500]);
         }

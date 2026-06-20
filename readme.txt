@@ -68,7 +68,7 @@ Updatronix aims to be fully accessible to all of its users. If you run into a pr
 
 == Multisite ==
 
-Multisite networks work too. Each site keeps its own update history.
+On a multisite network, Updatronix is network-only. Network-activate it once, and a Super Admin manages everything from the Network Admin dashboard: the settings, the update history, the schedule, and the email controls are all network-wide and shared across every site. Individual sites show no Updatronix menu, settings page, or notice. Single-site installs are unaffected and behave exactly as described above.
 
 == Screenshots ==
 
@@ -86,7 +86,7 @@ Multisite networks work too. Each site keeps its own update history.
 2. Activate the plugin from the Plugins screen.
 3. Open **Tools → Updatronix** (or **Dashboard → Update logs**) to see the history and adjust the settings.
 
-Activation creates the log table and schedules a daily cleanup. Deactivation cancels the cleanup but leaves your data alone. Deletion removes everything: the log table and the settings. On multisite, deletion runs per site.
+Activation creates the log table and schedules a daily cleanup. Deactivation cancels the cleanup but leaves your data alone. Deletion removes everything: the log table and the settings. On multisite, network-activate the plugin from the Network Admin Plugins screen; its data lives at the network level, and deletion clears it once for the whole network (including any leftover per-site data from earlier versions).
 
 == Frequently Asked Questions ==
 
@@ -124,11 +124,14 @@ Up to you. In **Settings**, set the retention window between 1 and 365 days. A d
 
 = Does Updatronix work on multisite? =
 
-Yes. Each site on the network keeps its own update history.
+Yes, as a network-only plugin. A Super Admin network-activates it and manages it from the Network Admin dashboard. The settings and the update history are shared across the whole network, and individual sites don't show any Updatronix interface. Single-site installs are unchanged.
 
 == Changelog ==
 
 = 1.1 =
+* Change: Multisite is now network-only. Network-activate Updatronix and manage it as a Super Admin from the Network Admin dashboard; the settings and update history are shared network-wide, and individual sites no longer show any Updatronix interface. Single-site installs are unchanged.
+* Change: On Multisite, the Network Admin update history and exports now show entries from every site on the network by default; deleting a site removes its entries from the shared history. Single-site installs are unchanged.
+* i18n: Removed the per-site "schedule changes were not saved because they affect every site on this network" warning notice, which no longer applies under the network-only model.
 * i18n: Save buttons now use "Save Changes" to match native WordPress settings screens.
 * Improvement: Activity log DataViews toolbar includes a compact Export logs control (upload icon, minimal style; wiring TBD).
 * Change: Streamlined the Update logs export modal — removed the optional "Details to include in each line" toggles; exports keep the standard date, category, status, and action details. Filter handling now flows from a single shared registry.

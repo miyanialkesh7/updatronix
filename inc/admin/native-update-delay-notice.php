@@ -12,13 +12,21 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-add_action('admin_notices', 'updatronix_render_delay_context_admin_notice', 12);
+if (is_multisite()) {
+    add_action('network_admin_notices', 'updatronix_render_delay_context_admin_notice', 12);
+} else {
+    add_action('admin_notices', 'updatronix_render_delay_context_admin_notice', 12);
+}
 /**
  * Prints an informational notice when delayed automatic updates are active.
  *
  * @return void
  */
 function updatronix_render_delay_context_admin_notice(): void {
+    if (is_multisite() && !is_network_admin()) {
+        return;
+    }
+
     if (!updatronix_delay_updates_is_active_from_settings()) {
         return;
     }
@@ -52,8 +60,13 @@ function updatronix_render_delay_context_admin_notice(): void {
     echo '</p>';
 
     if (current_user_can(UPDATRONIX_CAP_MANAGE)) {
-        $schedule_u = esc_url(admin_url('tools.php?page=updatronix&tab=schedule'));
-        $logs_u = esc_url(admin_url('tools.php?page=updatronix&tab=logs'));
+        if (is_multisite()) {
+            $base = network_admin_url('admin.php');
+        } else {
+            $base = admin_url('tools.php');
+        }
+        $schedule_u = esc_url(add_query_arg(['page' => 'updatronix', 'tab' => 'schedule'], $base));
+        $logs_u = esc_url(add_query_arg(['page' => 'updatronix', 'tab' => 'logs'], $base));
         $linked = sprintf(
             /* translators: %1$s: Schedule tab URL. %2$s: Update logs URL. */
             __('Change delay settings on the <a href="%1$s">Schedule tab</a> or open <a href="%2$s">Update logs</a> for details.', 'updatronix'),

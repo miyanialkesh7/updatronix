@@ -10,7 +10,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-/** Option key for the single JSON settings (per-site). */
+/** Option key for the single JSON settings blob (site option on Multisite). */
 const UPDATRONIX_OPTION_SETTINGS = 'updatronix_settings';
 
 /**
@@ -270,9 +270,15 @@ add_action('init', 'updatronix_maybe_grant_manage_cap', 1);
 /**
  * Grant {@see UPDATRONIX_CAP_MANAGE} to the administrator role on existing installs (activation hook does not run on upgrade).
  *
+ * Single-site only: on multisite, access is gated to Super Admins, who pass every capability check, so the
+ * administrator-role capability is never consulted.
+ *
  * @return void
  */
 function updatronix_maybe_grant_manage_cap(): void {
+    if (is_multisite()) {
+        return;
+    }
     if (get_option('updatronix_cap_migrated', '') === '1') {
         return;
     }
@@ -311,7 +317,7 @@ function updatronix_register_settings(): void {
  * @return array{logging_enabled: bool, retention_days: int, notifications_mode: string, notify_enabled: bool, notify_emails: string, notify_on: array<string>, auto_update_translations: bool, dismissed_constants: array<string>, schedule: array{update_check: array{recurrence: string, time: string}, delay_updates: array{enabled: bool, delay_value: int}}}
  */
 function updatronix_get_settings(): array {
-    $raw = get_option(UPDATRONIX_OPTION_SETTINGS, '');
+    $raw = updatronix_get_plugin_option(UPDATRONIX_OPTION_SETTINGS, '');
     $decoded = [];
     if ($raw !== '' && $raw !== false) {
         $decoded = json_decode($raw, true);
@@ -345,11 +351,7 @@ function updatronix_get_settings(): array {
  * @return array{update_check: array{recurrence: string, time: string}, delay_updates: array{enabled: bool, delay_value: int}}
  */
 function updatronix_get_network_schedule(): array {
-    if (is_multisite()) {
-        $raw = get_site_option(UPDATRONIX_OPTION_NETWORK_SCHEDULE, '');
-    } else {
-        $raw = get_option(UPDATRONIX_OPTION_NETWORK_SCHEDULE, '');
-    }
+    $raw = updatronix_get_plugin_option(UPDATRONIX_OPTION_NETWORK_SCHEDULE, '');
 
     $decoded = [];
     if (is_string($raw) && $raw !== '') {
@@ -386,11 +388,7 @@ function updatronix_save_network_schedule(array $schedule): bool {
         return false;
     }
 
-    if (is_multisite()) {
-        update_site_option(UPDATRONIX_OPTION_NETWORK_SCHEDULE, $encoded);
-    } else {
-        update_option(UPDATRONIX_OPTION_NETWORK_SCHEDULE, $encoded, false);
-    }
+    updatronix_update_plugin_option(UPDATRONIX_OPTION_NETWORK_SCHEDULE, $encoded, false);
 
     /**
      * Fires after the network-scoped Schedule subtree changes (recurrence, time, or delay window).
@@ -454,8 +452,42 @@ function updatronix_save_settings_array(array $input): void {
     if (isset($input['schedule']) && is_array($input['schedule'])) {
         updatronix_save_network_schedule($input['schedule']);
     }
-    update_option(UPDATRONIX_OPTION_SETTINGS, updatronix_sanitize_settings_json($input));
+    updatronix_update_plugin_option(UPDATRONIX_OPTION_SETTINGS, updatronix_sanitize_settings_json($input));
     do_action('updatronix_after_save_settings');
+}
+
+add_action('init', 'updatronix_maybe_migrate_network_storage', 0);
+/**
+ * Copy legacy main-site blog options into site options once after network-only upgrade.
+ *
+ * @return void
+ */
+function updatronix_maybe_migrate_network_storage(): void {
+    if (!is_multisite() || !updatronix_should_load()) {
+        return;
+    }
+
+    require_once UPDATRONIX_PLUGIN_DIR . 'inc/classes/UpdateLogState.php';
+    require_once UPDATRONIX_PLUGIN_DIR . 'inc/classes/UpdateLogger.php';
+    require_once UPDATRONIX_PLUGIN_DIR . 'inc/classes/AutoUpdateDelay.php';
+
+    updatronix_maybe_migrate_blog_options_to_site_options(
+        array_merge(
+            [
+                UPDATRONIX_OPTION_SETTINGS,
+                UPDATRONIX_OPTION_NETWORK_SCHEDULE,
+                'updatronix_cap_migrated',
+                'updatronix_log_db_version',
+                Updatronix_UpdateLogState::OPTION_STATE,
+                'updatronix_export_audit',
+            ],
+            Updatronix_Update_Logger::snapshot_option_keys_for_uninstall(),
+            Updatronix_AutoUpdateDelay::uninstall_option_keys()
+        )
+    );
+
+    require_once UPDATRONIX_PLUGIN_DIR . 'inc/classes/Cron.php';
+    Updatronix_Cron::clear_subsite_cron_artifacts();
 }
 
 /** Maximum raw byte length accepted for the comma-separated `notify_emails` field. */

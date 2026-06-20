@@ -293,7 +293,8 @@ final class Updatronix_Settings {
         $id = absint((string) $request->get_param('id'));
         $log = Updatronix_Logger::get_log($id, true);
 
-        if (!$log || (int) ($log->site_id ?? 0) !== self::resolve_site_id($request)) {
+        $scope = self::resolve_site_id($request);
+        if (!$log || ($scope > 0 && (int) ($log->site_id ?? 0) !== $scope)) {
             return new WP_REST_Response([
                 'message' => __('The requested log entry could not be found.', 'updatronix'),
             ], 404);
@@ -440,7 +441,8 @@ final class Updatronix_Settings {
     public static function rest_delete_log(\WP_REST_Request $request): WP_REST_Response {
         $id = (int) $request->get_param('id');
         $log = Updatronix_Logger::get_log($id, false);
-        if (!$log || (int) ($log->site_id ?? 0) !== self::resolve_site_id($request)) {
+        $scope = self::resolve_site_id($request);
+        if (!$log || ($scope > 0 && (int) ($log->site_id ?? 0) !== $scope)) {
             return new WP_REST_Response(['message' => __('The requested log entry could not be found.', 'updatronix')], 404);
         }
 
@@ -469,21 +471,13 @@ final class Updatronix_Settings {
     /**
      * REST: Update plugin settings.
      *
-     * On multisite, schedule writes additionally require `manage_network_options` because the
-     * Schedule subtree is stored as a network site option and drives the network-wide
-     * `wp_version_check` WP-Cron event. Subsite admins with only `manage_updatronix` can save the
-     * other settings but their `schedule` payload is silently kept at the current network value.
-     * Read access is unchanged.
-     *
      * @param \WP_REST_Request<array<string, mixed>> $request Request.
      * @return WP_REST_Response
      */
     public static function rest_update_settings(\WP_REST_Request $request): WP_REST_Response {
         $current = updatronix_get_settings();
 
-        $may_write_schedule = !is_multisite() || current_user_can('manage_network_options');
         $schedule_in_request = $request->has_param('schedule') && is_array($request->get_param('schedule'));
-        $schedule_ignored = $schedule_in_request && !$may_write_schedule;
 
         $next = [
             'logging_enabled' => $request->has_param('logging_enabled') ? (bool) $request->get_param('logging_enabled') : $current['logging_enabled'],
@@ -498,7 +492,7 @@ final class Updatronix_Settings {
                 : $current['notify_on'],
             'auto_update_translations' => $current['auto_update_translations'],
             'dismissed_constants' => $current['dismissed_constants'],
-            'schedule' => ($schedule_in_request && $may_write_schedule)
+            'schedule' => $schedule_in_request
                 ? updatronix_merge_partial_schedule_into((array) $request->get_param('schedule'), $current['schedule'])
                 : $current['schedule'],
         ];
@@ -508,7 +502,6 @@ final class Updatronix_Settings {
             [
                 'options' => updatronix_get_settings(),
                 'schedule_meta' => self::schedule_meta_response_payload(),
-                'schedule_ignored' => $schedule_ignored,
             ],
             200
         );
@@ -630,8 +623,13 @@ final class Updatronix_Settings {
     /**
      * Resolve the allowed site scope for log routes.
      *
+     * Returns a concrete blog ID to scope to, or `0` (network-global sentinel) to mean
+     * "all originating sites". On Multisite these routes are reachable only by Super Admins
+     * (see {@see Updatronix_Security::user_can_manage_logs()}), so the default is the
+     * network-global view; an explicit `site_id` narrows it to a single subsite.
+     *
      * @param \WP_REST_Request<array<string, mixed>> $request Request.
-     * @return int
+     * @return int Blog ID, or 0 for the network-global scope.
      */
     private static function resolve_site_id(\WP_REST_Request $request): int {
         $current_site_id = (int) get_current_blog_id();
@@ -641,10 +639,15 @@ final class Updatronix_Settings {
             return $current_site_id;
         }
 
-        if ($requested_site_id > 0 && current_user_can('manage_network_options')) {
+        // Defensive: callers are super-admin-gated, but never widen scope for anyone else.
+        if (!is_super_admin()) {
+            return $current_site_id;
+        }
+
+        if ($requested_site_id > 0) {
             return $requested_site_id;
         }
 
-        return $current_site_id;
+        return 0;
     }
 }

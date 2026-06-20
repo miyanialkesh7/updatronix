@@ -174,7 +174,7 @@ final class Updatronix_Export {
             $transient_key = (string) $decoded['k'];
             $offset = (int) $decoded['o'];
 
-            $stored = get_transient($transient_key);
+            $stored = updatronix_get_plugin_transient($transient_key);
             if (!is_array($stored) || empty($stored['validated_export']) || !is_array($stored['validated_export'])) {
                 return new WP_Error('cursor_expired', '', ['status' => 410]);
             }

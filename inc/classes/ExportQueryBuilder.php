@@ -51,8 +51,12 @@ final class Updatronix_Export_Query_Builder {
         $where = ['1=1'];
         $values = [];
 
-        $where[] = 'site_id = %d';
-        $values[] = $site_id;
+        // site_id 0 is the network-global sentinel (Super Admin, no per-site filter); export every
+        // originating site's rows. See Updatronix_Export_Request_Schema::resolve_site_id_for_export().
+        if ($site_id > 0) {
+            $where[] = 'site_id = %d';
+            $values[] = $site_id;
+        }
 
         $filters = isset($query['filters']) && is_array($query['filters']) ? $query['filters'] : [];
         foreach ($filters as $clause) {

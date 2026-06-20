@@ -29,7 +29,7 @@ Run from the plugin root before any manual steps. Details in `workflow.md`.
 
 - [ ] `npm run build:all` passes end to end (includes `verify:php`, Plugin Check, ESLint, Stylelint, Prettier, POT, build).
 - [ ] `bash .config/local-wp-cli.sh integration-test` passes (single-site integration suite).
-- [ ] `WP_TESTS_MULTISITE=1 bash .config/local-wp-cli.sh integration-test --filter Multisite` passes (multisite suite).
+- [ ] `WP_MULTISITE=1 bash .config/local-wp-cli.sh integration-test --filter Multisite` passes (multisite suite).
 - [ ] `git status` is clean apart from `assets/build/` and `languages/updatronix.pot` updates that belong to the release.
 
 ## 1. Install, activate, deactivate, uninstall
@@ -44,7 +44,7 @@ Run from the plugin root before any manual steps. Details in `workflow.md`.
 
 - [ ] As **Administrator**, **Tools → Updatronix** and **Dashboard → Update logs** appear; the React shell loads with no console errors and no missing translations.
 - [ ] As **Editor / Subscriber**, neither menu entry appears; direct navigation to `tools.php?page=updatronix` returns access denied.
-- [ ] `[MS]` On multisite, only **Super Admin** sees the Schedule tab as editable; subsite Administrators see the Schedule controls in read-only / informational state (or the warning notice fires when they try to save).
+- [ ] `[MS]` On multisite, only **Super Admin** sees Updatronix under **Network Admin**; subsite administrators see no menu, notices, or plugin UI.
 
 ## 3. REST API auth
 
@@ -55,8 +55,8 @@ Test with browser DevTools **Network** tab on the settings page, or `curl` with 
 - [ ] **POST** `/wp-json/updatronix/v1/settings` as Administrator with valid `X-WP-Nonce` → **200**; reload the page and the change is persisted.
 - [ ] **POST** without `X-WP-Nonce` (cookie session only) → REST cookie check failure (**403**).
 - [ ] **POST** as low-privilege user with cookies → **403**.
-- [ ] `[MS]` **POST** to `/settings` with a `schedule` payload as a **subsite Administrator** → **200** but response body has `schedule_ignored: true`; the network schedule option is **unchanged**.
-- [ ] `[MS]` Same request as **Super Admin** → **200**, `schedule_ignored: false`, the network schedule option **is** updated.
+- [ ] `[MS]` **POST** to `/settings` with a `schedule` payload as **Super Admin** (Network Admin context) → **200**, the network schedule option **is** updated.
+- [ ] `[MS]` Subsite administrators cannot reach Updatronix REST routes (plugin does not load on subsite requests).
 
 ## 4. Update logging
 
@@ -160,9 +160,10 @@ Edit `wp-config.php` between each step (`wp-config.php` requires a manual file e
 
 Run on a real network (subdomain and subdirectory if you support both).
 
-- [ ] **Per-site logs** — Each subsite shows only its own log entries; switching sites does not leak entries from another site.
+- [ ] **Network-global logs** — The Network Admin update history lists entries from **every** site on the network by default (run `wp core update`/`wp plugin update` with `--url=<subsite>` to generate a subsite-tagged entry and confirm it appears without any per-site selection).
+- [ ] **Site deletion cleanup** — Delete a subsite that has log entries; its entries no longer appear in the Network Admin history (rows for that `site_id` are purged).
 - [ ] **Network schedule** — A change made by Super Admin on the network is visible from every subsite's Schedule tab (read-only) and drives the actual `wp_version_check` event.
-- [ ] **Subsite isolation** — A subsite Administrator's settings save (recipients, notify-on, retention) only affects that site; other sites are untouched.
+- [ ] **Network storage** — Settings saved from Network Admin are identical on every subsite (shared site options).
 - [ ] **Uninstall on a network** — Deleting the plugin removes per-site data on **every site** in the network and removes the network-wide `updatronix_network_schedule` option exactly once.
 
 ## 11. Accessibility spot-checks
@@ -210,6 +211,6 @@ Quality bar (automated) — for cross-reference, the canonical pipeline lives in
 - `composer run lint:pcp` (Local / WP-CLI)
 - `npm run lint` / `npm run lint:css` / `npm run format` when JS/CSS changed
 - `bash .config/local-wp-cli.sh integration-test` (single-site integration tests)
-- `WP_TESTS_MULTISITE=1 bash .config/local-wp-cli.sh integration-test --filter Multisite` (multisite integration tests)
+- `WP_MULTISITE=1 bash .config/local-wp-cli.sh integration-test --filter Multisite` (multisite integration tests)
 
 Or run the full pipeline minus integration tests with `npm run build:all`.

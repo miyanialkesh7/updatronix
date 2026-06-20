@@ -184,16 +184,7 @@ export function usePluginSettings() {
 						...response.schedule_meta,
 					});
 				}
-				if (response.schedule_ignored) {
-					createWarningNotice(
-						__(
-							'Schedule changes were not saved because they affect every site on this network. Ask a network administrator to update them.',
-							'updatronix'
-						)
-					);
-				} else {
-					createSuccessNotice(__('Settings saved.', 'updatronix'));
-				}
+				createSuccessNotice(__('Settings saved.', 'updatronix'));
 			} else {
 				createWarningNotice(
 					__(

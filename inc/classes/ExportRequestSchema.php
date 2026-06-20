@@ -219,21 +219,29 @@ final class Updatronix_Export_Request_Schema {
     /**
      * Resolve multisite export scope (mirror Settings::resolve_site_id semantics).
      *
+     * Returns a concrete blog ID, or `0` (network-global sentinel) for "all originating sites".
+     * The export route is super-admin-gated on Multisite, so the default is the network-global
+     * scope; an explicit `site_id` narrows it to a single subsite.
+     *
      * @since 1.1.0
      *
      * @param int $requested Requested blog ID from payload (may be 0).
-     * @return int
+     * @return int Blog ID, or 0 for the network-global scope.
      */
     public static function resolve_site_id_for_export(int $requested): int {
         $current = (int) get_current_blog_id();
         if (!is_multisite()) {
             return $current;
         }
-        if ($requested > 0 && current_user_can('manage_network_options')) {
+        // Defensive: callers are super-admin-gated, but never widen scope for anyone else.
+        if (!is_super_admin()) {
+            return $current;
+        }
+        if ($requested > 0) {
             return $requested;
         }
 
-        return $current;
+        return 0;
     }
 
     /**

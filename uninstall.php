@@ -35,5 +35,7 @@ if (!defined('updatronix_PLUGIN_DIR')) {
 }
 
 require_once __DIR__ . '/inc/core/constants.php';
+require_once __DIR__ . '/inc/core/context.php';
+require_once __DIR__ . '/inc/core/storage.php';
 require_once __DIR__ . '/inc/classes/Uninstall.php';
 Updatronix_Uninstall::run();

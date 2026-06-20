@@ -167,7 +167,7 @@ final class Updatronix_Export_Rate_Limiter {
             return true;
         }
 
-        $cur = (int) get_transient($key);
+        $cur = (int) updatronix_get_plugin_transient($key);
         if ($cur + 1 > $max) {
             self::log_rate_limited($key);
 
@@ -177,7 +177,7 @@ final class Updatronix_Export_Rate_Limiter {
                 ['status' => 429]
             );
         }
-        set_transient($key, $cur + 1, $ttl);
+        updatronix_set_plugin_transient($key, $cur + 1, $ttl);
 
         return true;
     }

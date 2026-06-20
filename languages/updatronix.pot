@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-06-19T11:48:49+00:00\n"
+"POT-Creation-Date: 2026-06-20T10:07:40+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: updatronix\n"
@@ -39,53 +39,55 @@ msgstr ""
 msgid "https://profiles.wordpress.org/quentinldd/"
 msgstr ""
 
-#: inc/admin/links.php:25
+#: inc/admin/links.php:34
 msgid "Open Updatronix settings"
 msgstr ""
 
-#: inc/admin/links.php:26
+#: inc/admin/links.php:35
 #: assets/src/js/components/SettingsPanel.js:88
 #: assets/src/js/pages/SettingsPage.js:118
 #: assets/src/js/pages/SettingsPage.js:121
 msgid "Settings"
 msgstr ""
 
-#: inc/admin/links.php:46
-#: inc/admin/menu.php:98
+#: inc/admin/links.php:55
+#: inc/admin/menu.php:130
 msgid "View Updatronix changelog on WordPress.org (opens in a new tab)"
 msgstr ""
 
-#: inc/admin/links.php:47
-#: inc/admin/menu.php:99
+#: inc/admin/links.php:56
+#: inc/admin/menu.php:131
 msgid "Changelog"
 msgstr ""
 
-#: inc/admin/links.php:52
-#: inc/admin/menu.php:109
+#: inc/admin/links.php:61
+#: inc/admin/menu.php:141
 msgid "Read the Updatronix documentation (opens in a new tab)"
 msgstr ""
 
-#: inc/admin/links.php:53
+#: inc/admin/links.php:62
 msgid "Docs"
 msgstr ""
 
-#: inc/admin/links.php:58
-#: inc/admin/menu.php:139
+#: inc/admin/links.php:67
+#: inc/admin/menu.php:171
 msgid "Support Updatronix development (opens in a new tab)"
 msgstr ""
 
-#: inc/admin/links.php:59
+#: inc/admin/links.php:68
 msgid "Support"
 msgstr ""
 
-#: inc/admin/menu.php:23
-#: inc/admin/menu.php:24
-#: inc/admin/menu.php:31
-#: inc/admin/menu.php:81
+#: inc/admin/menu.php:28
+#: inc/admin/menu.php:29
+#: inc/admin/menu.php:36
+#: inc/admin/menu.php:57
+#: inc/admin/menu.php:58
+#: inc/admin/menu.php:113
 msgid "Updatronix"
 msgstr ""
 
-#: inc/admin/menu.php:32
+#: inc/admin/menu.php:37
 #: assets/src/js/components/activityLog/ActivityLogPanel.js:352
 #: assets/src/js/pages/SettingsPage.js:97
 #: assets/src/js/pages/SettingsPage.js:100
@@ -93,93 +95,93 @@ msgid "Update logs"
 msgstr ""
 
 #. translators: URL to the plugin changelog page.
-#: inc/admin/menu.php:53
+#: inc/admin/menu.php:85
 msgid "https://wordpress.org/plugins/updatronix/#developers"
 msgstr ""
 
 #. translators: URL to plugin documentation.
-#: inc/admin/menu.php:55
+#: inc/admin/menu.php:87
 msgid "https://holdmywp.com/en/documents/"
 msgstr ""
 
 #. translators: URL to source code repository.
-#: inc/admin/menu.php:57
+#: inc/admin/menu.php:89
 msgid "https://github.com/quentin-ld/updatronix/"
 msgstr ""
 
 #. translators: URL to the plugin reviews page.
-#: inc/admin/menu.php:59
+#: inc/admin/menu.php:91
 msgid "https://wordpress.org/plugins/updatronix/#reviews"
 msgstr ""
 
 #. translators: URL to support plugin development.
-#: inc/admin/menu.php:61
+#: inc/admin/menu.php:93
 msgid "https://buymeacoffee.com/quentinld"
 msgstr ""
 
-#: inc/admin/menu.php:83
+#: inc/admin/menu.php:115
 msgid "Manage your WordPress updates."
 msgstr ""
 
 #. translators: %s: plugin version number
-#: inc/admin/menu.php:90
+#: inc/admin/menu.php:122
 #, php-format
 msgid "Version %s"
 msgstr ""
 
-#: inc/admin/menu.php:110
+#: inc/admin/menu.php:142
 msgid "Documentation"
 msgstr ""
 
-#: inc/admin/menu.php:115
+#: inc/admin/menu.php:147
 msgid "View the source code on GitHub (opens in a new tab)"
 msgstr ""
 
-#: inc/admin/menu.php:116
+#: inc/admin/menu.php:148
 msgid "Source code"
 msgstr ""
 
-#: inc/admin/menu.php:121
+#: inc/admin/menu.php:153
 msgid "Leave a review for Updatronix on WordPress.org (opens in a new tab)"
 msgstr ""
 
-#: inc/admin/menu.php:122
+#: inc/admin/menu.php:154
 msgid "Leave a review"
 msgstr ""
 
 #. translators: 1: decorative heart emoji, 2: author name
-#: inc/admin/menu.php:129
+#: inc/admin/menu.php:161
 #, php-format
 msgid "Made with %1$s by %2$s"
 msgstr ""
 
-#: inc/admin/menu.php:140
+#: inc/admin/menu.php:172
 msgid "Support development"
 msgstr ""
 
-#: inc/admin/menu.php:149
+#: inc/admin/menu.php:181
 msgid "Loading your Updatronix settings…"
 msgstr ""
 
 #. translators: %d: full days to wait after WordPress first sees an update (1–365).
-#: inc/admin/native-update-delay-notice.php:38
+#: inc/admin/native-update-delay-notice.php:46
 #, php-format
 msgid "Delayed updates are on in Updatronix: WordPress waits %d full day after it first sees an update before installing it automatically."
 msgid_plural "Delayed updates are on in Updatronix: WordPress waits %d full days after it first sees an update before installing it automatically."
 msgstr[0] ""
 msgstr[1] ""
 
-#: inc/admin/native-update-delay-notice.php:48
+#: inc/admin/native-update-delay-notice.php:56
 msgid "Countdowns on this screen show when the next automatic update check may run, not when a delayed install happens. Each update keeps its own timer. Details stay in Update logs."
 msgstr ""
 
 #. translators: %1$s: Schedule tab URL. %2$s: Update logs URL.
-#: inc/admin/native-update-delay-notice.php:59
+#: inc/admin/native-update-delay-notice.php:72
 #, php-format
 msgid "Change delay settings on the <a href=\"%1$s\">Schedule tab</a> or open <a href=\"%2$s\">Update logs</a> for details."
 msgstr ""
 
-#: inc/admin/native-update-delay-notice.php:70
+#: inc/admin/native-update-delay-notice.php:83
 msgid "Ask a site administrator who can open Tools → Updatronix to change delay settings or review Update logs."
 msgstr ""
 
@@ -198,8 +200,8 @@ msgid "Unknown theme"
 msgstr ""
 
 #: inc/classes/AutoUpdateDelay.php:490
-#: inc/classes/Settings.php:382
-#: inc/classes/Settings.php:390
+#: inc/classes/Settings.php:383
+#: inc/classes/Settings.php:391
 #: assets/src/js/components/activityLog/utils.js:130
 #: assets/src/js/components/activityLog/utils.js:138
 msgid "WordPress"
@@ -262,13 +264,13 @@ msgid "Translation"
 msgstr ""
 
 #: inc/classes/ExportBodyBuilder.php:548
-#: inc/classes/Settings.php:318
+#: inc/classes/Settings.php:319
 msgid "System"
 msgstr ""
 
 #. translators: %d: WordPress user ID when display name is not available
 #: inc/classes/ExportBodyBuilder.php:558
-#: inc/classes/Settings.php:323
+#: inc/classes/Settings.php:324
 #, php-format
 msgid "User #%d"
 msgstr ""
@@ -365,37 +367,37 @@ msgid "single"
 msgstr ""
 
 #: inc/classes/ExportBodyBuilder.php:925
-#: inc/classes/Settings.php:338
+#: inc/classes/Settings.php:339
 #: assets/src/js/components/activityLog/constants.js:19
 msgid "Update"
 msgstr ""
 
 #: inc/classes/ExportBodyBuilder.php:926
-#: inc/classes/Settings.php:339
+#: inc/classes/Settings.php:340
 #: assets/src/js/components/activityLog/constants.js:20
 msgid "Rollback"
 msgstr ""
 
 #: inc/classes/ExportBodyBuilder.php:927
-#: inc/classes/Settings.php:340
+#: inc/classes/Settings.php:341
 #: assets/src/js/components/activityLog/constants.js:21
 msgid "Install"
 msgstr ""
 
 #: inc/classes/ExportBodyBuilder.php:928
-#: inc/classes/Settings.php:341
+#: inc/classes/Settings.php:342
 #: assets/src/js/components/activityLog/constants.js:22
 msgid "Reinstall"
 msgstr ""
 
 #: inc/classes/ExportBodyBuilder.php:929
-#: inc/classes/Settings.php:342
+#: inc/classes/Settings.php:343
 #: assets/src/js/components/activityLog/constants.js:23
 msgid "Failed"
 msgstr ""
 
 #: inc/classes/ExportBodyBuilder.php:930
-#: inc/classes/Settings.php:343
+#: inc/classes/Settings.php:344
 #: assets/src/js/components/activityLog/constants.js:24
 msgid "Uninstall"
 msgstr ""
@@ -416,59 +418,59 @@ msgstr ""
 msgid "TRANSLATIONS"
 msgstr ""
 
-#: inc/classes/Settings.php:298
-#: inc/classes/Settings.php:444
+#: inc/classes/Settings.php:299
+#: inc/classes/Settings.php:446
 msgid "The requested log entry could not be found."
 msgstr ""
 
-#: inc/classes/Settings.php:329
+#: inc/classes/Settings.php:330
 msgid "Automatic"
 msgstr ""
 
-#: inc/classes/Settings.php:331
+#: inc/classes/Settings.php:332
 msgid "File upload"
 msgstr ""
 
-#: inc/classes/Settings.php:333
+#: inc/classes/Settings.php:334
 msgid "Manual"
 msgstr ""
 
-#: inc/classes/Settings.php:349
+#: inc/classes/Settings.php:350
 #: assets/src/js/components/activityLog/logFilters.js:81
 #: assets/src/js/components/activityLog/utils.js:84
 msgid "Bulk action"
 msgstr ""
 
-#: inc/classes/Settings.php:351
+#: inc/classes/Settings.php:352
 #: assets/src/js/components/activityLog/logFilters.js:85
 #: assets/src/js/components/activityLog/utils.js:87
 msgid "Single action"
 msgstr ""
 
-#: inc/classes/Settings.php:353
-#: inc/classes/Settings.php:403
-#: inc/classes/Settings.php:431
+#: inc/classes/Settings.php:354
+#: inc/classes/Settings.php:404
+#: inc/classes/Settings.php:432
 msgid "—"
 msgstr ""
 
 #. translators: 1: item name, 2: version number
-#: inc/classes/Settings.php:381
+#: inc/classes/Settings.php:382
 #: assets/src/js/components/activityLog/utils.js:129
 #, php-format,js-format
 msgid "Language pack updated for %1$s %2$s"
 msgstr ""
 
 #. translators: %s: item name
-#: inc/classes/Settings.php:389
+#: inc/classes/Settings.php:390
 #: assets/src/js/components/activityLog/utils.js:137
 #, php-format,js-format
 msgid "Language pack updated for %s"
 msgstr ""
 
 #. translators: %s: version number
-#: inc/classes/Settings.php:400
-#: inc/classes/Settings.php:418
-#: inc/classes/Settings.php:426
+#: inc/classes/Settings.php:401
+#: inc/classes/Settings.php:419
+#: inc/classes/Settings.php:427
 #: assets/src/js/components/activityLog/utils.js:146
 #: assets/src/js/components/activityLog/utils.js:162
 #: assets/src/js/components/activityLog/utils.js:169
@@ -477,30 +479,30 @@ msgid "v%s"
 msgstr ""
 
 #. translators: 1: previous version number, 2: new version number
-#: inc/classes/Settings.php:409
+#: inc/classes/Settings.php:410
 #: assets/src/js/components/activityLog/utils.js:154
 #, php-format,js-format
 msgid "v%1$s → v%2$s"
 msgstr ""
 
-#: inc/classes/Settings.php:450
+#: inc/classes/Settings.php:452
 #: assets/src/js/components/activityLog/ActivityLogPanel.js:257
 msgid "The log entry could not be deleted. Try again or check your database connection."
 msgstr ""
 
-#: inc/classes/Settings.php:548
+#: inc/classes/Settings.php:541
 msgid "The core auto-update setting is controlled by a constant in your wp-config.php file and cannot be changed here."
 msgstr ""
 
-#: inc/classes/Settings.php:568
+#: inc/classes/Settings.php:561
 msgid "This plugin was not found on your site. It may have been removed."
 msgstr ""
 
-#: inc/classes/Settings.php:588
+#: inc/classes/Settings.php:581
 msgid "This theme was not found on your site. It may have been removed."
 msgstr ""
 
-#: inc/classes/Settings.php:623
+#: inc/classes/Settings.php:616
 msgid "That constant is not recognised by Updatronix."
 msgstr ""
 
@@ -1158,7 +1160,7 @@ msgid "The translation auto-update setting could not be changed. Try again."
 msgstr ""
 
 #: assets/src/js/hooks/useAutoUpdates.js:169
-#: assets/src/js/hooks/usePluginSettings.js:243
+#: assets/src/js/hooks/usePluginSettings.js:234
 msgid "The notice could not be dismissed. Try again."
 msgstr ""
 
@@ -1166,19 +1168,15 @@ msgstr ""
 msgid "Your update logs could not be loaded. Try refreshing the page."
 msgstr ""
 
-#: assets/src/js/hooks/usePluginSettings.js:189
-msgid "Schedule changes were not saved because they affect every site on this network. Ask a network administrator to update them."
-msgstr ""
-
-#: assets/src/js/hooks/usePluginSettings.js:195
+#: assets/src/js/hooks/usePluginSettings.js:187
 msgid "Settings saved."
 msgstr ""
 
-#: assets/src/js/hooks/usePluginSettings.js:199
+#: assets/src/js/hooks/usePluginSettings.js:190
 msgid "Your settings were saved, but the server did not return the updated values. Refresh the page to confirm."
 msgstr ""
 
-#: assets/src/js/hooks/usePluginSettings.js:208
+#: assets/src/js/hooks/usePluginSettings.js:199
 msgid "Your settings could not be saved. Check your connection and try again."
 msgstr ""
 
