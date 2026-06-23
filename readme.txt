@@ -9,15 +9,15 @@ Requires PHP: 8.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Enhanced Update Manager for WordPress. Monitor every change, controll all updates, fine tune your website maintenance flow.
+Enhanced Update Manager for WordPress. Monitor every change, control all updates, and fine-tune your website maintenance flow.
 
 == Description ==
 
-WordPress, plugins and themes need regulary updates, but then forgets it ever happened. Updatronix remembers. It keeps a running record of every update on your website, and hands you more controls over update process: what updates, when and how.
+WordPress, plugins, and themes need regular updates, but WordPress forgets they ever happened. Updatronix remembers. It keeps a running record of every update on your website, and hands you more control over the update process: what updates, when, and how.
 
-Updatronix is precision plugin build on the native WordPress update engine instead of swapping it out. Your settings are written to WordPress's own options, so your auto-update choices keep working even if you remove the plugin one day. I built it for the people who look after WordPress sites for a living, so it fits the way you already work.
+Updatronix is a precision plugin built on the native WordPress update engine instead of swapping it out. Your settings are written to WordPress's own options, so your auto-update choices keep working even if you remove the plugin one day. I built it for the people who look after WordPress sites for a living, so it fits the way you already work.
 
-= Built for every users in their diversity of needs =
+= Built for every user in their diversity of needs =
 
 * **Solo site owners:** Keep your site up to date and sleep at night. You'll always know what changed.
 * **Freelancers:** When a client asks what you've been up to, the answer is right there.
@@ -28,17 +28,17 @@ Updatronix is precision plugin build on the native WordPress update engine inste
 
 Four tabs, one per concern.
 
-= Update logs =
+= Update logs 📑=
 
-Every core, plugin, theme, and translation update are logged with full details. If something breaks after updates, you have a trusty starting point instead of a guess.
+Every core, plugin, theme, and translation update is logged with full details. If something breaks after updates, you have a trusty starting point instead of a guess.
 
 * The before and after version, what set it off, and how it ended.
 * Filter by category, date, action, or user when the list gets long.
 * Open any entry to read the details, including the exact error WordPress threw.
 
-Need to hand it off? Export the log just as you've filtered it. Handy for briefing your team when something breaks, sending a maintenance report for a client, or sharing context to someone you've called in to help.
+Need to hand it off? Export the log just as you've filtered it. Handy for briefing your team when something breaks, sending a maintenance report for a client, or sharing context with someone you've called in to help.
 
-= Auto-updates =
+= Auto-updates 🔄=
 
 WordPress 5.5 made auto-updates available across the dashboard. The controls then got scattered across half a dozen screens. This tab pulls them onto one page: how core updates itself, which plugins and themes update on their own, whether translations come along.
 
@@ -46,7 +46,7 @@ WordPress 5.5 made auto-updates available across the dashboard. The controls the
 * A switch for each plugin and theme, and one for translations.
 * If a `wp-config.php` constant is overriding something, you'll see which one.
 
-= Schedule =
+= Schedule 📅=
 
 WordPress checks for updates twice a day. Usually that's fine. When it isn't, this feature hands you the timing, and lets a new release age a little before it reaches you.
 
@@ -55,22 +55,22 @@ WordPress checks for updates twice a day. Usually that's fine. When it isn't, th
 * Skip the bad ones. If a plugin ships a broken update and then a quick fix, a short hold means you get the fix and miss the mess.
 * A notice appears on the Updates, Plugins, and Themes screens whenever a hold is active.
 
-= Settings =
+= Settings ⚙️=
 
 How long the log sticks around, who gets the update emails WordPress sends, and the master switch for those emails when you'd rather not see them at all. That switch leaves recovery mode emails alone—being locked out of your own site is not a notification preference.
 
-* Set up log conservation policy.
-* Send WordPress's update emails to desired recipient.
+* Set up log retention policy.
+* Send WordPress update emails to the desired recipient.
 * Per-event filters: core, plugin and theme, debug summary, technical alerts.
-* One switch silences every WordPress update notification email recovery mode excepted to prevent self-lock.
+* One switch silences every WordPress update notification email, recovery mode excepted, to prevent self-lockout.
 
 == Updatronix 3000 ==
 
 Somewhere in a neon-lit server room, the next version is booting.
 
-**Updatronix 3000** is the Pro edition comming soon. Extending Updatronix, with additionnal features for for developpers, power users and agencies.
+**Updatronix 3000** is the Pro edition coming soon. Extending Updatronix, with additional features for developers, power users, and agencies.
 
-* **Developpers tools.** Hooks, functions and a REST API to plug Updatronix into your own pipeline. Push events to your own dashboards, trigger backups, automate maintenance reports, imagine wathever you want and improve your workflow with solid foundation. 
+* **Developer tools.** Hooks, functions, and a REST API to plug Updatronix into your own pipeline. Push events to your own dashboards, trigger backups, automate maintenance reports, imagine whatever you want, and improve your workflow with a solid foundation. 
 * **Update Shield.** Checks PHP compatibility, flags abandoned plugins, version control protection.
 * **Update Flow.** You are the expert, you know your stack: set the exact order your plugins update in.
 * **White Label.** Your name on it, not mine. Clients see your agency, and the engine stays out of sight.
@@ -115,7 +115,7 @@ Open **Tools → Updatronix**. The first tab is the log: date, item, version cha
 
 = Can I export my update log? =
 
-Yes. Filter the log how you like, then click on **Export logs** button. You get a clean report you can drop into an email to your team, a maintenance summary for a client, or a note to whoever you've called in to help.
+Yes. Filter the log how you like, then click the **Export logs** button. You get a clean report you can drop into an email to your team, a maintenance summary for a client, or a note to whoever you've called in to help.
 
 = How do I send WordPress update emails to a different address? =
 
@@ -152,19 +152,12 @@ Yes, as a network-only plugin. A Super Admin turns it on for the whole network a
 == Changelog ==
 
 = 1.1 =
-* Change: Multisite is now network-only. Network-activate Updatronix and manage it as a Super Admin from the Network Admin dashboard; the settings and update history are shared network-wide, and individual sites no longer show any Updatronix interface. Single-site installs are unchanged.
-* Change: On Multisite, the Network Admin update history and exports now show entries from every site on the network by default; deleting a site removes its entries from the shared history. Single-site installs are unchanged.
-* i18n: Removed the per-site "schedule changes were not saved because they affect every site on this network" warning notice, which no longer applies under the network-only model.
-* i18n: Save buttons now use "Save Changes" to match native WordPress settings screens.
-* Improvement: Activity log DataViews toolbar includes a compact Export logs control (upload icon, minimal style; wiring TBD).
-* Change: Streamlined the Update logs export modal — removed the optional "Details to include in each line" toggles; exports keep the standard date, category, status, and action details. Filter handling now flows from a single shared registry.
-* Change: Redesigned the export report — merged exports group entries by category (Core, Plugins, Themes, Translations) and sort by date within each section. Non-merged exports use a single flat list sorted by date with a Category column. Each section or list includes aligned column headings with a dash separator. Translation rows show the package slug instead of the display name. The export modal adds copy buttons for formatted and plain-text clipboard output.
-* Change: Clearer export modal wording — the "Heading table" column option is now "Column headings", and the modal intro explains in plain language that filters you have not set include all values.
-* New: Schedule tab — pick how often WordPress checks for updates (every hour, twice a day, daily, or weekly) and a preferred time of day.
-* New: Hold automatic updates for a chosen number of days after they appear, with a friendly notice on the Updates, Plugins, and Themes screens explaining the wait.
-* New: One-click switch in Settings to turn off all WordPress update notification emails (recovery mode emails are kept on so you never get locked out).
-* Improvement: Cleaner copy, smoother flow, and a focused accessibility pass across every tab; the WordPress "Automatic update not scheduled" message now stays in sync with your chosen schedule.
-* Fix: Keyboard and screen-reader users can move focus into activity log modals.
+* New: Schedule tab — set how often WordPress checks for updates (hourly, twice daily, daily, or weekly), pick a preferred time of day, and hold automatic installs for a chosen number of days. Active holds show a notice on the Updates, Plugins, and Themes screens, and WordPress schedule messaging stays in sync with your settings.
+* New: Export update logs — generate merged or flat reports from your current filters, copy formatted or plain-text output to the clipboard, and access export from the activity log toolbar.
+* New: One-click switch in Settings to turn off all WordPress update notification emails (recovery mode emails stay on).
+* New: Multisite support — network-activate Updatronix and manage settings, update history, schedule, and email controls as a Super Admin from the Network Admin dashboard. Everything is shared across every site on the network, with one unified log that includes entries from all sites. Single-site installs are unchanged.
+* Improvement: Cleaner copy, smoother flow, and accessibility improvements across every tab, including keyboard focus in activity log modals.
+* i18n: Save buttons use "Save Changes" to match native WordPress settings screens.
 
 = 1.0.6.1 =
 * Fix: Readme.txt text is now naturally wrapped.
@@ -209,7 +202,7 @@ Yes, as a network-only plugin. A Super Admin turns it on for the whole network a
 == Upgrade Notice ==
 
 = 1.1 =
-Adds the new Schedule tab to control when WordPress checks for updates and to delay automatic installs, plus a one-click switch to turn off every WordPress update notification email when you don't need them.
+Adds the Schedule tab, update log export, a switch to silence WordPress update emails, and multisite support, plus accessibility improvements across every tab.
 
 = 1.0.6 =
 Improves uninstall cleanup, accessibility, and error logging for failed auto-updates.
