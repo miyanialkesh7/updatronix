@@ -12,6 +12,8 @@ if (!defined('ABSPATH')) {
 
 /**
  * Runs capped SELECT queries against `{prefix}updatronix_logs` for exports.
+ *
+ * @since 1.1.0
  */
 final class Updatronix_Export_Query_Builder {
     /** @var list<string> */

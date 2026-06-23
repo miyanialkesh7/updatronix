@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-06-23T09:36:53+00:00\n"
+"POT-Creation-Date: 2026-06-23T09:58:07+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: updatronix\n"
@@ -164,42 +164,42 @@ msgid "Loading your Updatronix settings…"
 msgstr ""
 
 #. translators: %d: full days to wait after WordPress first sees an update (1–365).
-#: inc/admin/native-update-delay-notice.php:46
+#: inc/admin/native-update-delay-notice.php:48
 #, php-format
 msgid "Delayed updates are on in Updatronix: WordPress waits %d full day after it first sees an update before installing it automatically."
 msgid_plural "Delayed updates are on in Updatronix: WordPress waits %d full days after it first sees an update before installing it automatically."
 msgstr[0] ""
 msgstr[1] ""
 
-#: inc/admin/native-update-delay-notice.php:56
+#: inc/admin/native-update-delay-notice.php:58
 msgid "Countdowns on this screen show when the next automatic update check may run, not when a delayed install happens. Each update keeps its own timer. Details stay in Update logs."
 msgstr ""
 
 #. translators: %1$s: Schedule tab URL. %2$s: Update logs URL.
-#: inc/admin/native-update-delay-notice.php:72
+#: inc/admin/native-update-delay-notice.php:74
 #, php-format
 msgid "Change delay settings on the <a href=\"%1$s\">Schedule tab</a> or open <a href=\"%2$s\">Update logs</a> for details."
 msgstr ""
 
-#: inc/admin/native-update-delay-notice.php:83
+#: inc/admin/native-update-delay-notice.php:85
 msgid "Ask a site administrator who can open Tools → Updatronix to change delay settings or review Update logs."
 msgstr ""
 
 #. translators: 1: number of soak days configured, 2: datetime string when eligibility starts if the update is still offered.
-#: inc/classes/AutoUpdateDelay.php:414
+#: inc/classes/AutoUpdateDelay.php:416
 #, php-format
 msgid "Updatronix deferred this automatic update: soak is %1$d full day(s) after first detection; eligible no earlier than %2$s."
 msgstr ""
 
-#: inc/classes/AutoUpdateDelay.php:450
+#: inc/classes/AutoUpdateDelay.php:452
 msgid "Unknown plugin"
 msgstr ""
 
-#: inc/classes/AutoUpdateDelay.php:470
+#: inc/classes/AutoUpdateDelay.php:472
 msgid "Unknown theme"
 msgstr ""
 
-#: inc/classes/AutoUpdateDelay.php:490
+#: inc/classes/AutoUpdateDelay.php:492
 #: inc/classes/Settings.php:383
 #: inc/classes/Settings.php:391
 #: assets/src/js/components/activityLog/utils.js:130
@@ -207,16 +207,16 @@ msgstr ""
 msgid "WordPress"
 msgstr ""
 
-#: inc/classes/AutoUpdateDelay.php:500
+#: inc/classes/AutoUpdateDelay.php:502
 msgid "unknown-project"
 msgstr ""
 
-#: inc/classes/AutoUpdateDelay.php:501
+#: inc/classes/AutoUpdateDelay.php:503
 msgid "locale-unknown"
 msgstr ""
 
 #. translators: 1: project slug or id, 2: locale code
-#: inc/classes/AutoUpdateDelay.php:505
+#: inc/classes/AutoUpdateDelay.php:507
 #, php-format
 msgid "Translation update (%1$s · %2$s)"
 msgstr ""
@@ -240,42 +240,42 @@ msgid "The core update encountered a redirect error (HTTP %d). Check your server
 msgstr ""
 
 #. translators: 1: Rows included in the export. 2: Rows matched before truncation.
-#: inc/classes/ExportBodyBuilder.php:234
+#: inc/classes/ExportBodyBuilder.php:237
 #, php-format
 msgid "— Truncated: %1$d of %2$d rows. Narrow your filters to include the rest. —"
 msgstr ""
 
-#: inc/classes/ExportBodyBuilder.php:507
+#: inc/classes/ExportBodyBuilder.php:510
 msgid "Core"
 msgstr ""
 
-#: inc/classes/ExportBodyBuilder.php:508
+#: inc/classes/ExportBodyBuilder.php:511
 #: assets/src/js/components/autoUpdates/AutoUpdatesPanel.js:110
 msgid "Plugin"
 msgstr ""
 
-#: inc/classes/ExportBodyBuilder.php:509
+#: inc/classes/ExportBodyBuilder.php:512
 #: assets/src/js/components/autoUpdates/AutoUpdatesPanel.js:96
 msgid "Theme"
 msgstr ""
 
-#: inc/classes/ExportBodyBuilder.php:510
+#: inc/classes/ExportBodyBuilder.php:513
 msgid "Translation"
 msgstr ""
 
-#: inc/classes/ExportBodyBuilder.php:548
+#: inc/classes/ExportBodyBuilder.php:551
 #: inc/classes/Settings.php:319
 msgid "System"
 msgstr ""
 
 #. translators: %d: WordPress user ID when display name is not available
-#: inc/classes/ExportBodyBuilder.php:558
+#: inc/classes/ExportBodyBuilder.php:561
 #: inc/classes/Settings.php:324
 #, php-format
 msgid "User #%d"
 msgstr ""
 
-#: inc/classes/ExportBodyBuilder.php:634
+#: inc/classes/ExportBodyBuilder.php:637
 #: assets/src/js/components/activityLog/ActivityLogPanel.js:115
 #: assets/src/js/components/activityLog/ExportLogsModal.js:53
 #: assets/src/js/components/activityLog/LogDetailsContent.js:58
@@ -283,23 +283,23 @@ msgstr ""
 msgid "Category"
 msgstr ""
 
-#: inc/classes/ExportBodyBuilder.php:635
+#: inc/classes/ExportBodyBuilder.php:638
 msgid "Element"
 msgstr ""
 
-#: inc/classes/ExportBodyBuilder.php:636
+#: inc/classes/ExportBodyBuilder.php:639
 #: assets/src/js/components/activityLog/ActivityLogPanel.js:124
 #: assets/src/js/components/activityLog/ExportLogsModal.js:37
 #: assets/src/js/components/activityLog/LogDetailsContent.js:60
 msgid "Action"
 msgstr ""
 
-#: inc/classes/ExportBodyBuilder.php:637
+#: inc/classes/ExportBodyBuilder.php:640
 #: assets/src/js/components/autoUpdates/ItemsDataViewSection.js:225
 msgid "Version"
 msgstr ""
 
-#: inc/classes/ExportBodyBuilder.php:638
+#: inc/classes/ExportBodyBuilder.php:641
 #: assets/src/js/components/activityLog/ActivityLogPanel.js:150
 #: assets/src/js/components/activityLog/LogDetailsContent.js:74
 #: assets/src/js/components/activityLog/logFilters.js:241
@@ -307,19 +307,19 @@ msgstr ""
 msgid "Date"
 msgstr ""
 
-#: inc/classes/ExportBodyBuilder.php:639
+#: inc/classes/ExportBodyBuilder.php:642
 #: assets/src/js/components/activityLog/ExportLogsModal.js:41
 msgid "Run context"
 msgstr ""
 
-#: inc/classes/ExportBodyBuilder.php:640
+#: inc/classes/ExportBodyBuilder.php:643
 #: assets/src/js/components/activityLog/ActivityLogPanel.js:183
 #: assets/src/js/components/activityLog/ExportLogsModal.js:45
 #: assets/src/js/components/activityLog/logFilters.js:216
 msgid "User"
 msgstr ""
 
-#: inc/classes/ExportBodyBuilder.php:641
+#: inc/classes/ExportBodyBuilder.php:644
 #: assets/src/js/components/activityLog/ActivityLogPanel.js:206
 #: assets/src/js/components/activityLog/ExportLogsModal.js:49
 #: assets/src/js/components/activityLog/LogDetailsContent.js:63
@@ -328,93 +328,93 @@ msgstr ""
 msgid "Status"
 msgstr ""
 
-#: inc/classes/ExportBodyBuilder.php:747
+#: inc/classes/ExportBodyBuilder.php:750
 #: assets/src/js/components/activityLog/logFilters.js:208
 #: assets/src/js/components/activityLog/utils.js:51
 msgid "Error"
 msgstr ""
 
-#: inc/classes/ExportBodyBuilder.php:748
+#: inc/classes/ExportBodyBuilder.php:751
 #: assets/src/js/components/activityLog/logFilters.js:209
 #: assets/src/js/components/activityLog/utils.js:54
 msgid "Cancelled"
 msgstr ""
 
-#: inc/classes/ExportBodyBuilder.php:749
+#: inc/classes/ExportBodyBuilder.php:752
 #: assets/src/js/components/activityLog/logFilters.js:207
 #: assets/src/js/components/activityLog/utils.js:45
 msgid "Success"
 msgstr ""
 
-#: inc/classes/ExportBodyBuilder.php:876
+#: inc/classes/ExportBodyBuilder.php:879
 msgid "manual"
 msgstr ""
 
-#: inc/classes/ExportBodyBuilder.php:877
+#: inc/classes/ExportBodyBuilder.php:880
 msgid "automatic"
 msgstr ""
 
-#: inc/classes/ExportBodyBuilder.php:878
+#: inc/classes/ExportBodyBuilder.php:881
 msgid "upload"
 msgstr ""
 
-#: inc/classes/ExportBodyBuilder.php:896
+#: inc/classes/ExportBodyBuilder.php:899
 msgid "bulk"
 msgstr ""
 
-#: inc/classes/ExportBodyBuilder.php:897
+#: inc/classes/ExportBodyBuilder.php:900
 msgid "single"
 msgstr ""
 
-#: inc/classes/ExportBodyBuilder.php:925
+#: inc/classes/ExportBodyBuilder.php:928
 #: inc/classes/Settings.php:339
 #: assets/src/js/components/activityLog/constants.js:19
 msgid "Update"
 msgstr ""
 
-#: inc/classes/ExportBodyBuilder.php:926
+#: inc/classes/ExportBodyBuilder.php:929
 #: inc/classes/Settings.php:340
 #: assets/src/js/components/activityLog/constants.js:20
 msgid "Rollback"
 msgstr ""
 
-#: inc/classes/ExportBodyBuilder.php:927
+#: inc/classes/ExportBodyBuilder.php:930
 #: inc/classes/Settings.php:341
 #: assets/src/js/components/activityLog/constants.js:21
 msgid "Install"
 msgstr ""
 
-#: inc/classes/ExportBodyBuilder.php:928
+#: inc/classes/ExportBodyBuilder.php:931
 #: inc/classes/Settings.php:342
 #: assets/src/js/components/activityLog/constants.js:22
 msgid "Reinstall"
 msgstr ""
 
-#: inc/classes/ExportBodyBuilder.php:929
+#: inc/classes/ExportBodyBuilder.php:932
 #: inc/classes/Settings.php:343
 #: assets/src/js/components/activityLog/constants.js:23
 msgid "Failed"
 msgstr ""
 
-#: inc/classes/ExportBodyBuilder.php:930
+#: inc/classes/ExportBodyBuilder.php:933
 #: inc/classes/Settings.php:344
 #: assets/src/js/components/activityLog/constants.js:24
 msgid "Uninstall"
 msgstr ""
 
-#: inc/classes/ExportBodyBuilder.php:943
+#: inc/classes/ExportBodyBuilder.php:946
 msgid "CORE"
 msgstr ""
 
-#: inc/classes/ExportBodyBuilder.php:944
+#: inc/classes/ExportBodyBuilder.php:947
 msgid "PLUGINS"
 msgstr ""
 
-#: inc/classes/ExportBodyBuilder.php:945
+#: inc/classes/ExportBodyBuilder.php:948
 msgid "THEMES"
 msgstr ""
 
-#: inc/classes/ExportBodyBuilder.php:946
+#: inc/classes/ExportBodyBuilder.php:949
 msgid "TRANSLATIONS"
 msgstr ""
 

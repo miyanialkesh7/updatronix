@@ -25,6 +25,7 @@
  * and collapses rows that share entity, action, and status.
  *
  * @package updatronix
+ * @since 1.1.0
  */
 
 if (!defined('ABSPATH')) {
@@ -33,6 +34,8 @@ if (!defined('ABSPATH')) {
 
 /**
  * Builds UTF-8 plain-text fragments for {@see Updatronix_Export::rest_export()}.
+ *
+ * @since 1.1.0
  */
 final class Updatronix_Export_Body_Builder {
     /**

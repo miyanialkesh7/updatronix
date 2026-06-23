@@ -16,6 +16,8 @@ if (!defined('ABSPATH')) {
 
 /**
  * Defers eligible automatic updates until each offer exceeds a configured soak window.
+ *
+ * @since 1.1.0
  */
 final class Updatronix_AutoUpdateDelay {
     /**

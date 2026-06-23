@@ -12,6 +12,8 @@ if (!defined('ABSPATH')) {
 
 /**
  * Token-bucket style limits for export starts (requests without a continuation cursor).
+ *
+ * @since 1.1.0
  */
 final class Updatronix_Export_Rate_Limiter {
     /**

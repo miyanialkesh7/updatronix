@@ -12,6 +12,8 @@ if (!defined('ABSPATH')) {
 
 /**
  * Encode and verify opaque continuation tokens for POST /logs/export.
+ *
+ * @since 1.1.0
  */
 final class Updatronix_Export_Cursor {
     /**

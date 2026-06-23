@@ -38,6 +38,7 @@ const UPDATRONIX_SETTINGS_DEFAULTS = [
 /**
  * Default Schedule tab subtree (merged when missing).
  *
+ * @since 1.1.0
  * @return array<string, mixed>
  */
 function updatronix_get_schedule_defaults(): array {
@@ -58,6 +59,7 @@ function updatronix_get_schedule_defaults(): array {
  *
  * Each slug must exist in {@see wp_get_schedules()} (WordPress default schedules).
  *
+ * @since 1.1.0
  * @return list<string>
  */
 function updatronix_allowed_update_check_recurrence_slugs(): array {
@@ -67,6 +69,7 @@ function updatronix_allowed_update_check_recurrence_slugs(): array {
 /**
  * Labels for Core {@see wp_get_schedules()} entries used in the Schedule tab picker (immutable slugs).
  *
+ * @since 1.1.0
  * @return list<array{slug: string, label: string}>
  */
 function updatronix_get_allowed_cron_schedule_labels(): array {
@@ -90,6 +93,7 @@ function updatronix_get_allowed_cron_schedule_labels(): array {
 /**
  * Attach an admin-rendered datetime string for Schedule tab cron diagnostics.
  *
+ * @since 1.1.0
  * @param array{cron_schedule_labels: list<array{slug: string, label: string}>, update_check_next_scheduled: int|false, wp_cron_disabled: bool, timezone_string: string, schedule_driver: 'wordpress'|'updatronix', unified_schedule_active: bool} $meta Raw meta from {@see Updatronix_Cron::get_schedule_rest_meta()}.
  * @return array<string, mixed>
  */
@@ -109,6 +113,7 @@ function updatronix_decorate_schedule_meta_for_display(array $meta): array {
 /**
  * Merge a partial Schedule payload from REST over the baseline (already normalized).
  *
+ * @since 1.1.0
  * @param array<string, mixed> $partial
  * @param array<string, mixed> $baseline
  * @return array<string, mixed>
@@ -151,6 +156,7 @@ function updatronix_merge_partial_schedule_into(array $partial, array $baseline)
 /**
  * Sanitize Schedule subtree (REST + Settings API JSON).
  *
+ * @since 1.1.0
  * @param array<string, mixed> $in
  * @return array{update_check: array{recurrence: string, time: string}, delay_updates: array{enabled: bool, delay_value: int}}
  */
@@ -199,6 +205,7 @@ function updatronix_sanitize_schedule_array(array $in): array {
 /**
  * Normalize H:i in site-wall-clock semantics (used with {@see wp_timezone()} for cron timestamps).
  *
+ * @since 1.1.0
  * @param string $time_raw User input.
  * @return string Canonical `HH:mm` defaulting to 03:00 when empty or invalid (for daily schedules).
  */
@@ -222,6 +229,7 @@ function updatronix_sanitize_schedule_wall_time(string $time_raw): string {
  *
  * For `weekly`, if today's preferred time has passed, the next run is the same weekday and clock time in seven days.
  *
+ * @since 1.1.0
  * @param string $recurrence hourly|twicedaily|daily|weekly
  * @param string $time       H:i site TZ wall clock when not hourly
  *
@@ -348,6 +356,7 @@ function updatronix_get_settings(): array {
 /**
  * Read the Schedule subtree from the network site option (multisite) or option (single-site).
  *
+ * @since 1.1.0
  * @return array{update_check: array{recurrence: string, time: string}, delay_updates: array{enabled: bool, delay_value: int}}
  */
 function updatronix_get_network_schedule(): array {
@@ -373,6 +382,7 @@ function updatronix_get_network_schedule(): array {
  * when {@see updatronix_save_settings_array()} is called by code paths that did not change Schedule
  * (for example {@see Updatronix_AutoUpdates::dismiss_constant()}).
  *
+ * @since 1.1.0
  * @param array<string, mixed> $schedule Raw or sanitised schedule subtree.
  * @return bool True when the option was written; false when no write was needed.
  */
@@ -460,6 +470,7 @@ add_action('init', 'updatronix_maybe_migrate_network_storage', 0);
 /**
  * Copy legacy main-site blog options into site options once after network-only upgrade.
  *
+ * @since 1.1.0
  * @return void
  */
 function updatronix_maybe_migrate_network_storage(): void {
@@ -548,6 +559,7 @@ function updatronix_sanitize_emails(mixed $value): string {
  * - `disabled`: suppress core/plugin/theme/update-debug notification emails (recovery mode untouched).
  * Legacy stored value `redirect` is treated as `default`.
  *
+ * @since 1.1.0
  * @param mixed $value Raw value.
  * @return string `default`|`disabled`
  */

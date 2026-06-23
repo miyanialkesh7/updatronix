@@ -12,6 +12,8 @@ if (!defined('ABSPATH')) {
 
 /**
  * FIFO ring buffer stored in `updatronix_export_audit`.
+ *
+ * @since 1.1.0
  */
 final class Updatronix_Export_Audit {
     /**

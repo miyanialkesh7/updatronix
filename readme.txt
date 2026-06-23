@@ -87,7 +87,7 @@ Updatronix aims to be fully accessible to all of its users. If you run into a pr
 
 == Multisite Support ==
 
-On a multisite network, Updatronix is network-only. Network-activate it once, and a Super Admin manages everything from the Network Admin dashboard: the settings, the update history, the schedule, and the email controls are all network-wide and shared across every site.
+Updatronix supports multisite networks. Network-activate it once, and a Super Admin manages settings, update history, schedule, and email controls from the Network Admin dashboard — everything shared across every site, with one unified update log.
 
 == Screenshots ==
 
@@ -147,7 +147,7 @@ Up to you. In **Settings**, set the retention window between 1 and 365 days. A d
 
 = Does Updatronix work on multisite? =
 
-Yes, as a network-only plugin. A Super Admin turns it on for the whole network and runs everything from the Network Admin dashboard. The settings and history are shared across every site, the sites themselves stay clean, and single-site installs behave just like above.
+Yes. Network-activate Updatronix for the whole network and manage everything as a Super Admin from the Network Admin dashboard. Settings, schedule, email controls, and update history are shared across every site in one unified log. Single-site installs work the same as before.
 
 == Changelog ==
 
@@ -155,7 +155,7 @@ Yes, as a network-only plugin. A Super Admin turns it on for the whole network a
 * New: Schedule tab — set how often WordPress checks for updates (hourly, twice daily, daily, or weekly), pick a preferred time of day, and hold automatic installs for a chosen number of days. Active holds show a notice on the Updates, Plugins, and Themes screens, and WordPress schedule messaging stays in sync with your settings.
 * New: Export update logs — generate merged or flat reports from your current filters, copy formatted or plain-text output to the clipboard, and access export from the activity log toolbar.
 * New: One-click switch in Settings to turn off all WordPress update notification emails (recovery mode emails stay on).
-* New: Multisite support — network-activate Updatronix and manage settings, update history, schedule, and email controls as a Super Admin from the Network Admin dashboard. Everything is shared across every site on the network, with one unified log that includes entries from all sites. Single-site installs are unchanged.
+* New: Multisite support — network-activate Updatronix and manage settings, update history, schedule, and email controls as a Super Admin from the Network Admin dashboard. Everything is shared across every site on the network, with one unified log. Single-site installs are unchanged.
 * Improvement: Cleaner copy, smoother flow, and accessibility improvements across every tab, including keyboard focus in activity log modals.
 * i18n: Save buttons use "Save Changes" to match native WordPress settings screens.
 

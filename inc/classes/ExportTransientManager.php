@@ -12,6 +12,8 @@ if (!defined('ABSPATH')) {
 
 /**
  * Unguessable export transient keys plus replace-on-write user-meta pointer.
+ *
+ * @since 1.1.0
  */
 final class Updatronix_Export_Transient_Manager {
     /**

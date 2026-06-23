@@ -12,6 +12,8 @@ if (!defined('ABSPATH')) {
 
 /**
  * Registers POST /updatronix/v1/logs/export and coordinates export sub-services.
+ *
+ * @since 1.1.0
  */
 final class Updatronix_Export {
     public const MAX_ROWS_PER_CHUNK = 5000;

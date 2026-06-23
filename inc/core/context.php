@@ -3,6 +3,7 @@
  * Multisite runtime context helpers (network-only load policy).
  *
  * @package updatronix
+ * @since 1.1.0
  */
 
 if (!defined('ABSPATH')) {
@@ -30,6 +31,7 @@ if (!defined('ABSPATH')) {
  * notification filters ({@see Updatronix_Notifications}) are present whenever a real auto-update runs. Do not
  * narrow the main-site branch without preserving the main-site cron path.
  *
+ * @since 1.1.0
  * @return bool
  */
 function updatronix_should_load(): bool {
@@ -51,6 +53,7 @@ function updatronix_should_load(): bool {
 /**
  * Whether plugin activation/deactivation hooks may mutate storage on this request.
  *
+ * @since 1.1.0
  * @return bool
  */
 function updatronix_activation_allowed(): bool {
@@ -72,6 +75,7 @@ function updatronix_activation_allowed(): bool {
 /**
  * Run a callback in the main site blog context on Multisite (no-op switch on single-site).
  *
+ * @since 1.1.0
  * @template T
  * @param callable(): T $callback Callback.
  * @return T

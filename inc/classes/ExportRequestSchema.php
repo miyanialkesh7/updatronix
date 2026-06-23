@@ -12,6 +12,8 @@ if (!defined('ABSPATH')) {
 
 /**
  * Closed-schema validator for export requests.
+ *
+ * @since 1.1.0
  */
 final class Updatronix_Export_Request_Schema {
     /**

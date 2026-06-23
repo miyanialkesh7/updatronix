@@ -6,6 +6,7 @@
  * Clarifies how countdown text on those screens relates to delayed automatic installs and Update logs.
  *
  * @package updatronix
+ * @since 1.1.0
  */
 
 if (!defined('ABSPATH')) {
@@ -20,6 +21,7 @@ if (is_multisite()) {
 /**
  * Prints an informational notice when delayed automatic updates are active.
  *
+ * @since 1.1.0
  * @return void
  */
 function updatronix_render_delay_context_admin_notice(): void {
@@ -93,6 +95,7 @@ function updatronix_render_delay_context_admin_notice(): void {
 /**
  * Whether delay controls from settings should gate automatic updates (matches {@see Updatronix_AutoUpdateDelay}).
  *
+ * @since 1.1.0
  * @return bool True when delay is enabled with a positive day count.
  */
 function updatronix_delay_updates_is_active_from_settings(): bool {
@@ -104,6 +107,7 @@ function updatronix_delay_updates_is_active_from_settings(): bool {
 /**
  * Whether the current user may see delay notices on this admin screen.
  *
+ * @since 1.1.0
  * @param string $screen_id Screen ID from `WP_Screen::$id`.
  * @return bool True when the user has the capability required for that screen.
  */

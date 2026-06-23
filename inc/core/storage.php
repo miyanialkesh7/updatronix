@@ -5,6 +5,7 @@
  * Multisite stores in wp_sitemeta; single-site uses wp_options / blog transients.
  *
  * @package updatronix
+ * @since 1.1.0
  */
 
 if (!defined('ABSPATH')) {
@@ -14,6 +15,7 @@ if (!defined('ABSPATH')) {
 /**
  * Read a plugin-owned option.
  *
+ * @since 1.1.0
  * @param string $key     Option key.
  * @param mixed  $default Default when missing.
  * @return mixed
@@ -29,6 +31,7 @@ function updatronix_get_plugin_option(string $key, mixed $default = false): mixe
 /**
  * Write a plugin-owned option.
  *
+ * @since 1.1.0
  * @param string $key      Option key.
  * @param mixed  $value    Value to store.
  * @param bool|null $autoload Autoload flag (single-site only; ignored on Multisite).
@@ -49,6 +52,7 @@ function updatronix_update_plugin_option(string $key, mixed $value, ?bool $autol
 /**
  * Delete a plugin-owned option.
  *
+ * @since 1.1.0
  * @param string $key Option key.
  * @return bool
  */
@@ -63,6 +67,7 @@ function updatronix_delete_plugin_option(string $key): bool {
 /**
  * Read a plugin-owned transient.
  *
+ * @since 1.1.0
  * @param string $key Transient key.
  * @return mixed
  */
@@ -77,6 +82,7 @@ function updatronix_get_plugin_transient(string $key): mixed {
 /**
  * Write a plugin-owned transient.
  *
+ * @since 1.1.0
  * @param string $key        Transient key.
  * @param mixed  $value      Value.
  * @param int    $expiration TTL in seconds.
@@ -93,6 +99,7 @@ function updatronix_set_plugin_transient(string $key, mixed $value, int $expirat
 /**
  * Delete a plugin-owned transient.
  *
+ * @since 1.1.0
  * @param string $key Transient key.
  * @return bool
  */
@@ -107,6 +114,7 @@ function updatronix_delete_plugin_transient(string $key): bool {
 /**
  * One-time migration: copy main-site blog options into site options when site meta is empty.
  *
+ * @since 1.1.0
  * @param list<string> $keys Option keys to migrate.
  * @return void
  */
