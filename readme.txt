@@ -9,72 +9,73 @@ Requires PHP: 8.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Confident WordPress updates, on your terms. Track every change, control all updates, and keep it private in wp-admin.
+Enhanced Update Manager for WordPress. Monitor every change, controll all updates, fine tune your website maintenance flow.
 
 == Description ==
 
-WordPress updates itself all the time, then forgets it ever happened. Updatronix remembers. It keeps a running record of every update on your site, and hands you the controls WordPress likes to tuck away: what updates on its own, and when.
+WordPress, plugins and themes need regulary updates, but then forgets it ever happened. Updatronix remembers. It keeps a running record of every update on your website, and hands you more controls over update process: what updates, when and how.
 
-One thing matters more than the rest. Updatronix builds on the WordPress update engine instead of swapping it out. Your settings are written to WordPress's own options, so your auto-update choices keep working even if you remove the plugin one day. I built it for the people who look after WordPress sites for a living, so it fits the way you already work.
+Updatronix is precision plugin build on the native WordPress update engine instead of swapping it out. Your settings are written to WordPress's own options, so your auto-update choices keep working even if you remove the plugin one day. I built it for the people who look after WordPress sites for a living, so it fits the way you already work.
 
-= Who it's for =
+= Built for every users in their diversity of needs =
 
-* **Solo site owners.** Keep your site current and sleep at night. You'll always know what changed.
-* **Freelancers.** When a client asks what you've been up to, the answer is right there.
-* **Developers.** Real control over auto-updates and scheduling, plus the full detail behind every event.
-* **Agencies.** The same update policy you trust, running on every client site, each with its own log.
+* **Solo site owners:** Keep your site up to date and sleep at night. You'll always know what changed.
+* **Freelancers:** When a client asks what you've been up to, the answer is right there.
+* **Developers:** Real control over auto-updates and scheduling, plus the full detail behind every event.
+* **Agencies:** The same update policy you trust, running on every client site, each with its own log.
 
 == Features ==
 
-Four tabs, one job each.
+Four tabs, one per concern.
 
 = Update logs =
 
-Every update, written down. The moment WordPress installs something, whether it's core, a plugin, a theme, or a translation, it lands in the log. So when a site breaks a week later, you're not guessing about what changed. You can see it.
+Every core, plugin, theme, and translation update are logged with full details. If something breaks after updates, you have a trusty starting point instead of a guess.
 
 * The before and after version, what set it off, and how it ended.
 * Filter by category, date, action, or user when the list gets long.
 * Open any entry to read the details, including the exact error WordPress threw.
 
-Need to hand it off? Export the log just as you've filtered it. Handy for briefing your team when something breaks, putting together a maintenance report for a client, or sending context to whoever you've called in to help.
+Need to hand it off? Export the log just as you've filtered it. Handy for briefing your team when something breaks, sending a maintenance report for a client, or sharing context to someone you've called in to help.
 
 = Auto-updates =
 
-WordPress spreads its auto-update switches across half a dozen screens. This tab gathers them in one place. Flip what you want, and the choice goes straight into WordPress's own settings.
+WordPress 5.5 made auto-updates available across the dashboard. The controls then got scattered across half a dozen screens. This tab pulls them onto one page: how core updates itself, which plugins and themes update on their own, whether translations come along.
 
 * Set core to every release, security and minor only, or fully manual.
 * A switch for each plugin and theme, and one for translations.
-* If a `wp-config.php` constant is overriding something, you'll see which one, in plain words.
+* If a `wp-config.php` constant is overriding something, you'll see which one.
 
 = Schedule =
 
-WordPress checks for updates twice a day, whenever it feels like it. Usually that's fine. When it isn't, this tab hands you the timing, and lets a new release age a little before it reaches you.
+WordPress checks for updates twice a day. Usually that's fine. When it isn't, this feature hands you the timing, and lets a new release age a little before it reaches you.
 
 * Pick how often WordPress checks (hourly, twice daily, daily, or weekly) and the time of day.
-* Hold automatic installs for up to 365 days after a release shows up.
+* Hold automatic installs after a release shows up.
 * Skip the bad ones. If a plugin ships a broken update and then a quick fix, a short hold means you get the fix and miss the mess.
-* Anyone logging in sees a notice while a hold is on, so nobody's left wondering.
+* A notice appears on the Updates, Plugins, and Themes screens whenever a hold is active.
 
 = Settings =
 
-The housekeeping. How long to keep your history, and which update emails actually reach you.
+How long the log sticks around, who gets the update emails WordPress sends, and the master switch for those emails when you'd rather not see them at all. That switch leaves recovery mode emails alone—being locked out of your own site is not a notification preference.
 
-* Turn logging on or off, and keep entries anywhere from 1 to 365 days.
-* Send WordPress's update emails wherever you want, to one inbox or a whole list.
-* Already watching your sites another way? Switch the update emails off for good. (Recovery mode email stays on, so you can't lock yourself out.)
+* Set up log conservation policy.
+* Send WordPress's update emails to desired recipient.
+* Per-event filters: core, plugin and theme, debug summary, technical alerts.
+* One switch silences every WordPress update notification email recovery mode excepted to prevent self-lock.
 
 == Updatronix 3000 ==
 
 Somewhere in a neon-lit server room, the next version is booting.
 
-**Updatronix 3000** is the Pro edition, and it's almost online. Same core you already run, with extra firepower bolted on for developers and agencies who take their stack seriously.
+**Updatronix 3000** is the Pro edition comming soon. Extending Updatronix, with additionnal features for for developpers, power users and agencies.
 
-* **Integrations tab.** Hooks and a REST API so you can plug Updatronix into your own pipeline. Trigger updates from the cloud, push events to your dashboard, automate the parts you'd rather not touch.
-* **Update Shield.** A bouncer for your updates. It checks PHP compatibility, flags plugins that look abandoned, and notices a `.git` folder so a stray update can't clobber your work.
-* **Update Flow.** Set the order your plugins update in, so the ones that lean on each other stop falling over.
+* **Developpers tools.** Hooks, functions and a REST API to plug Updatronix into your own pipeline. Push events to your own dashboards, trigger backups, automate maintenance reports, imagine wathever you want and improve your workflow with solid foundation. 
+* **Update Shield.** Checks PHP compatibility, flags abandoned plugins, version control protection.
+* **Update Flow.** You are the expert, you know your stack: set the exact order your plugins update in.
 * **White Label.** Your name on it, not mine. Clients see your agency, and the engine stays out of sight.
 
-**Coming soon.** One payment, one site, yours to keep, with updates for life. I'm not a fan of subscriptions, so there won't be one. You buy, you own it.
+**Coming soon.** One payment, one license, one site, with updates for life. I'm not a fan of subscriptions, so there won't be one. You buy it, you own it.
 
 == Privacy ==
 
@@ -86,7 +87,7 @@ Updatronix aims to be fully accessible to all of its users. If you run into a pr
 
 == Multisite Support ==
 
-On a multisite network, Updatronix is network-only. Network-activate it once, and a Super Admin manages everything from the Network Admin dashboard: the settings, the update history, the schedule, and the email controls are all network-wide and shared across every site. Individual sites show no Updatronix menu, settings page, or notice. Single-site installs are unaffected and behave exactly as described above.
+On a multisite network, Updatronix is network-only. Network-activate it once, and a Super Admin manages everything from the Network Admin dashboard: the settings, the update history, the schedule, and the email controls are all network-wide and shared across every site.
 
 == Screenshots ==
 
@@ -110,39 +111,39 @@ Activation creates the log table and schedules a daily cleanup. Deactivation can
 
 = Where do I see the history of updates on my site? =
 
-Open **Tools → Updatronix**. The first tab is your log: date, item, version change, outcome. Click a row for the full entry. Logging is on from the day you activate, so the history builds itself.
+Open **Tools → Updatronix**. The first tab is the log: date, item, version change, outcome. Click any row to drill into a single entry. Logging is on by default after activation; if you've turned it off in the past, only events recorded while it was on will show up.
 
 = Can I export my update log? =
 
-Yes. Filter the log how you like, then hit **Export logs**. You get a clean report you can drop into an email to your team, a maintenance summary for a client, or a note to whoever you've called in to help.
+Yes. Filter the log how you like, then click on **Export logs** button. You get a clean report you can drop into an email to your team, a maintenance summary for a client, or a note to whoever you've called in to help.
 
 = How do I send WordPress update emails to a different address? =
 
-In **Settings**, turn on **Manage update notifications** and enter an address (or several, separated by commas). Pick the events you care about and save. WordPress still sends the same emails. They just go where you want them now.
+In **Settings**, turn on **Manage update notifications** and put the address in the recipient field. A comma-separated list works if you want to send the emails to several inboxes. Pick which event types should trigger an email—core, plugin and theme, debug summary, technical alert—and save. WordPress keeps sending the same emails it always sends; they just go to the address you picked instead of the site admin.
 
 = Can I turn off WordPress update notification emails completely? =
 
-Yes. Switch on **Disable all update notification emails** in **Settings** and they stop. The one exception is recovery mode email, the one that gets you back in after a fatal error. That stays on, on purpose. Getting locked out of your own site isn't a feature.
+Yes. In **Settings**, turn on **Disable all update notification emails**. That suppresses the core, plugin, theme, and debug summary emails WordPress would normally send. Recovery mode emails—the ones that arrive after a fatal error so you can log back in—are deliberately exempt. Disabling those would lock you out of your own site, which is the opposite of helpful.
 
 = Can I delay automatic updates? =
 
-Yes. In **Schedule**, turn on **Hold automatic updates** and choose how many days to wait, up to 365. The clock runs per release, so a seven-day hold means an update is at least a week old before it installs. While a hold is on, the Updates, Plugins, and Themes screens show a notice so nobody's caught off guard.
+Yes. In **Schedule**, enable **Delay Updates** and set the number of days WordPress should wait after a release appears. The countdown is per release, not per check, so a 7-day hold means an offer is at least 7 days old before it installs. While anything is on hold, the Updates, Plugins, and Themes screens display a notice explaining what's happening.
 
 = Does Updatronix work with my plugins, themes, and host? =
 
-Almost certainly. Updatronix rides on the same update system WordPress already uses, so anything that comes through **Dashboard → Updates** or the automatic updater gets logged. WordPress.org, a private repo, your host's own mirror, it's all the same to it. And if your host or `wp-config.php` has locked something, Updatronix tells you what, so you're not poking at a switch that does nothing.
+It hooks into the same update pipeline WordPress already runs, so anything that updates through **Dashboard → Updates** or the automatic update system gets logged—whether the package comes from WordPress.org, a private source, or your host's mirror. If your host or `wp-config.php` locks a setting from outside the dashboard, Updatronix surfaces a notice explaining what's locked, so you don't waste time wondering why a toggle isn't responding.
 
 = Can Updatronix undo a failed update? =
 
-No, and that's on purpose. Rolling back is a different job with its own risks, so Updatronix leaves it alone. What it does do is grab the error and the version details the second an update fails. That's the part you (or your developer) actually need to put things right.
+No. Rolling updates back is a different problem with different tradeoffs, and Updatronix deliberately stays out of it. What it does instead: when an update fails, the plugin captures the WordPress error and the version snapshot before WordPress moves on. That's the data you need to recover by hand—or hand to your host's support so they can.
 
 = Where does my data go? =
 
-Nowhere. Your logs and settings sit on your site and stay there. Updatronix doesn't make calls of its own. The only things it talks to are the APIs WordPress was already going to call.
+Nowhere. Logs and settings live on your site. The plugin makes zero outbound network calls of its own—every API it touches is one WordPress was already going to call without it.
 
 = How long are log entries kept? =
 
-However long you want. Set the window between 1 and 365 days in **Settings**, and a daily cleanup clears the rest. The default is 90 days, which works for most sites. Push it higher for a longer trail, or lower if storage is tight.
+Up to you. In **Settings**, set the retention window between 1 and 365 days. A daily cleanup task drops anything older. The default is 90 days, which works for most sites; raise it if you need a longer audit trail, or lower it if your hosting is tight on storage.
 
 = Does Updatronix work on multisite? =
 

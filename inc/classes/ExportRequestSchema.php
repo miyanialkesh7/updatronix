@@ -251,8 +251,12 @@ final class Updatronix_Export_Request_Schema {
      * @return array<string, mixed>|null
      */
     private static function parse_filter_item(array $f): ?array {
-        $field = isset($f['field']) ? sanitize_key((string) $f['field']) : '';
-        $operator = isset($f['operator']) ? sanitize_key((string) $f['operator']) : '';
+        // DataViews sends camelCase field/operator tokens (e.g. actionType, isAny). Do NOT use
+        // sanitize_key() here: it lowercases the token, so camelCase names no longer match the
+        // FILTER_FIELDS / *_OPERATORS allowlists and the filter is silently dropped. Strip to safe
+        // characters while preserving case; the allowlist checks below remain the security boundary.
+        $field = isset($f['field']) ? self::sanitize_token($f['field']) : '';
+        $operator = isset($f['operator']) ? self::sanitize_token($f['operator']) : '';
 
         if (!in_array($field, Updatronix_Export::FILTER_FIELDS, true)) {
             return null;
@@ -543,6 +547,22 @@ final class Updatronix_Export_Request_Schema {
         }
 
         return $dt->setTimezone(wp_timezone());
+    }
+
+    /**
+     * Sanitize a DataViews field/operator token while preserving camelCase.
+     *
+     * Unlike {@see sanitize_key()}, this keeps the original letter case so camelCase
+     * identifiers (e.g. `actionType`, `isAny`, `beforeInc`) still match their allowlists.
+     * Only ASCII letters, digits, underscores, and dashes survive; everything else is dropped.
+     *
+     * @param mixed $value Raw token from the request.
+     * @return string Sanitized token (may be empty).
+     */
+    private static function sanitize_token(mixed $value): string {
+        $string = is_scalar($value) ? (string) $value : '';
+
+        return (string) preg_replace('/[^A-Za-z0-9_-]/', '', $string);
     }
 
     /**
