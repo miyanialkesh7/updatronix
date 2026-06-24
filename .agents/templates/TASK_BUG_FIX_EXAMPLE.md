@@ -1,4 +1,4 @@
-Orchestrator: task-type=`bug-fix` · route=`fullstack` · add `quality` if user/data/REST/auth surfaces are involved
+task-type: bug-fix
 
 <!-- Purpose: Use this template when observed behavior contradicts the agreed spec, documented contract, or test expectations — a genuine defect. Not for intent-alignment (use behavior-adjustment) or scope changes (use feature-modification). -->
 

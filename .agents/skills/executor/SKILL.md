@@ -8,7 +8,7 @@ description: >-
 
 # Resume
 
-Continue `/architect` work without chat history. **Use a worker-tier model** in Zed.
+Continue `/architect` work without chat history. **Use a worker-tier model.**
 
 Reply in US English.
 
@@ -28,7 +28,7 @@ Update `## Tasks` and note in `## Log` if the remaining plan is wrong.
 
 ## Thread rotation
 
-After 5 more tasks or ~25 turns, update checkpoint; suggest fresh **worker** tier thread + `/resume`.
+After 3 more tasks or ~20 turns, update checkpoint; suggest fresh **worker** tier thread + `/resume`.
 
 ## Hand-off
 

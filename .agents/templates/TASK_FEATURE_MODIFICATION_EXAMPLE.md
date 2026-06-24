@@ -1,4 +1,4 @@
-Orchestrator: task-type=`feature-modification` · route=`fullstack` · use `AGENTS.md § 2-Model Workflow` only if the change is large enough to need UX/security/architecture notes (treat as `new-feature` in that case)
+task-type: feature-modification
 
 <!-- Purpose: Use this template when an existing capability changes in scope or behavior — new parameters, different UI, altered API surface, additional storage. Not for net-new capabilities (use new-feature) or intent-alignment tweaks (use behavior-adjustment). -->
 
@@ -57,7 +57,7 @@ priority: <!-- low | normal | high -->
 ## References
 
 - `.agents/docs/docs-library.md` — key sections: WordPress Plugin Development, WordPress REST API, WordPress Coding Standards.
-- `AGENTS.md § 2-Model Workflow` — follow if the modification is large enough to warrant UX/security/architecture notes.
+- `AGENTS.md § Workflow` — follow if the modification is large enough to warrant UX/security/architecture notes.
 
 ## When to use this template instead of X
 

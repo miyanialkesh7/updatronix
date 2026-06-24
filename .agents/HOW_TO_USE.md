@@ -4,30 +4,30 @@ You delegate. The agent plans, codes, lints, and fixes. Your job: describe outco
 
 ## Setup (once)
 
-1. Open the **plugin root** (`updatronix/`) in Zed.
-2. Agent Panel → confirm **Using project AGENTS.md file**.
-3. Skills → Project: `architect`, `resume`, `reviewer`, `security`, `release`.
+1. Open the **plugin root** (`updatronix/`) in your editor.
+2. Confirm the project's `AGENTS.md` is loaded as agent instructions.
+3. Skills available: `architect`, `resume`, `reviewer`, `security`, `release`.
 4. Trust the workspace when prompted.
 
-## Model tiers — what to pick in Zed
+## Model tiers — what to pick per thread
 
-Each thread: choose a **tier** in the model selector. Skills tell the agent what to do; tiers tell **you** which model capability to use.
+Each thread: choose a **tier** in your model selector. Skills tell the agent what to do; tiers tell **you** which model capability to use.
 
-| Tier | When | Zed thread |
-|------|------|------------|
+| Tier | When | Thread |
+|------|------|--------|
 | **Planning** | Clarify, design, write the plan — answer not in task file yet | `/architect` until you approve |
 | **Worker** | Execute from task file — implement, lint, fix, rotate | `/architect` after `go` · `/resume` · `/release` |
 | **Audit** | Review or security gate — no coding | `/reviewer` (high-risk) · `/security` |
 
 **One-line rule:** Planning until `go` → worker to build → audit before ship when required.
 
-### Example mapping (personal — update in Zed, not in repo)
+### Recommended models
 
-| Tier | Example models (Jun 2026) |
-|------|---------------------------|
-| Planning | Claude Sonnet 4.6, GPT-5.x mid-tier |
-| Worker | DeepSeek V4-Flash, Claude Sonnet 4.6 |
-| Audit | Claude Opus 4.x, DeepSeek V4-Pro for review-only experiments |
+| Tier | Recommended | Why |
+|------|-------------|-----|
+| **Planning** | DeepSeek Pro V4 · Claude Opus | Strong reasoning, design, trade-off analysis |
+| **Worker** | DeepSeek Pro Flash | Fast, cheap, reliable tool calling — bulk of the work |
+| **Audit** | Claude Opus · DeepSeek Pro V4 | Thorough review, security analysis, no hallucinations on gates |
 
 Use **worker** on `/resume` threads to save tokens. Keep **audit** for `/security` and high-risk `/reviewer`. If a worker model mishandles tools or skips WP security rules, move that phase back to planning tier.
 
@@ -42,7 +42,7 @@ Use **worker** on `/resume` threads to save tokens. Keep **audit** for `/securit
 → you: go
 ```
 
-**Thread B — worker tier** (optional but recommended after `go`)
+**Thread B — worker tier** (recommended after `go`)
 
 ```
 /resume
@@ -75,8 +75,8 @@ Blockers found? **Worker** tier → `/resume` with the task file → fix → re-
 
 Rotate on **worker** tier when:
 
-- **5 tasks** done in the same thread, or
-- **~25 agent turns**, or
+- **3 tasks** done in the same thread, or
+- **~20 agent turns**, or
 - you stop for the day
 
 ```
@@ -84,7 +84,7 @@ Rotate on **worker** tier when:
 @.agents/tasks/YYYY-MM-DD-<type>-<slug>.md
 ```
 
-Same delegation — you don’t re-explain the feature. If the agent suggests rotation, accept it.
+Same delegation — you don't re-explain the feature. If the agent suggests rotation, accept it.
 
 ## Interrupted session
 
@@ -111,7 +111,7 @@ When tested, reviewed (if required), and you **explicitly authorize** the versio
 
 ## Reference docs
 
-`.agents/docs/` holds large mirrors. **You don’t open them.** Agents grep one section when needed. Source in `inc/` is primary.
+`.agents/docs/` holds large mirrors. **You don't open them.** Agents grep one section when needed. Source in `inc/` is primary.
 
 ## What you never do
 

@@ -30,38 +30,68 @@ You describe the outcome. The agent plans, implements, lints, logs, and fixes fr
 | 4 | Done testing | `/reviewer` if required (see below) |
 | 5 | Release ready | `/release` after explicit version authorization |
 
-## Model Tiers — Pick in Zed Per Thread
+## Model Tiers
 
-Skills define **what** to do. **Model tier** defines **which capability level** you select in the Agent Panel. Vendor names are not fixed in this repo — map tiers to whatever models you use locally.
+Skills define **what** to do. **Model tier** defines **which capability level** to use per thread. Tier names are abstract — map them to whatever models you run locally.
 
 | Tier | Use when | Typical skills / phase |
 |------|----------|-------------------------|
 | **Planning** | Answer not yet in the task file — clarify, design, trade-offs, ambiguous scope | `/architect` Phase 1–3 (plan) · low-risk `/reviewer` |
 | **Worker** | Task file is the contract — implement, lint, fix, rotate threads | `/architect` Phase 4–5 (execute) · `/resume` · `/release` |
-| **Audit** | Judge only — no implementation; security and integration gates | `/reviewer` when required · `/security` always · planning-tier **audit** for high-risk review |
+| **Audit** | Judge only — no implementation; security and integration gates | `/reviewer` when required · `/security` always |
+
+### Recommended models
+
+| Tier | Recommended | Why |
+|------|-------------|-----|
+| **Planning** | DeepSeek Pro V4 · Claude Opus | Strong reasoning, design, trade-off analysis |
+| **Worker** | DeepSeek Pro Flash | Fast, cheap, reliable tool calling — bulk of the work |
+| **Audit** | Claude Opus · DeepSeek Pro V4 | Thorough review, security analysis, no hallucinations on gates |
 
 **Rules**
 
-- **Planning** before the plan is approved; switch to **worker** after you say `go` (same skill `/architect`, new thread optional).
-- **Worker** for all `/resume` rotation threads — best place to use a cheaper model if tool calling stays reliable.
+- **Planning** before the plan is approved; switch to **worker** after you say `go`.
+- **Worker** for all `/resume` rotation threads.
 - **Audit** for `/security` always. For `/reviewer`: **audit** when `review_required: yes` or `risk` includes `rest`, `sql`, `auth`, `export`, or `multisite`; otherwise planning tier is enough.
 - Ambiguous SQL/auth/REST **design** during planning: stop and re-run planning on **audit** tier before coding.
-- Avoid bare “fast” models with weak tool support — this plugin has real security surfaces.
 
 Record the tier used in review/security note frontmatter (`model_tier: planning | worker | audit`), not vendor SKUs.
 
-## Long Sessions — Thread Rotation
+## Token Optimization
+
+Every token costs. These rules keep context lean and runs fast.
+
+**Read strategy:** grep first → read only needed sections → never re-read a file you just wrote.
+
+**Lint economy:**
+
+| Task touches | Lint |
+|--------------|------|
+| REST, SQL, auth, sanitization, PHP logic, JS/React | **Immediate** after task |
+| Comments, docs, pure CSS, no new surface | **Batch** every up to **5** tasks |
+| All tasks done | `npm run test:all` |
+
+**Skip irrelevant commands:**
+
+- No `composer run make:pot` unless i18n strings changed
+- No `npm run build` unless `assets/src/` changed
+- No `npm run lint:css` unless SCSS changed
+- No `composer run verify:php` unless PHP changed
+
+**Reference docs:** grep one `## Section` only — never load whole `.agents/docs/` mirrors.
+
+## Thread Rotation
 
 Chat history is not memory. The **task file** is.
 
 Rotate to a **new thread + `/resume`** when any trigger fires:
 
-- **5 tasks** completed in one thread
-- **~25 agent turns** in one thread
+- **3 tasks** completed in one thread (worker tier)
+- **~20 agent turns** in one thread
 - End of your work day or before a long break
 - Context feels stale (agent repeats questions or forgets decisions)
 
-Before rotating, the agent updates `## Session checkpoint` in the task file (last task done, files touched, open decisions, review required).
+Before rotating, update `## Session checkpoint` (last task done, files touched, open decisions, review required).
 
 In the new thread: `/resume` + `@.agents/tasks/YYYY-MM-DD-<type>-<slug>.md` on a **worker** tier model.
 
@@ -103,19 +133,11 @@ Deliverables per feature: **one task file** + **one review note** (when required
 
 When required, the architect must set `review_required: yes` in task frontmatter and say so at hand-off.
 
-## Lint Cadence
-
-| Tier | When | Commands |
-|------|------|----------|
-| **Immediate** | After each task touching REST, SQL, auth, sanitization, or JS/React | `composer run lint:php` and/or `npm run lint` + `npm run lint:css` |
-| **Batch** | Low-risk tasks (comments, docs, pure CSS, internal refactor with no new surface) — at most every **3** tasks | Same commands, batched |
-| **Full gate** | All tasks done | `npm run test:all` |
-
 ## Build & Lint Reference
 
 | Command | When |
 |---------|------|
-| `composer run lint:php` | PHP changes |
+| `composer run verify:php` | PHP changes (CS Fixer + PHPStan + unit tests) |
 | `npm run lint` / `npm run lint:css` | JS / SCSS |
 | `npm run test:all` | End of dev cycle |
 | `composer run lint:pcp` | Pre-release |

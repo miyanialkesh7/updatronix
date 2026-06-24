@@ -1,4 +1,4 @@
-Orchestrator: task-type=`accessibility-audit` · route=`interface-content` · add `fullstack` if fixes require PHP/block structural changes
+task-type: accessibility-audit
 
 <!-- Purpose: Use this template for a WCAG 2.1/2.2 Level AA review of a specific scope — keyboard navigation, ARIA usage, color contrast, focus management, screen reader output, form accessibility, and motion handling. -->
 

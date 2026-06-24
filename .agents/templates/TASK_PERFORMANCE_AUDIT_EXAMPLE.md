@@ -1,4 +1,4 @@
-Orchestrator: task-type=`performance-audit` · route=`fullstack` (performance is owned by `fullstack`) · add `quality` if a regression test is needed to lock the gain in
+task-type: performance-audit
 
 <!-- Purpose: Use this template to profile and optimize a specific scope — database query count, asset weight, caching strategy, Core Web Vitals impact, REST response time, or background processing efficiency. -->
 

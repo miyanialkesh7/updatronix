@@ -1,4 +1,4 @@
-Orchestrator: task-type=`refactoring` · route=`fullstack` · add `quality` if permission/validation paths are restructured or test coverage shifts — **no user-facing behavior change**
+task-type: refactoring
 
 <!-- Purpose: Use this template for structural code improvements that do not alter externally observable behavior — extracting classes, splitting files, reducing coupling, consolidating duplicated logic, improving testability or readability. -->
 

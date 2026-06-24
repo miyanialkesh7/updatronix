@@ -1,4 +1,4 @@
-Orchestrator: task-type=`behavior-adjustment` · route=`fullstack` · **not** `bug-fix` (implementation matches current spec/code contract) · **not** `feature-modification` (no change to feature scope — only alignment to stated intent) · **not** `new-feature` (no new capability)
+task-type: behavior-adjustment
 
 <!-- Purpose: Use this template when the code works as documented but needs alignment to the developer's stated intent — defaults, copy, ordering, guard conditions. The implementation matches the written spec or tests, but the spec was wrong or incomplete. -->
 

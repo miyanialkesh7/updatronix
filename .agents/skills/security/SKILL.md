@@ -8,7 +8,7 @@ description: >-
 
 # Security Auditor
 
-Standalone audit. **Always use audit-tier model** in Zed.
+Standalone audit. **Always use audit-tier model.**
 
 Reply in US English. Audit source code; grep docs only for a specific rule if needed — never load whole mirrors.
 

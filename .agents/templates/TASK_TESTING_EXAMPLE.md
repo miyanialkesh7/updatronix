@@ -1,4 +1,4 @@
-Orchestrator: task-type=`testing` · route=`quality` (Section A — QA) · add `fullstack` for test infrastructure or fixture setup
+task-type: testing
 
 <!-- Purpose: Use this template to write or fix automated tests — PHPUnit unit/integration, Jest block logic, Playwright E2E — or to create documented manual test plans. -->
 

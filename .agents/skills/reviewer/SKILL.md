@@ -19,7 +19,7 @@ Reply in US English.
 | `review_required: yes` or `risk` includes `rest`, `sql`, `auth`, `export`, `multisite` | **Audit** |
 | Optional review on low-risk scope | **Planning** |
 
-User selects the matching model in Zed before starting the thread.
+User selects the matching model before starting the thread.
 
 ## Inputs
 

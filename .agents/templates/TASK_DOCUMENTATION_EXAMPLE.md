@@ -1,4 +1,4 @@
-Orchestrator: task-type=`documentation` · route=`interface-content` · add `release` if the work touches `readme.txt` headers (`Stable tag:`, `Tested up to:`) or the `== Changelog ==` block
+task-type: documentation
 
 <!-- Purpose: Use this template for documentation work in the codebase — PHPDoc, JSDoc, inline comments, `readme.txt` prose (Description, FAQ, Screenshots, Upgrade Notice), or in-admin help text. The `interface-content` agent owns writing-style and code-documentation rules; `release` co-owns the parts of `readme.txt` tied to versioning. -->
 

@@ -1,6 +1,6 @@
-Orchestrator: task-type=`new-feature` · route=`AGENTS.md § 2-Model Workflow` (steps 1→7)
+task-type: new-feature
 
-<!-- Purpose: Use this template for a net-new capability — something that does not exist in the plugin yet. Triggers the full 7-step orchestration workflow (UX → Security → Architecture → Implementation → Validation → Accessibility → Final Checklist). -->
+<!-- Purpose: Use this template for a net-new capability — something that does not exist in the plugin yet. -->
 
 ---
 type: new-feature
@@ -84,7 +84,7 @@ priority: <!-- low | normal | high -->
 
 ## Out of scope
 
-<!-- Explicitly what this feature does not include — prevents scope creep during orchestration. -->
+<!-- Explicitly what this feature does not include — prevents scope creep. -->
 
 ## Dependencies / assumptions
 
@@ -94,7 +94,7 @@ priority: <!-- low | normal | high -->
 
 <!-- Testable "done" conditions: functional, security, and accessibility (e.g. "Admin can export CSV for date range", "Non-admins get 403", "Form is keyboard-only and WCAG AA", "Export works for 10 k rows"). -->
 
-- [ ] Produces orchestration outputs under `.agents/notes/` for this `slug` as required by each step (UX, security, architecture, implementation plan, validation, accessibility, final checklist).
+- [ ] Produces outputs under `.agents/notes/` for this `slug` as required by the workflow.
 - [ ] Passes verification against feature spec; security and accessibility notes are satisfied or explicitly deferred with rationale.
 
 ---
@@ -102,7 +102,7 @@ priority: <!-- low | normal | high -->
 ## References
 
 - `.agents/docs/docs-library.md` — key sections: WordPress Plugin Development, WordPress REST API, Gutenberg Block Development, WordPress Security Best Practices, Accessibility (WCAG 2.1+).
-- `AGENTS.md § 2-Model Workflow` — the 7-step workflow this template feeds.
+- `AGENTS.md § Workflow` — the 5-step workflow this template feeds.
 
 ## When to use this template instead of X
 

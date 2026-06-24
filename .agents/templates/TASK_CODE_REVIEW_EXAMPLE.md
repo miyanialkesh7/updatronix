@@ -1,4 +1,4 @@
-Orchestrator: task-type=`code-review` · route=`fullstack` · add specialist (`quality` for security or test coverage; `interface-content` for UX/accessibility/microcopy/PHPDoc) per review goals — **no functional behavior change** unless a separate task is filed
+task-type: code-review
 
 <!-- Purpose: Use this template for a multi-dimensional code quality review — maintainability, security, performance, accessibility, test coverage. For a deep single-domain audit (security-only, performance-only, or a11y-only), use the dedicated audit template instead. -->
 
@@ -30,7 +30,7 @@ priority: <!-- low | normal | high -->
 
 ## Review goals
 
-<!-- Check all that apply; orchestrator may add the matching specialist agent. -->
+<!-- Check all that apply. -->
 
 - [ ] Maintainability / clarity
 - [ ] Security (capabilities, validation, escaping, CSRF)

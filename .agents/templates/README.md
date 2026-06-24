@@ -1,4 +1,4 @@
-> **Routing note:** The `Orchestrator: task-type=` header on line 1 of each template is informational. In Zed and compatible agent systems, routing is manual: invoke `/architect` for dev work, `/resume` to continue, `/reviewer` for integration review, `/security` for audits, and `/release` for releases.
+> **Routing note:** The `task-type:` header on line 1 of each template is informational. Routing is manual: invoke `/architect` for dev work, `/resume` to continue, `/reviewer` for integration review, `/security` for audits, and `/release` for releases.
 
 # Task prompt templates
 
@@ -30,7 +30,7 @@ The `TASK_*.md` files in this folder stay unchanged so they remain available as 
 | `TASK_TESTING_EXAMPLE.md` | Write or fix automated tests: PHPUnit, Jest, Playwright E2E |
 | `TASK_DOCUMENTATION_EXAMPLE.md` | PHPDoc, JSDoc, comments, `readme.txt`, in-admin help — style rules in `.agents/docs/wordpress-documentation-style-guide-consolidated.md` and `AGENTS.md` |
 
-The **first line** of each template (`Orchestrator: task-type=...`) documents the task type for human readers and historical task files.
+The **first line** of each template (`task-type: ...`) documents the task type for human readers and historical task files.
 
 **Note:** Release work (version bump, changelog promotion, `Stable tag:` synchronisation, packaging) is owned by the `/release` skill. There is no dedicated template — invoke `/release` once every cycle task is signed off; see `.agents/skills/release/SKILL.md`.
 
@@ -38,7 +38,7 @@ The **first line** of each template (`Orchestrator: task-type=...`) documents th
 
 Every template follows a consistent section order:
 
-1. **Orchestrator routing header** (line 1) — task type and specialist routing hints.
+1. **Task type header** (line 1) — `task-type: <type>` for readers and historical task files.
 2. **Purpose comment** (HTML) — when to use this template.
 3. **YAML frontmatter** — `type`, `slug`, `date`, `agent-hint`, `priority`.
 4. **Status** — Pending / In progress / Done.

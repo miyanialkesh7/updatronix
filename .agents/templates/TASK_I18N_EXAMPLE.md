@@ -1,4 +1,4 @@
-Orchestrator: task-type=`i18n` · route=`fullstack` · add `interface-content` if user-facing copy or plurals need UX or writing-style review
+task-type: i18n
 
 <!-- Purpose: Use this template for internationalization work — wrapping hardcoded strings, fixing translation function usage, adding translator comments, setting up JS translations, regenerating POT files, and resolving PCP i18n violations. -->
 

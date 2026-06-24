@@ -1,6 +1,6 @@
 # `.agents/` — workflow assets
 
-Zed-compatible agent configuration. Always-on rules: `../AGENTS.md`. Human playbook: `HOW_TO_USE.md`.
+Agent configuration. Always-on rules: `../AGENTS.md`. Human playbook: `HOW_TO_USE.md`.
 
 | Path | Role |
 |------|------|
@@ -12,6 +12,6 @@ Zed-compatible agent configuration. Always-on rules: `../AGENTS.md`. Human playb
 | `docs/` | Large reference mirrors — **lookup only, never read whole files** |
 | `scripts/` | Regenerate doc mirrors |
 
-**Design:** Skills + **model tiers** (planning / worker / audit) picked per Zed thread; disk-backed task files; rotation via `/resume`. See `AGENTS.md`.
+**Design:** Skills + **model tiers** (planning / worker / audit) picked per thread; disk-backed task files; rotation via `/resume`. See `AGENTS.md`.
 
 **Git:** `skills/`, `templates/`, `docs/`, `scripts/` committed · `tasks/`, `notes/` gitignored.

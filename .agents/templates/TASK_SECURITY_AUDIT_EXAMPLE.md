@@ -1,4 +1,4 @@
-Orchestrator: task-type=`security-audit` · route=`quality` (Section B — Security) · add `fullstack` if fixes require architectural changes
+task-type: security-audit
 
 <!-- Purpose: Use this template to review a feature, file, or endpoint scope for security risks — escaping, sanitization, nonces, capability checks, SQL injection, path traversal, open redirects, and data exposure. -->
 
