@@ -9,32 +9,50 @@ You delegate. The agent plans, codes, lints, and fixes. Your job: describe outco
 3. Skills → Project: `architect`, `resume`, `reviewer`, `security`, `release`.
 4. Trust the workspace when prompted.
 
-## Models
+## Model tiers — what to pick in Zed
 
-| Work | Model |
-|------|-------|
-| `/architect`, `/resume`, `/release` | **Claude Sonnet 4.6** |
-| `/reviewer` (normal) | Sonnet 4.6 |
-| `/reviewer` (REST, SQL, auth, export, multisite) | **Claude Opus** |
-| `/security` | **Claude Opus** — always |
+Each thread: choose a **tier** in the model selector. Skills tell the agent what to do; tiers tell **you** which model capability to use.
 
-Sonnet keeps cost down for routine WP work. Opus is for security design, audits, and high-risk review. Fast/cheap models are a poor fit for this codebase.
+| Tier | When | Zed thread |
+|------|------|------------|
+| **Planning** | Clarify, design, write the plan — answer not in task file yet | `/architect` until you approve |
+| **Worker** | Execute from task file — implement, lint, fix, rotate | `/architect` after `go` · `/resume` · `/release` |
+| **Audit** | Review or security gate — no coding | `/reviewer` (high-risk) · `/security` |
+
+**One-line rule:** Planning until `go` → worker to build → audit before ship when required.
+
+### Example mapping (personal — update in Zed, not in repo)
+
+| Tier | Example models (Jun 2026) |
+|------|---------------------------|
+| Planning | Claude Sonnet 4.6, GPT-5.x mid-tier |
+| Worker | DeepSeek V4-Flash, Claude Sonnet 4.6 |
+| Audit | Claude Opus 4.x, DeepSeek V4-Pro for review-only experiments |
+
+Use **worker** on `/resume` threads to save tokens. Keep **audit** for `/security` and high-risk `/reviewer`. If a worker model mishandles tools or skips WP security rules, move that phase back to planning tier.
 
 ## Daily flow — one feature
 
+**Thread A — planning tier**
+
 ```
 /architect
-[describe what you want — French or English, high level is fine]
-
-→ agent asks clarifying questions (one message) OR shows a plan
-→ you: go  (or adjust)
-
-→ agent executes all tasks, lints, logs to the task file
-→ you: test in Local, paste issues
-
-→ agent fixes, you retest
-→ repeat until stable
+[describe what you want]
+→ plan + task file
+→ you: go
 ```
+
+**Thread B — worker tier** (optional but recommended after `go`)
+
+```
+/resume
+@.agents/tasks/YYYY-MM-DD-<type>-<slug>.md
+→ executes tasks, lints, logs
+```
+
+Or stay in Thread A on worker tier if the feature is small.
+
+**You:** test in Local, paste issues → agent fixes (worker tier).
 
 The agent creates `.agents/tasks/YYYY-MM-DD-<type>-<slug>.md`. You never copy templates.
 
@@ -47,15 +65,15 @@ Mandatory if the change touches REST, SQL, auth/capabilities, export, multisite,
 @.agents/tasks/YYYY-MM-DD-<type>-<slug>.md
 ```
 
-Use Opus in the review thread for high-risk features. Output: `.agents/notes/YYYY-MM-DD-review-<slug>.md`.
+Use **audit** tier for high-risk features; **planning** tier is enough for optional low-risk review. Output: `.agents/notes/YYYY-MM-DD-review-<slug>.md`.
 
 Skip review only for low-risk work (comments-only, trivial CSS) when the agent confirms it.
 
-Blockers found? New thread → `/resume` with the task file → fix → re-review.
+Blockers found? **Worker** tier → `/resume` with the task file → fix → re-review on **audit** tier.
 
 ## Long sessions — rotate threads
 
-One thread does **not** need to last the whole feature. Rotate when:
+Rotate on **worker** tier when:
 
 - **5 tasks** done in the same thread, or
 - **~25 agent turns**, or
@@ -66,29 +84,20 @@ One thread does **not** need to last the whole feature. Rotate when:
 @.agents/tasks/YYYY-MM-DD-<type>-<slug>.md
 ```
 
-The agent reads `## Session checkpoint` + remaining tasks and continues. **Same delegation model** — you don’t re-explain the feature.
-
-If the agent suggests rotation, accept it. Fresh context is cheaper and more accurate than a bloated thread.
+Same delegation — you don’t re-explain the feature. If the agent suggests rotation, accept it.
 
 ## Interrupted session
 
-Thread limit or crash? Same as rotation:
-
-```
-/resume
-@.agents/tasks/YYYY-MM-DD-<type>-<slug>.md
-```
+Same as rotation — **worker** tier + `/resume` + task file.
 
 ## Security audit (standalone)
 
 ```
 /security
-[scope — feature slug, files, surfaces]
+[scope]
 ```
 
-Always **Opus**. Output: `.agents/notes/YYYY-MM-DD-security-<slug>.md`.
-
-Fix findings with `/resume` on the task file.
+Always **audit** tier. Fix findings with **worker** tier + `/resume`.
 
 ## Release
 
@@ -98,26 +107,27 @@ When tested, reviewed (if required), and you **explicitly authorize** the versio
 /release
 ```
 
-Sonnet 4.6. The agent will not bump versions without your explicit OK in that thread.
+**Worker** tier is usually enough (checklist-driven). The agent will not bump versions without your explicit OK.
 
 ## Reference docs
 
-`.agents/docs/` holds WordPress handbooks and style mirrors (~tens of thousands of lines). **You don’t open them.** Agents use them only for targeted lookups (one section or grep). Source code in `inc/` remains the primary truth.
+`.agents/docs/` holds large mirrors. **You don’t open them.** Agents grep one section when needed. Source in `inc/` is primary.
 
 ## What you never do
 
 - Copy task templates manually
 - Pick files to edit (agent decides from the plan)
-- Run lint by hand during dev (agent runs it)
-- Keep one thread open for days without `/resume`
-- Micromanage implementation steps after you approved the plan
+- Run lint by hand during dev
+- Keep one worker thread open for days without `/resume`
+- Micromanage steps after plan approval
+- Hardcode vendor models in task files — use tiers
 
 ## Quick reference
 
-| Goal | Command |
-|------|---------|
-| Start any change | `/architect` |
-| Continue / rotate thread | `/resume` + task file |
-| Integration review | `/reviewer` + task file |
-| Security audit | `/security` |
-| Ship | `/release` (after authorization) |
+| Goal | Command | Tier |
+|------|---------|------|
+| Start / plan | `/architect` | Planning |
+| Build / continue | `/resume` + task file | Worker |
+| Integration review | `/reviewer` + task file | Audit (or planning if low-risk) |
+| Security audit | `/security` | Audit |
+| Ship | `/release` | Worker |

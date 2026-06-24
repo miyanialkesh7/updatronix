@@ -1,36 +1,35 @@
 ---
 name: resume
 description: >-
-  Continue dev work (Claude Sonnet 4.6). Use after thread rotation, turn limits,
+  Continue dev work on worker tier. Use after thread rotation, turn limits,
   crashes, or fixing review/security findings. Reads the task file and resumes
   from the first unchecked task.
 ---
 
 # Resume
 
-Continue an `/architect` session without replaying chat history. The task file is the source of truth.
+Continue `/architect` work without chat history. **Use a worker-tier model** in Zed.
 
 Reply in US English.
 
 ## Start
 
-1. Read the referenced `.agents/tasks/YYYY-MM-DD-<type>-<slug>.md` in full
-2. Read `## Session checkpoint` first, then `## Tasks`, `## Log`, `## Feedback`
-3. Say: "Resuming from task N. Remaining: [list]. Next: [action]."
-4. Execute from the first unchecked task using **the same rules as `/architect` Phase 4–5**
+1. Read the task file in full — `## Session checkpoint` first
+2. Say: "Resuming from task N. Remaining: [list]. Next: [action]."
+3. Execute from the first unchecked task (architect Phase 4–5 rules)
 
 ## Reference docs
 
-Same policy as architect: **never load whole mirror files**. Grep or read one section only (`AGENTS.md`).
+Grep one section only — never load whole `.agents/docs/` mirrors.
 
 ## Plan changes
 
-If remaining tasks are wrong given work already done, update `## Tasks`, note why in `## Log`, tell the user, then continue.
+Update `## Tasks` and note in `## Log` if the remaining plan is wrong.
 
 ## Thread rotation
 
-After 5 more completed tasks or ~25 turns, update `## Session checkpoint` and suggest a fresh `/resume` thread again.
+After 5 more tasks or ~25 turns, update checkpoint; suggest fresh **worker** tier thread + `/resume`.
 
-## Lint & hand-off
+## Hand-off
 
-Follow architect lint tiers and review hand-off rules (`review_required` in frontmatter).
+Follow `review_required` and lint tiers from the task file and `AGENTS.md`.

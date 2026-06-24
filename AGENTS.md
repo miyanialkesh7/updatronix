@@ -30,17 +30,25 @@ You describe the outcome. The agent plans, implements, lints, logs, and fixes fr
 | 4 | Done testing | `/reviewer` if required (see below) |
 | 5 | Release ready | `/release` after explicit version authorization |
 
-**Skills & models**
+## Model Tiers — Pick in Zed Per Thread
 
-| Skill | Model | Role |
-|-------|-------|------|
-| `/architect` | **Sonnet 4.6** | Full dev cycle — start here |
-| `/resume` | **Sonnet 4.6** | Continue after interrupt or thread rotation |
-| `/reviewer` | Sonnet 4.6 · **Opus** if high-risk | Integration gate |
-| `/security` | **Opus** — always | Standalone security audit |
-| `/release` | Sonnet 4.6 | Version bump & packaging |
+Skills define **what** to do. **Model tier** defines **which capability level** you select in the Agent Panel. Vendor names are not fixed in this repo — map tiers to whatever models you use locally.
 
-**Model guidance:** Sonnet 4.6 is the default workhorse (cost-effective for WP patterns). Opus for `/security`, ambiguous SQL/auth/REST **design**, and high-risk `/reviewer` threads. Avoid fast/cheap models — this plugin has real security surfaces.
+| Tier | Use when | Typical skills / phase |
+|------|----------|-------------------------|
+| **Planning** | Answer not yet in the task file — clarify, design, trade-offs, ambiguous scope | `/architect` Phase 1–3 (plan) · low-risk `/reviewer` |
+| **Worker** | Task file is the contract — implement, lint, fix, rotate threads | `/architect` Phase 4–5 (execute) · `/resume` · `/release` |
+| **Audit** | Judge only — no implementation; security and integration gates | `/reviewer` when required · `/security` always · planning-tier **audit** for high-risk review |
+
+**Rules**
+
+- **Planning** before the plan is approved; switch to **worker** after you say `go` (same skill `/architect`, new thread optional).
+- **Worker** for all `/resume` rotation threads — best place to use a cheaper model if tool calling stays reliable.
+- **Audit** for `/security` always. For `/reviewer`: **audit** when `review_required: yes` or `risk` includes `rest`, `sql`, `auth`, `export`, or `multisite`; otherwise planning tier is enough.
+- Ambiguous SQL/auth/REST **design** during planning: stop and re-run planning on **audit** tier before coding.
+- Avoid bare “fast” models with weak tool support — this plugin has real security surfaces.
+
+Record the tier used in review/security note frontmatter (`model_tier: planning | worker | audit`), not vendor SKUs.
 
 ## Long Sessions — Thread Rotation
 
@@ -55,7 +63,7 @@ Rotate to a **new thread + `/resume`** when any trigger fires:
 
 Before rotating, the agent updates `## Session checkpoint` in the task file (last task done, files touched, open decisions, review required).
 
-In the new thread: `/resume` + `@.agents/tasks/YYYY-MM-DD-<type>-<slug>.md`.
+In the new thread: `/resume` + `@.agents/tasks/YYYY-MM-DD-<type>-<slug>.md` on a **worker** tier model.
 
 ## Reference Docs — Available, Not Mandatory
 
@@ -74,6 +82,8 @@ Default: read **`inc/` source** and **`workflow.md`** first. Open docs only when
 Path: `.agents/tasks/YYYY-MM-DD-<type>-<slug>.md`
 
 Sections: `Goal` · `Context` · `Tasks` · `Session checkpoint` · `Log` · `Feedback`
+
+Frontmatter may include `review_required`, `risk`, and `model_tier` hints for hand-off.
 
 The agent creates and maintains this file. Templates in `.agents/templates/` are reference only.
 
