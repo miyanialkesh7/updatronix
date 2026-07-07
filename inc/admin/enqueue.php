@@ -265,6 +265,19 @@ function updatronix_admin_enqueue_scripts(string $admin_page): void {
         ),
         $asset['version']
     );
+
+    /**
+     * Fires after Updatronix Free admin assets are enqueued.
+     *
+     * Use this action to enqueue additional scripts, styles, or inline assets
+     * for the Updatronix admin page. It fires only on the correct page hooks
+     * and after the core Free assets have been registered.
+     *
+     * @since 1.1.1
+     *
+     * @param string $admin_page Current admin page hook suffix.
+     */
+    do_action('updatronix_enqueue_admin_assets', $admin_page);
 }
 
 add_action('admin_enqueue_scripts', 'updatronix_localize_settings');

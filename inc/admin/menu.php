@@ -78,6 +78,36 @@ function updatronix_options_page(): void {
 
     $plugin_data = get_file_data(updatronix_PLUGIN_FILE, ['Version' => 'Version'], 'plugin');
     $plugin_version = $plugin_data['Version'] ?? '';
+
+    /**
+     * Default admin tab definitions.
+     *
+     * @since 1.1.1
+     *
+     * @var array<string, array{slug: string, label: string, icon: string}>
+     */
+    $default_tabs = [
+        'logs' => ['slug' => 'logs', 'label' => __('Update logs', 'updatronix'), 'icon' => ''],
+        'settings' => ['slug' => 'settings', 'label' => __('Settings', 'updatronix'), 'icon' => ''],
+        'schedule' => ['slug' => 'schedule', 'label' => __('Schedule', 'updatronix'), 'icon' => ''],
+    ];
+
+    /**
+     * Filters the admin page tab definitions.
+     *
+     * Allows third-party code (e.g. Updatronix Pro) to add, remove, or reorder
+     * tabs in the admin page shell. Each tab is an array with keys:
+     *   - slug   (string) Unique tab identifier.
+     *   - label  (string) Translatable display label.
+     *   - icon   (string) Optional dashicon class or SVG markup.
+     *
+     * @since 1.1.1
+     *
+     * @param array<string, array{slug: string, label: string, icon: string}> $tabs Default tab definitions.
+     */
+    $tabs = apply_filters('updatronix_admin_tabs', $default_tabs);
+
+    $active_tab = isset($_GET['tab']) ? sanitize_key($_GET['tab']) : 'logs';
     $logo_rel_path = 'assets/img/logo-60x60.webp';
     $logo_file_path = updatronix_PLUGIN_DIR . $logo_rel_path;
     $logo_url = file_exists($logo_file_path) ? plugins_url($logo_rel_path, updatronix_PLUGIN_FILE) : '';
@@ -182,6 +212,20 @@ function updatronix_options_page(): void {
                         </p>
                     </div>
                 </div>
+                <?php
+                /**
+                 * Fires inside the admin page shell, after the default content area.
+                 *
+                 * Use this action to render custom tab content or supplementary panels.
+                 * The active tab slug is passed so consumers can conditionally output
+                 * content only when their tab is selected.
+                 *
+                 * @since 1.1.1
+                 *
+                 * @param string $active_tab The slug of the currently active admin tab.
+                 */
+                do_action('updatronix_admin_page_content', $active_tab);
+    ?>
             </main>
         </div>
     </div>

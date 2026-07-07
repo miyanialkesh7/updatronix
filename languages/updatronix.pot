@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-06-23T12:50:37+00:00\n"
+"POT-Creation-Date: 2026-07-07T13:51:27+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: updatronix\n"
@@ -21,7 +21,7 @@ msgstr ""
 #: inc/admin/menu.php:36
 #: inc/admin/menu.php:57
 #: inc/admin/menu.php:58
-#: inc/admin/menu.php:113
+#: inc/admin/menu.php:143
 msgid "Updatronix"
 msgstr ""
 
@@ -50,6 +50,7 @@ msgid "Open Updatronix settings"
 msgstr ""
 
 #: inc/admin/links.php:35
+#: inc/admin/menu.php:91
 #: assets/src/js/components/SettingsPanel.js:88
 #: assets/src/js/pages/SettingsPage.js:118
 #: assets/src/js/pages/SettingsPage.js:121
@@ -57,17 +58,17 @@ msgid "Settings"
 msgstr ""
 
 #: inc/admin/links.php:55
-#: inc/admin/menu.php:130
+#: inc/admin/menu.php:160
 msgid "View Updatronix changelog on WordPress.org (opens in a new tab)"
 msgstr ""
 
 #: inc/admin/links.php:56
-#: inc/admin/menu.php:131
+#: inc/admin/menu.php:161
 msgid "Changelog"
 msgstr ""
 
 #: inc/admin/links.php:61
-#: inc/admin/menu.php:141
+#: inc/admin/menu.php:171
 msgid "Read the Updatronix documentation (opens in a new tab)"
 msgstr ""
 
@@ -76,7 +77,7 @@ msgid "Docs"
 msgstr ""
 
 #: inc/admin/links.php:67
-#: inc/admin/menu.php:171
+#: inc/admin/menu.php:201
 msgid "Support Updatronix development (opens in a new tab)"
 msgstr ""
 
@@ -85,78 +86,86 @@ msgid "Support"
 msgstr ""
 
 #: inc/admin/menu.php:37
+#: inc/admin/menu.php:90
 #: assets/src/js/components/activityLog/ActivityLogPanel.js:352
 #: assets/src/js/pages/SettingsPage.js:97
 #: assets/src/js/pages/SettingsPage.js:100
 msgid "Update logs"
 msgstr ""
 
+#: inc/admin/menu.php:92
+#: assets/src/js/components/schedule/SchedulePanel.js:150
+#: assets/src/js/pages/SettingsPage.js:111
+#: assets/src/js/pages/SettingsPage.js:114
+msgid "Schedule"
+msgstr ""
+
 #. translators: URL to the plugin changelog page.
-#: inc/admin/menu.php:85
+#: inc/admin/menu.php:115
 msgid "https://wordpress.org/plugins/updatronix/#developers"
 msgstr ""
 
 #. translators: URL to plugin documentation.
-#: inc/admin/menu.php:87
+#: inc/admin/menu.php:117
 msgid "https://holdmywp.com/en/documents/"
 msgstr ""
 
 #. translators: URL to source code repository.
-#: inc/admin/menu.php:89
+#: inc/admin/menu.php:119
 msgid "https://github.com/quentin-ld/updatronix/"
 msgstr ""
 
 #. translators: URL to the plugin reviews page.
-#: inc/admin/menu.php:91
+#: inc/admin/menu.php:121
 msgid "https://wordpress.org/plugins/updatronix/#reviews"
 msgstr ""
 
 #. translators: URL to support plugin development.
-#: inc/admin/menu.php:93
+#: inc/admin/menu.php:123
 msgid "https://buymeacoffee.com/quentinld"
 msgstr ""
 
-#: inc/admin/menu.php:115
+#: inc/admin/menu.php:145
 msgid "Manage your WordPress updates."
 msgstr ""
 
 #. translators: %s: plugin version number
-#: inc/admin/menu.php:122
+#: inc/admin/menu.php:152
 #, php-format
 msgid "Version %s"
 msgstr ""
 
-#: inc/admin/menu.php:142
+#: inc/admin/menu.php:172
 msgid "Documentation"
 msgstr ""
 
-#: inc/admin/menu.php:147
+#: inc/admin/menu.php:177
 msgid "View the source code on GitHub (opens in a new tab)"
 msgstr ""
 
-#: inc/admin/menu.php:148
+#: inc/admin/menu.php:178
 msgid "Source code"
 msgstr ""
 
-#: inc/admin/menu.php:153
+#: inc/admin/menu.php:183
 msgid "Leave a review for Updatronix on WordPress.org (opens in a new tab)"
 msgstr ""
 
-#: inc/admin/menu.php:154
+#: inc/admin/menu.php:184
 msgid "Leave a review"
 msgstr ""
 
 #. translators: 1: decorative heart emoji, 2: author name
-#: inc/admin/menu.php:161
+#: inc/admin/menu.php:191
 #, php-format
 msgid "Made with %1$s by %2$s"
 msgstr ""
 
-#: inc/admin/menu.php:172
+#: inc/admin/menu.php:202
 msgid "Support development"
 msgstr ""
 
-#: inc/admin/menu.php:181
+#: inc/admin/menu.php:211
 msgid "Loading your Updatronix settings…"
 msgstr ""
 
@@ -966,12 +975,6 @@ msgstr ""
 
 #: assets/src/js/components/schedule/SchedulePanel.js:141
 msgid "Save your changes to see the next scheduled time."
-msgstr ""
-
-#: assets/src/js/components/schedule/SchedulePanel.js:150
-#: assets/src/js/pages/SettingsPage.js:111
-#: assets/src/js/pages/SettingsPage.js:114
-msgid "Schedule"
 msgstr ""
 
 #: assets/src/js/components/schedule/SchedulePanel.js:153
