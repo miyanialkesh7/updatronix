@@ -48,6 +48,6 @@ else
 fi
 
 echo
-	echo "==> Done. Next:"
-	echo "      npm run test:all     # all linters + unit tests"
-	echo "      npm run build:all    # full verification + POT + production build"
+echo "==> Done. Next:"
+echo "      npm run test:all     # all linters + unit tests"
+echo "      npm run build:all    # full verification + POT + production build"
