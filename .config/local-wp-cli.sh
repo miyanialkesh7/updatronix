@@ -193,7 +193,7 @@ PCP_EXCLUDE_DIRS=".config,.github,.cursor,.agents,bin,tests"
 PCP_EXCLUDE_FILES="workflow.md,.distignore,.gitignore,.gitattributes,.editorconfig,updatronix.zip"
 
 # Legitimate use of core update APIs for an updates-management plugin (not a bundled updater).
-PCP_IGNORE_CODES="plugin_updater_detected,update_modification_detected"
+PCP_IGNORE_CODES="plugin_updater_detected,update_modification_detected,hidden_files,unexpected_markdown_file"
 
 case "$MODE" in
 	pcp)

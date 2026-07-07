@@ -107,7 +107,14 @@ function updatronix_options_page(): void {
      */
     $tabs = apply_filters('updatronix_admin_tabs', $default_tabs);
 
-    $active_tab = isset($_GET['tab']) ? sanitize_key($_GET['tab']) : 'logs';
+    $active_tab = 'logs';
+    $tab_input = filter_input(INPUT_GET, 'tab', FILTER_UNSAFE_RAW);
+    if (is_string($tab_input) && '' !== $tab_input) {
+        $requested_tab = sanitize_key($tab_input);
+        if (isset($tabs[$requested_tab])) {
+            $active_tab = $requested_tab;
+        }
+    }
     $logo_rel_path = 'assets/img/logo-60x60.webp';
     $logo_file_path = updatronix_PLUGIN_DIR . $logo_rel_path;
     $logo_url = file_exists($logo_file_path) ? plugins_url($logo_rel_path, updatronix_PLUGIN_FILE) : '';

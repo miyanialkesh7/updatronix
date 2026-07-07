@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-07-07T14:09:58+00:00\n"
+"POT-Creation-Date: 2026-07-07T14:15:22+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: updatronix\n"
@@ -21,7 +21,7 @@ msgstr ""
 #: inc/admin/menu.php:36
 #: inc/admin/menu.php:57
 #: inc/admin/menu.php:58
-#: inc/admin/menu.php:143
+#: inc/admin/menu.php:150
 msgid "Updatronix"
 msgstr ""
 
@@ -58,17 +58,17 @@ msgid "Settings"
 msgstr ""
 
 #: inc/admin/links.php:55
-#: inc/admin/menu.php:160
+#: inc/admin/menu.php:167
 msgid "View Updatronix changelog on WordPress.org (opens in a new tab)"
 msgstr ""
 
 #: inc/admin/links.php:56
-#: inc/admin/menu.php:161
+#: inc/admin/menu.php:168
 msgid "Changelog"
 msgstr ""
 
 #: inc/admin/links.php:61
-#: inc/admin/menu.php:171
+#: inc/admin/menu.php:178
 msgid "Read the Updatronix documentation (opens in a new tab)"
 msgstr ""
 
@@ -77,7 +77,7 @@ msgid "Docs"
 msgstr ""
 
 #: inc/admin/links.php:67
-#: inc/admin/menu.php:201
+#: inc/admin/menu.php:208
 msgid "Support Updatronix development (opens in a new tab)"
 msgstr ""
 
@@ -101,71 +101,71 @@ msgid "Schedule"
 msgstr ""
 
 #. translators: URL to the plugin changelog page.
-#: inc/admin/menu.php:115
+#: inc/admin/menu.php:122
 msgid "https://wordpress.org/plugins/updatronix/#developers"
 msgstr ""
 
 #. translators: URL to plugin documentation.
-#: inc/admin/menu.php:117
+#: inc/admin/menu.php:124
 msgid "https://holdmywp.com/en/documents/"
 msgstr ""
 
 #. translators: URL to source code repository.
-#: inc/admin/menu.php:119
+#: inc/admin/menu.php:126
 msgid "https://github.com/quentin-ld/updatronix/"
 msgstr ""
 
 #. translators: URL to the plugin reviews page.
-#: inc/admin/menu.php:121
+#: inc/admin/menu.php:128
 msgid "https://wordpress.org/plugins/updatronix/#reviews"
 msgstr ""
 
 #. translators: URL to support plugin development.
-#: inc/admin/menu.php:123
+#: inc/admin/menu.php:130
 msgid "https://buymeacoffee.com/quentinld"
 msgstr ""
 
-#: inc/admin/menu.php:145
+#: inc/admin/menu.php:152
 msgid "Manage your WordPress updates."
 msgstr ""
 
 #. translators: %s: plugin version number
-#: inc/admin/menu.php:152
+#: inc/admin/menu.php:159
 #, php-format
 msgid "Version %s"
 msgstr ""
 
-#: inc/admin/menu.php:172
+#: inc/admin/menu.php:179
 msgid "Documentation"
 msgstr ""
 
-#: inc/admin/menu.php:177
+#: inc/admin/menu.php:184
 msgid "View the source code on GitHub (opens in a new tab)"
 msgstr ""
 
-#: inc/admin/menu.php:178
+#: inc/admin/menu.php:185
 msgid "Source code"
 msgstr ""
 
-#: inc/admin/menu.php:183
+#: inc/admin/menu.php:190
 msgid "Leave a review for Updatronix on WordPress.org (opens in a new tab)"
 msgstr ""
 
-#: inc/admin/menu.php:184
+#: inc/admin/menu.php:191
 msgid "Leave a review"
 msgstr ""
 
 #. translators: 1: decorative heart emoji, 2: author name
-#: inc/admin/menu.php:191
+#: inc/admin/menu.php:198
 #, php-format
 msgid "Made with %1$s by %2$s"
 msgstr ""
 
-#: inc/admin/menu.php:202
+#: inc/admin/menu.php:209
 msgid "Support development"
 msgstr ""
 
-#: inc/admin/menu.php:211
+#: inc/admin/menu.php:218
 msgid "Loading your Updatronix settings…"
 msgstr ""
 
