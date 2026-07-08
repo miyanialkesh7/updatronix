@@ -4,7 +4,7 @@ Donate link: https://buymeacoffee.com/quentinld
 Tags: updates, auto-update, maintenance, security, audit-log
 Requires at least: 6.2
 Tested up to: 7.0
-Stable tag: 1.1
+Stable tag: 1.1.1
 Requires PHP: 8.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -70,7 +70,7 @@ Somewhere in a neon-lit server room, the next version is booting.
 
 **Updatronix 3000** is the Pro edition coming soon. Extending Updatronix, with additional features for developers, power users, and agencies.
 
-* **Developer tools.** Hooks, functions, and a REST API to plug Updatronix into your own pipeline. Push events to your own dashboards, trigger backups, automate maintenance reports, imagine whatever you want, and improve your workflow with a solid foundation. 
+* **Developer tools.** Hooks, functions, and a REST API to plug Updatronix into your own pipeline. Push events to your own dashboards, trigger backups, automate maintenance reports, imagine whatever you want, and improve your workflow with a solid foundation.
 * **Update Shield.** Checks PHP compatibility, flags abandoned plugins, version control protection.
 * **Update Flow.** You are the expert, you know your stack: set the exact order your plugins update in.
 * **White Label.** Your name on it, not mine. Clients see your agency, and the engine stays out of sight.
@@ -166,6 +166,9 @@ In addition, if you like the plugin then I'd love for you to [leave a review](ht
 I welcome your ideas! If you have a suggestion for the roadmap, please visit the official support forum. If you are a developer, you can also contribute directly to the project on GitHub.
 
 == Changelog ==
+
+= 1.1.1 =
+* New: Updatronix 3000 connector.
 
 = 1.1 =
 * New: Schedule tab, set how often WordPress checks for updates (hourly, twice daily, daily, or weekly), pick a preferred time of day, and hold automatic installs for a chosen number of days. Active holds show a notice on the Updates, Plugins, and Themes screens, and WordPress schedule messaging stays in sync with your settings.
