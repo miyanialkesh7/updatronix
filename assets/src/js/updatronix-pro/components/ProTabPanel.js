@@ -12,14 +12,6 @@ import { useEffect } from '@wordpress/element';
  * @return {JSX.Element} Mount-point div for the Pro tab content.
  */
 export default function ProTabPanel({ slug }) {
-	// eslint-disable-next-line no-console -- diagnostic, remove after confirming tab renders
-	console.log(
-		'[ProTabPanel] rendering for slug:',
-		slug,
-		'isPro:',
-		window.updatronixSettings?.isPro
-	);
-
 	useEffect(() => {
 		if (!window.updatronixSettings?.isPro) {
 			return;

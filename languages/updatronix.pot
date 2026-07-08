@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-07-08T10:39:19+00:00\n"
+"POT-Creation-Date: 2026-07-08T11:06:28+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: updatronix\n"
@@ -52,7 +52,7 @@ msgstr ""
 #: inc/admin/links.php:35
 #: inc/core/tabs.php:51
 #: assets/src/js/components/SettingsPanel.js:88
-#: assets/src/js/pages/SettingsPage.js:61
+#: assets/src/js/pages/SettingsPage.js:69
 msgid "Settings"
 msgstr ""
 
@@ -87,7 +87,7 @@ msgstr ""
 #: inc/admin/menu.php:37
 #: inc/core/tabs.php:33
 #: assets/src/js/components/activityLog/ActivityLogPanel.js:352
-#: assets/src/js/pages/SettingsPage.js:43
+#: assets/src/js/pages/SettingsPage.js:51
 msgid "Update logs"
 msgstr ""
 
@@ -559,13 +559,13 @@ msgstr ""
 
 #: inc/core/tabs.php:39
 #: assets/src/js/components/autoUpdates/AutoUpdatesPanel.js:61
-#: assets/src/js/pages/SettingsPage.js:49
+#: assets/src/js/pages/SettingsPage.js:57
 msgid "Auto-updates"
 msgstr ""
 
 #: inc/core/tabs.php:45
 #: assets/src/js/components/schedule/SchedulePanel.js:150
-#: assets/src/js/pages/SettingsPage.js:55
+#: assets/src/js/pages/SettingsPage.js:63
 msgid "Schedule"
 msgstr ""
 
@@ -1177,6 +1177,6 @@ msgstr ""
 msgid "Your settings could not be saved. Check your connection and try again."
 msgstr ""
 
-#: assets/src/js/pages/SettingsPage.js:235
+#: assets/src/js/pages/SettingsPage.js:255
 msgid "Updatronix settings sections"
 msgstr ""

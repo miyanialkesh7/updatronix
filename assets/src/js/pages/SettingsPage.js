@@ -3,6 +3,7 @@ import {
 	backup as iconLogs,
 	calendar as iconSchedule,
 	settings as iconSettings,
+	starEmpty as iconStar,
 	update as iconUpdate,
 } from '@wordpress/icons';
 import { Notices } from '../components/Notices';
@@ -30,6 +31,7 @@ const TAB_ICONS = {
 	[TAB_AUTO_UPDATES]: iconUpdate,
 	[TAB_SCHEDULE]: iconSchedule,
 	[TAB_SETTINGS]: iconSettings,
+	'updatronix-3000': iconStar,
 };
 
 /**
@@ -180,11 +182,6 @@ export const SettingsPage = () => {
 	}, []);
 
 	const tabs = useMemo(() => getTabsFromPhp(), []);
-	// eslint-disable-next-line no-console -- diagnostic, remove after confirming tab list
-	console.log(
-		'[SettingsPage] tabs:',
-		tabs.map((t) => t.slug)
-	);
 
 	useEffect(() => {
 		const validSlugs = tabs.map((t) => t.slug);
