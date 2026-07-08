@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from '@wordpress/element';
+import { useState, useEffect, useCallback, useMemo } from '@wordpress/element';
 import {
 	backup as iconLogs,
 	calendar as iconSchedule,
@@ -18,12 +18,89 @@ const TAB_LOGS = 'logs';
 const TAB_AUTO_UPDATES = 'auto-updates';
 const TAB_SCHEDULE = 'schedule';
 const TAB_SETTINGS = 'settings';
-const VALID_TABS = [TAB_LOGS, TAB_AUTO_UPDATES, TAB_SCHEDULE, TAB_SETTINGS];
+
+/**
+ * Map of known tab IDs to their WordPress icon components.
+ *
+ * @type {Object<string, Object>}
+ */
+const TAB_ICONS = {
+	[TAB_LOGS]: iconLogs,
+	[TAB_AUTO_UPDATES]: iconUpdate,
+	[TAB_SCHEDULE]: iconSchedule,
+	[TAB_SETTINGS]: iconSettings,
+};
+
+/**
+ * Default fallback tabs used when window.updatronixSettings is unavailable.
+ *
+ * @return {Object<string, {slug: string, label: string, icon: string, priority: number}>} Default tab definitions keyed by slug.
+ */
+function getDefaultTabs() {
+	return {
+		[TAB_LOGS]: {
+			slug: TAB_LOGS,
+			label: __('Update logs', 'updatronix'),
+			icon: '',
+			priority: 10,
+		},
+		[TAB_AUTO_UPDATES]: {
+			slug: TAB_AUTO_UPDATES,
+			label: __('Auto-updates', 'updatronix'),
+			icon: '',
+			priority: 20,
+		},
+		[TAB_SCHEDULE]: {
+			slug: TAB_SCHEDULE,
+			label: __('Schedule', 'updatronix'),
+			icon: '',
+			priority: 30,
+		},
+		[TAB_SETTINGS]: {
+			slug: TAB_SETTINGS,
+			label: __('Settings', 'updatronix'),
+			icon: '',
+			priority: 40,
+		},
+	};
+}
+
+/**
+ * Retrieve the tab definitions passed from PHP, sorted by priority.
+ * Falls back to hardcoded defaults if PHP data is unavailable.
+ *
+ * @return {Array<{slug: string, label: string, icon: string, priority: number}>} Tabs sorted by priority ascending.
+ */
+function getTabsFromPhp() {
+	let tabsObj;
+
+	if (
+		typeof window.updatronixSettings !== 'undefined' &&
+		typeof window.updatronixSettings.tabs === 'object' &&
+		window.updatronixSettings.tabs !== null &&
+		!Array.isArray(window.updatronixSettings.tabs)
+	) {
+		tabsObj = window.updatronixSettings.tabs;
+	} else {
+		tabsObj = getDefaultTabs();
+	}
+
+	// Convert to array and sort by priority ascending.
+	return Object.values(tabsObj)
+		.map((tab) => ({
+			...tab,
+			priority: tab.priority ?? 10,
+		}))
+		.sort((a, b) => a.priority - b.priority);
+}
 
 function getTabFromUrl() {
 	const params = new URLSearchParams(window.location.search);
 	const tab = params.get('tab');
-	return VALID_TABS.includes(tab) ? tab : TAB_LOGS;
+	const validSlugs = getTabsFromPhp().map((t) => t.slug);
+	return validSlugs.includes(tab)
+		? tab
+		: window.updatronixSettings?.activeTab || TAB_LOGS;
 }
 
 function setTabInUrl(tabId) {
@@ -67,12 +144,69 @@ export const SettingsPage = () => {
 		setTabInUrl(tabId);
 	}, []);
 
+	const tabs = useMemo(() => getTabsFromPhp(), []);
+
 	useEffect(() => {
-		if (!selectedTabId || !VALID_TABS.includes(selectedTabId)) {
-			setSelectedTabId(TAB_LOGS);
-			setTabInUrl(TAB_LOGS);
+		const validSlugs = tabs.map((t) => t.slug);
+		if (!selectedTabId || !validSlugs.includes(selectedTabId)) {
+			const fallback = window.updatronixSettings?.activeTab || TAB_LOGS;
+			setSelectedTabId(fallback);
+			setTabInUrl(fallback);
 		}
-	}, [selectedTabId]);
+	}, [selectedTabId, tabs]);
+
+	/**
+	 * Render a tab panel for a given tab definition.
+	 *
+	 * @param {{slug: string, label: string}} tab Tab definition.
+	 * @return {JSX.Element} The tab panel content.
+	 */
+	const renderTabPanel = (tab) => {
+		switch (tab.slug) {
+			case TAB_LOGS:
+				return (
+					<ActivityLogPanel
+						loggingEnabled={settings.logging_enabled}
+					/>
+				);
+			case TAB_AUTO_UPDATES:
+				return (
+					<AutoUpdatesPanel
+						dismissedConstants={settings.dismissed_constants}
+						onDismissedConstantsChange={syncDismissedConstants}
+					/>
+				);
+			case TAB_SCHEDULE:
+				return (
+					<SchedulePanel
+						settings={settings}
+						setSettings={setSettings}
+						saveSettings={saveSettings}
+						saving={saving}
+						scheduleMeta={scheduleMeta}
+						wpConfigConstants={wpConfigConstants}
+						onDismissConstantNotice={dismissConstantNotice}
+					/>
+				);
+			case TAB_SETTINGS:
+				return (
+					<SettingsPanel
+						settings={settings}
+						setSettings={setSettings}
+						saveSettings={saveSettings}
+						saving={saving}
+					/>
+				);
+			default:
+				// Unknown tabs (e.g. from Pro) render a mount point for external JS.
+				return (
+					<div
+						id={`updatronix-pro-tab-${tab.slug}`}
+						className="updatronix-pro-tab-mount"
+					/>
+				);
+		}
+	};
 
 	return (
 		<div className="updatronix-row">
@@ -92,69 +226,22 @@ export const SettingsPage = () => {
 								'updatronix'
 							)}
 						>
-							<Tabs.Tab
-								tabId={TAB_LOGS}
-								title={__('Update logs', 'updatronix')}
-								icon={iconLogs}
-							>
-								{__('Update logs', 'updatronix')}
-							</Tabs.Tab>
-							<Tabs.Tab
-								tabId={TAB_AUTO_UPDATES}
-								title={__('Auto-updates', 'updatronix')}
-								icon={iconUpdate}
-							>
-								{__('Auto-updates', 'updatronix')}
-							</Tabs.Tab>
-							<Tabs.Tab
-								tabId={TAB_SCHEDULE}
-								title={__('Schedule', 'updatronix')}
-								icon={iconSchedule}
-							>
-								{__('Schedule', 'updatronix')}
-							</Tabs.Tab>
-							<Tabs.Tab
-								tabId={TAB_SETTINGS}
-								title={__('Settings', 'updatronix')}
-								icon={iconSettings}
-							>
-								{__('Settings', 'updatronix')}
-							</Tabs.Tab>
+							{tabs.map((tab) => (
+								<Tabs.Tab
+									key={tab.slug}
+									tabId={tab.slug}
+									title={tab.label}
+									icon={TAB_ICONS[tab.slug]}
+								>
+									{tab.label}
+								</Tabs.Tab>
+							))}
 						</Tabs.TabList>
-						<Tabs.TabPanel tabId={TAB_LOGS}>
-							<ActivityLogPanel
-								loggingEnabled={settings.logging_enabled}
-							/>
-						</Tabs.TabPanel>
-						<Tabs.TabPanel tabId={TAB_AUTO_UPDATES}>
-							<AutoUpdatesPanel
-								dismissedConstants={
-									settings.dismissed_constants
-								}
-								onDismissedConstantsChange={
-									syncDismissedConstants
-								}
-							/>
-						</Tabs.TabPanel>
-						<Tabs.TabPanel tabId={TAB_SCHEDULE}>
-							<SchedulePanel
-								settings={settings}
-								setSettings={setSettings}
-								saveSettings={saveSettings}
-								saving={saving}
-								scheduleMeta={scheduleMeta}
-								wpConfigConstants={wpConfigConstants}
-								onDismissConstantNotice={dismissConstantNotice}
-							/>
-						</Tabs.TabPanel>
-						<Tabs.TabPanel tabId={TAB_SETTINGS}>
-							<SettingsPanel
-								settings={settings}
-								setSettings={setSettings}
-								saveSettings={saveSettings}
-								saving={saving}
-							/>
-						</Tabs.TabPanel>
+						{tabs.map((tab) => (
+							<Tabs.TabPanel key={tab.slug} tabId={tab.slug}>
+								{renderTabPanel(tab)}
+							</Tabs.TabPanel>
+						))}
 					</Tabs>
 				</div>
 			</section>

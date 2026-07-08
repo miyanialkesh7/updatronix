@@ -294,6 +294,9 @@ function updatronix_localize_settings(string $admin_page): void {
     }
 
     $options = updatronix_get_settings();
+    $tabs = updatronix_get_admin_tabs();
+    $active_tab = updatronix_get_active_tab($tabs);
+
     wp_localize_script('updatronix-scripts', 'updatronixSettings', [
         'restUrl' => esc_url_raw(rest_url()),
         'namespace' => 'updatronix/v1',
@@ -301,5 +304,7 @@ function updatronix_localize_settings(string $admin_page): void {
         'options' => $options,
         'schedule_meta' => updatronix_decorate_schedule_meta_for_display(Updatronix_Cron::get_schedule_rest_meta()),
         'constants' => Updatronix_AutoUpdates::get_constants(),
+        'tabs' => $tabs,
+        'activeTab' => $active_tab,
     ]);
 }

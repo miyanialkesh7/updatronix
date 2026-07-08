@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-07-08T06:24:34+00:00\n"
+"POT-Creation-Date: 2026-07-08T07:56:21+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: updatronix\n"
@@ -21,7 +21,7 @@ msgstr ""
 #: inc/admin/menu.php:36
 #: inc/admin/menu.php:57
 #: inc/admin/menu.php:58
-#: inc/admin/menu.php:150
+#: inc/admin/menu.php:116
 msgid "Updatronix"
 msgstr ""
 
@@ -50,25 +50,24 @@ msgid "Open Updatronix settings"
 msgstr ""
 
 #: inc/admin/links.php:35
-#: inc/admin/menu.php:91
+#: inc/core/tabs.php:51
 #: assets/src/js/components/SettingsPanel.js:88
-#: assets/src/js/pages/SettingsPage.js:118
-#: assets/src/js/pages/SettingsPage.js:121
+#: assets/src/js/pages/SettingsPage.js:61
 msgid "Settings"
 msgstr ""
 
 #: inc/admin/links.php:55
-#: inc/admin/menu.php:167
+#: inc/admin/menu.php:133
 msgid "View Updatronix changelog on WordPress.org (opens in a new tab)"
 msgstr ""
 
 #: inc/admin/links.php:56
-#: inc/admin/menu.php:168
+#: inc/admin/menu.php:134
 msgid "Changelog"
 msgstr ""
 
 #: inc/admin/links.php:61
-#: inc/admin/menu.php:178
+#: inc/admin/menu.php:144
 msgid "Read the Updatronix documentation (opens in a new tab)"
 msgstr ""
 
@@ -77,7 +76,7 @@ msgid "Docs"
 msgstr ""
 
 #: inc/admin/links.php:67
-#: inc/admin/menu.php:208
+#: inc/admin/menu.php:174
 msgid "Support Updatronix development (opens in a new tab)"
 msgstr ""
 
@@ -86,86 +85,78 @@ msgid "Support"
 msgstr ""
 
 #: inc/admin/menu.php:37
-#: inc/admin/menu.php:90
+#: inc/core/tabs.php:33
 #: assets/src/js/components/activityLog/ActivityLogPanel.js:352
-#: assets/src/js/pages/SettingsPage.js:97
-#: assets/src/js/pages/SettingsPage.js:100
+#: assets/src/js/pages/SettingsPage.js:43
 msgid "Update logs"
 msgstr ""
 
-#: inc/admin/menu.php:92
-#: assets/src/js/components/schedule/SchedulePanel.js:150
-#: assets/src/js/pages/SettingsPage.js:111
-#: assets/src/js/pages/SettingsPage.js:114
-msgid "Schedule"
-msgstr ""
-
 #. translators: URL to the plugin changelog page.
-#: inc/admin/menu.php:122
+#: inc/admin/menu.php:88
 msgid "https://wordpress.org/plugins/updatronix/#developers"
 msgstr ""
 
 #. translators: URL to plugin documentation.
-#: inc/admin/menu.php:124
+#: inc/admin/menu.php:90
 msgid "https://holdmywp.com/en/documents/"
 msgstr ""
 
 #. translators: URL to source code repository.
-#: inc/admin/menu.php:126
+#: inc/admin/menu.php:92
 msgid "https://github.com/quentin-ld/updatronix/"
 msgstr ""
 
 #. translators: URL to the plugin reviews page.
-#: inc/admin/menu.php:128
+#: inc/admin/menu.php:94
 msgid "https://wordpress.org/plugins/updatronix/#reviews"
 msgstr ""
 
 #. translators: URL to support plugin development.
-#: inc/admin/menu.php:130
+#: inc/admin/menu.php:96
 msgid "https://buymeacoffee.com/quentinld"
 msgstr ""
 
-#: inc/admin/menu.php:152
+#: inc/admin/menu.php:118
 msgid "Manage your WordPress updates."
 msgstr ""
 
 #. translators: %s: plugin version number
-#: inc/admin/menu.php:159
+#: inc/admin/menu.php:125
 #, php-format
 msgid "Version %s"
 msgstr ""
 
-#: inc/admin/menu.php:179
+#: inc/admin/menu.php:145
 msgid "Documentation"
 msgstr ""
 
-#: inc/admin/menu.php:184
+#: inc/admin/menu.php:150
 msgid "View the source code on GitHub (opens in a new tab)"
 msgstr ""
 
-#: inc/admin/menu.php:185
+#: inc/admin/menu.php:151
 msgid "Source code"
 msgstr ""
 
-#: inc/admin/menu.php:190
+#: inc/admin/menu.php:156
 msgid "Leave a review for Updatronix on WordPress.org (opens in a new tab)"
 msgstr ""
 
-#: inc/admin/menu.php:191
+#: inc/admin/menu.php:157
 msgid "Leave a review"
 msgstr ""
 
 #. translators: 1: decorative heart emoji, 2: author name
-#: inc/admin/menu.php:198
+#: inc/admin/menu.php:164
 #, php-format
 msgid "Made with %1$s by %2$s"
 msgstr ""
 
-#: inc/admin/menu.php:209
+#: inc/admin/menu.php:175
 msgid "Support development"
 msgstr ""
 
-#: inc/admin/menu.php:218
+#: inc/admin/menu.php:184
 msgid "Loading your Updatronix settings…"
 msgstr ""
 
@@ -566,6 +557,18 @@ msgstr ""
 msgid "Updated %1$s to %2$s"
 msgstr ""
 
+#: inc/core/tabs.php:39
+#: assets/src/js/components/autoUpdates/AutoUpdatesPanel.js:61
+#: assets/src/js/pages/SettingsPage.js:49
+msgid "Auto-updates"
+msgstr ""
+
+#: inc/core/tabs.php:45
+#: assets/src/js/components/schedule/SchedulePanel.js:150
+#: assets/src/js/pages/SettingsPage.js:55
+msgid "Schedule"
+msgstr ""
+
 #: assets/src/js/components/activityLog/ActivityLogPanel.js:99
 msgid "Title"
 msgstr ""
@@ -828,12 +831,6 @@ msgstr ""
 
 #: assets/src/js/components/autoUpdates/AutoUpdatesPanel.js:53
 msgid "Loading auto-update settings…"
-msgstr ""
-
-#: assets/src/js/components/autoUpdates/AutoUpdatesPanel.js:61
-#: assets/src/js/pages/SettingsPage.js:104
-#: assets/src/js/pages/SettingsPage.js:107
-msgid "Auto-updates"
 msgstr ""
 
 #: assets/src/js/components/autoUpdates/AutoUpdatesPanel.js:64
@@ -1180,6 +1177,6 @@ msgstr ""
 msgid "Your settings could not be saved. Check your connection and try again."
 msgstr ""
 
-#: assets/src/js/pages/SettingsPage.js:90
+#: assets/src/js/pages/SettingsPage.js:224
 msgid "Updatronix settings sections"
 msgstr ""

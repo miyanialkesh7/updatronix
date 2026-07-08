@@ -54,6 +54,7 @@ if (!defined('updatronix_PLUGIN_DIR')) {
 require_once __DIR__ . '/inc/core/constants.php';
 require_once __DIR__ . '/inc/core/context.php';
 require_once __DIR__ . '/inc/core/storage.php';
+require_once __DIR__ . '/inc/core/tabs.php';
 
 register_activation_hook(__FILE__, 'updatronix_activate');
 register_deactivation_hook(__FILE__, 'updatronix_deactivate');

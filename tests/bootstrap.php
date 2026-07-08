@@ -112,6 +112,37 @@ if (!function_exists('__')) {
     }
 }
 
+if (!function_exists('apply_filters')) {
+    /**
+     * Stub for apply_filters used in unit tests without WordPress loaded.
+     *
+     * @param string $tag   Filter name (unused).
+     * @param mixed  $value The value to filter.
+     * @param mixed  ...$_  Additional args (unused).
+     * @return mixed The value unchanged.
+     */
+    function apply_filters(string $tag, $value, ...$_) {
+        return $value;
+    }
+}
+
+if (!function_exists('filter_input')) {
+    /**
+     * Stub for filter_input used in unit tests without WordPress loaded.
+     *
+     * @param int    $type          Input type (unused).
+     * @param string $variable_name Variable name (unused).
+     * @param int    $filter        Filter (unused).
+     * @param mixed  $options       Options (unused).
+     * @return null Always null for unit tests (no superglobals in stubs).
+     */
+    function filter_input(int $type, string $variable_name, int $filter = 516, $options = null) {
+        return null;
+    }
+}
+
+require_once dirname(__DIR__) . '/inc/core/tabs.php';
+
 if (!function_exists('sanitize_key')) {
     /**
      * Minimal stub mirroring WordPress `sanitize_key()` for unit tests.
