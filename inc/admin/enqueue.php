@@ -306,6 +306,6 @@ function updatronix_localize_settings(string $admin_page): void {
         'constants' => Updatronix_AutoUpdates::get_constants(),
         'tabs' => $tabs,
         'activeTab' => $active_tab,
-                'isPro' => defined('UPDATRONIX_PRO_VERSION'),
-            ]);
+        'isPro' => defined('UPDATRONIX_PRO_VERSION'),
+    ]);
 }

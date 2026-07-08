@@ -12,6 +12,7 @@ import { AutoUpdatesPanel } from '../components/autoUpdates';
 import { SchedulePanel } from '../components/schedule';
 import { SettingsPanel } from '../components/SettingsPanel';
 import { usePluginSettings } from '../hooks/usePluginSettings';
+import ProTabPanel from '../updatronix-pro/components/ProTabPanel';
 import { __ } from '@wordpress/i18n';
 
 const TAB_LOGS = 'logs';
@@ -37,7 +38,12 @@ const TAB_ICONS = {
  * @return {Object<string, {slug: string, label: string, icon: string, priority: number}>} Default tab definitions keyed by slug.
  */
 function getDefaultTabs() {
-	return {
+	const isPro =
+		typeof window !== 'undefined' &&
+		window.updatronixSettings &&
+		window.updatronixSettings.isPro;
+
+	const tabs = {
 		[TAB_LOGS]: {
 			slug: TAB_LOGS,
 			label: __('Update logs', 'updatronix'),
@@ -63,6 +69,17 @@ function getDefaultTabs() {
 			priority: 40,
 		},
 	};
+
+	if (isPro) {
+		tabs['updatronix-3000'] = {
+			slug: 'updatronix-3000',
+			label: __('Updatronix 3000', 'updatronix-pro'),
+			icon: '',
+			priority: 60,
+		};
+	}
+
+	return tabs;
 }
 
 /**
@@ -86,12 +103,30 @@ function getTabsFromPhp() {
 	}
 
 	// Convert to array and sort by priority ascending.
-	return Object.values(tabsObj)
+	const isPro =
+		typeof window !== 'undefined' &&
+		window.updatronixSettings &&
+		window.updatronixSettings.isPro;
+
+	const result = Object.values(tabsObj)
 		.map((tab) => ({
 			...tab,
 			priority: tab.priority ?? 10,
 		}))
 		.sort((a, b) => a.priority - b.priority);
+
+	// Ensure Pro tab is always present when Pro is active.
+	if (isPro && !result.find((t) => t.slug === 'updatronix-3000')) {
+		result.push({
+			slug: 'updatronix-3000',
+			label: __('Updatronix 3000', 'updatronix-pro'),
+			icon: '',
+			priority: 60,
+		});
+		result.sort((a, b) => a.priority - b.priority);
+	}
+
+	return result;
 }
 
 function getTabFromUrl() {
@@ -145,6 +180,11 @@ export const SettingsPage = () => {
 	}, []);
 
 	const tabs = useMemo(() => getTabsFromPhp(), []);
+	// eslint-disable-next-line no-console -- diagnostic, remove after confirming tab list
+	console.log(
+		'[SettingsPage] tabs:',
+		tabs.map((t) => t.slug)
+	);
 
 	useEffect(() => {
 		const validSlugs = tabs.map((t) => t.slug);
@@ -198,13 +238,7 @@ export const SettingsPage = () => {
 					/>
 				);
 			default:
-				// Unknown tabs (e.g. from Pro) render a mount point for external JS.
-				return (
-					<div
-						id={`updatronix-pro-tab-${tab.slug}`}
-						className="updatronix-pro-tab-mount"
-					/>
-				);
+				return <ProTabPanel slug={tab.slug} />;
 		}
 	};
 
