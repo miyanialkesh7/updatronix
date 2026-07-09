@@ -4,6 +4,8 @@
 
 Messages may arrive in French or English. **Always reply in US English.** WordPress prose style: `.agents/docs/wordpress-documentation-style-guide-consolidated.md` (lookup sections only — never load the full file).
 
+**Reply verbosity:** Conclusion first, then evidence. No preamble ("Here's what I'll do…"), no recap ("I did X. Done with X."), no closing remarks ("Let me know if…"). Action over explanation. Scale detail to complexity — 1–4 lines unless the task needs more. **Stop when done**; do not offer follow-ups.
+
 ## Project Facts
 
 | | |
@@ -18,9 +20,11 @@ Messages may arrive in French or English. **Always reply in US English.** WordPr
 | Storage | `{prefix}updatronix_logs` · `updatronix_settings` (JSON, autoloaded) · `updatronix_update_logger_state` (no autoload) · native `auto_update_*` options |
 | Build & test | `workflow.md` |
 
-## Workflow — Delegate, Don’t Micromanage
+## Workflow — Delegate, Don't Micromanage
 
 You describe the outcome. The agent plans, implements, lints, logs, and fixes from your test feedback. **You approve the plan once, then test.**
+
+**Knowledge boundary:** Never guess paths, APIs, or commands. If uncertain, verify with a tool before claiming or acting. State clearly when a request exceeds available context (KBT).
 
 | Step | You | Agent |
 |------|-----|-------|
@@ -61,7 +65,7 @@ Record the tier used in review/security note frontmatter (`model_tier: planning 
 
 Every token costs. These rules keep context lean and runs fast.
 
-**Read strategy:** grep first → read only needed sections → never re-read a file you just wrote.
+**Read strategy:** grep first → read only needed sections → never re-read a file you just wrote. **Parallelize independent reads and searches** in a single response — do not serialize file reads that have no dependency on each other.
 
 **Lint economy:**
 
@@ -153,5 +157,16 @@ When required, the architect must set `review_required: yes` in task frontmatter
 **Version** — Never bump `UPDATRONIX_VERSION`, headers, `Stable tag:`, or package versions without explicit owner authorization in the current conversation.
 
 **Files** — Never delete `.agents/tasks/` or `.agents/notes/` without owner confirmation. Stay in task scope.
+
+## Maintenance — Monthly Rule Review
+
+Review `AGENTS.md` and skills monthly. Short checklist:
+
+- Are rules still relevant to the current `inc/` structure?
+- Any repeated agent mistakes that need a new one-line rule?
+- Any redundant or dead rules to prune?
+- Token size creeping? Trim explanatory text, keep imperative directives.
+
+Do **not** rewrite for style. Only change rules to fix observed agent behavior.
 
 Human playbook: `.agents/HOW_TO_USE.md`.

@@ -26,6 +26,14 @@ Grep one section only — never load whole `.agents/docs/` mirrors.
 
 Update `## Tasks` and note in `## Log` if the remaining plan is wrong.
 
+## Retry ceiling
+
+After **3 failed attempts** at the same fix, **STOP and re-plan** — update `## Tasks` and `## Log`, tell the user. Do not grind past three iterations.
+
+## Self-review before "done"
+
+Before reporting a task or the feature complete: silently argue against your own solution (redundancy, unused code, simpler alternative, missed edge case). Fix or note anything surfaced. Then report.
+
 ## Thread rotation
 
 After 3 more tasks or ~20 turns, update checkpoint; suggest fresh **worker** tier thread + `/resume`.

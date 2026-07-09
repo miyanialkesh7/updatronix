@@ -50,10 +50,15 @@ worker_model_tier: worker
 ## Tasks
 - [ ] 1. ...
 
+## Edge cases
+- [ ] 1. ...
+
 ## Session checkpoint
 ## Log
 ## Feedback
 ```
+
+Enumerate **3–5 edge cases** relevant to the change; ensure the task plan covers each. REST/SQL/auth/user-input surfaces must cover at minimum: missing/invalid input, capability/nonce failure, and the empty/oversize boundary.
 
 Set `review_required: yes` and `risk:` per `AGENTS.md` when REST, SQL, auth, export, multisite, user input, or new admin UI is involved.
 
@@ -76,6 +81,14 @@ On approval, run all tasks in order.
 ### Thread rotation
 
 After **3 tasks** or **~20 turns**, update `## Session checkpoint` and tell the user: new **worker** tier thread + `/resume` + this task file.
+
+### Retry ceiling
+
+After **3 failed attempts** at the same fix (lint fail, failing test, reviewer blocker), **STOP and re-plan** — update `## Tasks` and `## Log`, tell the user what's wrong. Do not grind past three iterations.
+
+### Self-review before "done"
+
+Before reporting completion: silently argue against your own solution (redundancy, unused code, simpler alternative, missed edge case). Fix or note anything surfaced. Then report.
 
 Stop only for uncovered design decisions, frozen docs, version bumps, or major scope creep.
 
