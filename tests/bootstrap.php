@@ -112,16 +112,71 @@ if (!function_exists('__')) {
     }
 }
 
-if (!function_exists('apply_filters')) {
+if (!function_exists('add_filter')) {
     /**
-     * Stub for apply_filters used in unit tests without WordPress loaded.
+     * Minimal filter registry stub for unit tests without WordPress.
      *
-     * @param string $tag   Filter name (unused).
+     * Holds registered callbacks in a static array keyed by tag.
+     * Each callback is stored as [callable, int $priority, int $accepted_args].
+     *
+     * @var array<string, list<array{callable, int, int}>>
+     */
+    $GLOBALS['_updatronix_filters'] = [];
+
+    /**
+     * Register a filter callback.
+     *
+     * @param string   $tag             Filter name.
+     * @param callable $callback        Callback.
+     * @param int      $priority        Priority (default 10).
+     * @param int      $accepted_args   Number of accepted args (default 1).
+     * @return void
+     */
+    function add_filter(string $tag, callable $callback, int $priority = 10, int $accepted_args = 1): void {
+        $GLOBALS['_updatronix_filters'][$tag][] = [$callback, $priority, $accepted_args];
+    }
+
+    /**
+     * Remove a filter callback.
+     *
+     * @param string   $tag      Filter name.
+     * @param callable $callback The exact callback to remove.
+     * @param int      $priority Priority (default 10).
+     * @return void
+     */
+    function remove_filter(string $tag, callable $callback, int $priority = 10): void {
+        if (!isset($GLOBALS['_updatronix_filters'][$tag])) {
+            return;
+        }
+        foreach ($GLOBALS['_updatronix_filters'][$tag] as $idx => [$cb, $prio]) {
+            if ($prio === $priority && $cb === $callback) {
+                unset($GLOBALS['_updatronix_filters'][$tag][$idx]);
+                break;
+            }
+        }
+    }
+
+    /**
+     * Apply registered filters to a value, in priority order.
+     *
+     * @param string $tag   Filter name.
      * @param mixed  $value The value to filter.
      * @param mixed  ...$_  Additional args (unused).
-     * @return mixed The value unchanged.
+     * @return mixed The filtered value.
      */
     function apply_filters(string $tag, $value, ...$_) {
+        if (!isset($GLOBALS['_updatronix_filters'][$tag])) {
+            return $value;
+        }
+        // Sort by priority (stable sort kept by insertion order for equal priorities).
+        $callbacks = $GLOBALS['_updatronix_filters'][$tag];
+        usort($callbacks, static function (array $a, array $b): int {
+            return $a[1] <=> $b[1];
+        });
+        foreach ($callbacks as [$cb]) {
+            $value = $cb($value);
+        }
+
         return $value;
     }
 }

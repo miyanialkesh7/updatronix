@@ -72,4 +72,57 @@ final class AdminTabsTest extends TestCase {
             $this->assertIsInt($tab['priority'], "Default tab {$slug} priority must be int");
         }
     }
+
+    /**
+     * A filter callback can append a custom tab and it survives sorting.
+     */
+    public function test_filter_can_append_custom_tab(): void {
+        $cb = static function (array $tabs): array {
+            $tabs['probe-tab'] = [
+                'slug' => 'probe-tab',
+                'label' => 'Probe',
+                'icon' => '',
+                'priority' => 50,
+            ];
+
+            return $tabs;
+        };
+        add_filter('updatronix_admin_tabs', $cb, 10, 1);
+        try {
+            $tabs = updatronix_get_admin_tabs();
+            $this->assertArrayHasKey('probe-tab', $tabs);
+            $this->assertSame('probe-tab', $tabs['probe-tab']['slug']);
+            $this->assertSame('Probe', $tabs['probe-tab']['label']);
+            $this->assertSame('', $tabs['probe-tab']['icon']);
+            $this->assertSame(50, $tabs['probe-tab']['priority']);
+        } finally {
+            remove_filter('updatronix_admin_tabs', $cb, 10);
+        }
+    }
+
+    /**
+     * The appended tab is sorted after the built-in tabs by priority.
+     */
+    public function test_filter_respects_priority_sort_after_append(): void {
+        $cb = static function (array $tabs): array {
+            $tabs['probe-tab'] = [
+                'slug' => 'probe-tab',
+                'label' => 'Probe',
+                'icon' => '',
+                'priority' => 50,
+            ];
+
+            return $tabs;
+        };
+        add_filter('updatronix_admin_tabs', $cb, 10, 1);
+        try {
+            $tabs = updatronix_get_admin_tabs();
+            $slugs = array_keys($tabs);
+            $this->assertSame('logs', $slugs[0]);
+            $this->assertSame('settings', $slugs[3]);
+            $this->assertSame('probe-tab', $slugs[4]);
+        } finally {
+            remove_filter('updatronix_admin_tabs', $cb, 10);
+        }
+    }
 }

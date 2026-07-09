@@ -269,9 +269,10 @@ function updatronix_admin_enqueue_scripts(string $admin_page): void {
     /**
      * Fires after Updatronix Free admin assets are enqueued.
      *
-     * Use this action to enqueue additional scripts, styles, or inline assets
-     * for the Updatronix admin page. It fires only on the correct page hooks
-     * and after the core Free assets have been registered.
+     * Consumed by Updatronix Pro's `Updatronix_Pro_Enqueue::enqueue_scripts()`
+     * to enqueue Pro's own admin JS/CSS on the Updatronix admin page. Fires only
+     * on the correct page hooks and after Free's core assets have been
+     * registered, so Pro can depend on `updatronix-scripts` and `wp-components`.
      *
      * @since 1.1.1
      *
@@ -307,5 +308,7 @@ function updatronix_localize_settings(string $admin_page): void {
         'tabs' => $tabs,
         'activeTab' => $active_tab,
         'isPro' => defined('UPDATRONIX_PRO_VERSION'),
+        // Global window property populated by Pro's admin JS for the panel registry; Free reads it via ProTabPanel.
+        'proPanelRegistryGlobal' => 'updatronixProPanelRegistry',
     ]);
 }

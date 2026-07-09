@@ -25,7 +25,8 @@
 		"@wordpress/prettier-config": "^4.43.0",
 		"@wordpress/scripts": "^31.8.0",
 		"@wordpress/stylelint-config": "^23.35.0",
-		"archiver": "^7.0.1"
+		"archiver": "^7.0.1",
+		"typescript": "~5.5.4"
 	},
 	"dependencies": {
 		"@wordpress/api-fetch": "^7.43.0",

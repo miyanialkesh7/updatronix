@@ -189,9 +189,11 @@ function updatronix_options_page(): void {
                 /**
                  * Fires inside the admin page shell, after the default content area.
                  *
-                 * Use this action to render custom tab content or supplementary panels.
-                 * The active tab slug is passed so consumers can conditionally output
-                 * content only when their tab is selected.
+                 * Reserved extension point for server-rendered tab content or
+                 * supplementary panels. Currently has no core consumer; kept for
+                 * future use by extensions. The active tab slug is passed so
+                 * consumers can conditionally output content only when their
+                 * tab is selected.
                  *
                  * @since 1.1.1
                  *

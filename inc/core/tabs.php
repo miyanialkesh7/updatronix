@@ -19,8 +19,8 @@ if (!defined('ABSPATH')) {
  * Each tab is an array with keys:
  *   - slug     (string) Unique tab identifier.
  *   - label    (string) Translatable display label.
- *   - icon     (string) Dashicon class or SVG markup.
- *   - priority (int)    Sort order (lower = earlier). Default 10.
+ *   - icon     (string) Reserved metadata. Currently unused by the React UI; kept for future use.
+ *   - priority (int)    Sort order (optional, default 10).
  *
  * @since 1.1.1
  *
@@ -62,8 +62,7 @@ function updatronix_default_admin_tabs(): array {
  * Each tab array should include:
  *   - slug     (string) Unique tab identifier.
  *   - label    (string) Translatable display label.
- *   - icon     (string) Dashicon class or SVG markup (optional, default '').
- *   - priority (int)    Sort order (optional, default 10).
+ *   - icon     (string) Reserved metadata. Currently unused by the React UI; kept for future use.
  *
  * @since 1.1.1
  *

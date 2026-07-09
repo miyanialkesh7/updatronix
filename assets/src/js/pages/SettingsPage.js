@@ -3,7 +3,6 @@ import {
 	backup as iconLogs,
 	calendar as iconSchedule,
 	settings as iconSettings,
-	starEmpty as iconStar,
 	update as iconUpdate,
 } from '@wordpress/icons';
 import { Notices } from '../components/Notices';
@@ -26,25 +25,24 @@ const TAB_SETTINGS = 'settings';
  *
  * @type {Object<string, Object>}
  */
-const TAB_ICONS = {
+const BUILTIN_TAB_ICONS = {
 	[TAB_LOGS]: iconLogs,
 	[TAB_AUTO_UPDATES]: iconUpdate,
 	[TAB_SCHEDULE]: iconSchedule,
 	[TAB_SETTINGS]: iconSettings,
-	'updatronix-3000': iconStar,
 };
+
+function resolveTabIcon(tab) {
+	return BUILTIN_TAB_ICONS[tab.slug];
+}
 
 /**
  * Default fallback tabs used when window.updatronixSettings is unavailable.
  *
  * @return {Object<string, {slug: string, label: string, icon: string, priority: number}>} Default tab definitions keyed by slug.
+ *     The `icon` field is reserved metadata; the React UI does not currently consume it.
  */
 function getDefaultTabs() {
-	const isPro =
-		typeof window !== 'undefined' &&
-		window.updatronixSettings &&
-		window.updatronixSettings.isPro;
-
 	const tabs = {
 		[TAB_LOGS]: {
 			slug: TAB_LOGS,
@@ -72,15 +70,6 @@ function getDefaultTabs() {
 		},
 	};
 
-	if (isPro) {
-		tabs['updatronix-3000'] = {
-			slug: 'updatronix-3000',
-			label: __('Updatronix 3000', 'updatronix-pro'),
-			icon: '',
-			priority: 60,
-		};
-	}
-
 	return tabs;
 }
 
@@ -89,6 +78,7 @@ function getDefaultTabs() {
  * Falls back to hardcoded defaults if PHP data is unavailable.
  *
  * @return {Array<{slug: string, label: string, icon: string, priority: number}>} Tabs sorted by priority ascending.
+ *     The `icon` field is reserved metadata; the React UI does not currently consume it.
  */
 function getTabsFromPhp() {
 	let tabsObj;
@@ -105,10 +95,6 @@ function getTabsFromPhp() {
 	}
 
 	// Convert to array and sort by priority ascending.
-	const isPro =
-		typeof window !== 'undefined' &&
-		window.updatronixSettings &&
-		window.updatronixSettings.isPro;
 
 	const result = Object.values(tabsObj)
 		.map((tab) => ({
@@ -117,27 +103,7 @@ function getTabsFromPhp() {
 		}))
 		.sort((a, b) => a.priority - b.priority);
 
-	// Ensure Pro tab is always present when Pro is active.
-	if (isPro && !result.find((t) => t.slug === 'updatronix-3000')) {
-		result.push({
-			slug: 'updatronix-3000',
-			label: __('Updatronix 3000', 'updatronix-pro'),
-			icon: '',
-			priority: 60,
-		});
-		result.sort((a, b) => a.priority - b.priority);
-	}
-
 	return result;
-}
-
-function getTabFromUrl() {
-	const params = new URLSearchParams(window.location.search);
-	const tab = params.get('tab');
-	const validSlugs = getTabsFromPhp().map((t) => t.slug);
-	return validSlugs.includes(tab)
-		? tab
-		: window.updatronixSettings?.activeTab || TAB_LOGS;
 }
 
 function setTabInUrl(tabId) {
@@ -174,14 +140,22 @@ export const SettingsPage = () => {
 		},
 		[setSettings]
 	);
-	const [selectedTabId, setSelectedTabId] = useState(getTabFromUrl);
+
+	const tabs = useMemo(() => getTabsFromPhp(), []);
+
+	const [selectedTabId, setSelectedTabId] = useState(() => {
+		const params = new URLSearchParams(window.location.search);
+		const requested = params.get('tab');
+		const validSlugs = tabs.map((t) => t.slug);
+		return validSlugs.includes(requested)
+			? requested
+			: window.updatronixSettings?.activeTab || tabs[0]?.slug || TAB_LOGS;
+	});
 
 	const handleSelectTab = useCallback((tabId) => {
 		setSelectedTabId(tabId);
 		setTabInUrl(tabId);
 	}, []);
-
-	const tabs = useMemo(() => getTabsFromPhp(), []);
 
 	useEffect(() => {
 		const validSlugs = tabs.map((t) => t.slug);
@@ -235,7 +209,12 @@ export const SettingsPage = () => {
 					/>
 				);
 			default:
-				return <ProTabPanel slug={tab.slug} />;
+				return (
+					<ProTabPanel
+						slug={tab.slug}
+						isActive={selectedTabId === tab.slug}
+					/>
+				);
 		}
 	};
 
@@ -262,7 +241,7 @@ export const SettingsPage = () => {
 									key={tab.slug}
 									tabId={tab.slug}
 									title={tab.label}
-									icon={TAB_ICONS[tab.slug]}
+									icon={resolveTabIcon(tab)}
 								>
 									{tab.label}
 								</Tabs.Tab>
