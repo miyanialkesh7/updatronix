@@ -211,12 +211,7 @@ export const SettingsPage = () => {
 					/>
 				);
 			default:
-				return (
-					<ProTabPanel
-						slug={tab.slug}
-						isActive={selectedTabId === tab.slug}
-					/>
-				);
+				return <ProTabPanel slug={tab.slug} />;
 		}
 	};
 

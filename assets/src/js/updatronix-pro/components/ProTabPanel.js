@@ -8,20 +8,17 @@ import { useEffect, useRef } from '@wordpress/element';
  * by PHP via window.updatronixSettings.proPanelRegistryGlobal). The renderer
  * signature is (mountEl: HTMLElement) => (() => void) | undefined.
  *
- * The renderer is invoked only while the tab is active, and any cleanup
- * function it returns is called on deactivation/unmount to avoid leaking
- * React roots (React 18 StrictMode double-invokes effects in dev).
+ * The renderer runs once on mount — the parent TabPanel handles hide/show via
+ * CSS visibility, so the Pro content stays alive and does not re-fetch on tab
+ * switch. The cleanup function returned by the renderer is called on unmount.
  *
- * @param {{slug: string, isActive: boolean}} props Component props.
+ * @param {{slug: string}} props Component props.
  * @return {JSX.Element} Mount-point div for the Pro tab content.
  */
-export default function ProTabPanel({ slug, isActive }) {
+export default function ProTabPanel({ slug }) {
 	const mountRef = useRef(null);
 
 	useEffect(() => {
-		if (!isActive) {
-			return undefined;
-		}
 		if (!window.updatronixSettings?.isPro) {
 			return undefined;
 		}
@@ -45,13 +42,13 @@ export default function ProTabPanel({ slug, isActive }) {
 				cleanup();
 			}
 		};
-	}, [slug, isActive]);
+	}, [slug]);
 
 	return (
 		<div
 			ref={mountRef}
 			id={`updatronix-pro-tab-${slug}`}
-			className="updatronix-pro-tab-mount"
+			className="updatronix-settings-form"
 		/>
 	);
 }
