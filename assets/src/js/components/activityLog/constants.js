@@ -23,4 +23,5 @@ export const ACTION_LABELS = {
 	failed: __('Failed', 'updatronix'),
 	uninstall: __('Uninstall', 'updatronix'),
 	delete: __('Delete', 'updatronix'),
+	prevented: __('Prevented', 'updatronix'),
 };

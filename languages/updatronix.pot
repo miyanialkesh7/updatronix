@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-07-11T08:48:21+00:00\n"
+"POT-Creation-Date: 2026-07-11T12:16:29+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: updatronix\n"
@@ -199,8 +199,8 @@ msgstr ""
 #: inc/classes/AutoUpdateDelay.php:492
 #: inc/classes/Settings.php:383
 #: inc/classes/Settings.php:391
-#: assets/src/js/components/activityLog/utils.js:130
-#: assets/src/js/components/activityLog/utils.js:138
+#: assets/src/js/components/activityLog/utils.js:136
+#: assets/src/js/components/activityLog/utils.js:144
 msgid "WordPress"
 msgstr ""
 
@@ -327,19 +327,19 @@ msgstr ""
 
 #: inc/classes/ExportBodyBuilder.php:750
 #: assets/src/js/components/activityLog/logFilters.js:208
-#: assets/src/js/components/activityLog/utils.js:51
+#: assets/src/js/components/activityLog/utils.js:54
 msgid "Error"
 msgstr ""
 
 #: inc/classes/ExportBodyBuilder.php:751
 #: assets/src/js/components/activityLog/logFilters.js:209
-#: assets/src/js/components/activityLog/utils.js:54
+#: assets/src/js/components/activityLog/utils.js:57
 msgid "Cancelled"
 msgstr ""
 
 #: inc/classes/ExportBodyBuilder.php:752
 #: assets/src/js/components/activityLog/logFilters.js:207
-#: assets/src/js/components/activityLog/utils.js:45
+#: assets/src/js/components/activityLog/utils.js:48
 msgid "Success"
 msgstr ""
 
@@ -434,13 +434,13 @@ msgstr ""
 
 #: inc/classes/Settings.php:350
 #: assets/src/js/components/activityLog/logFilters.js:81
-#: assets/src/js/components/activityLog/utils.js:84
+#: assets/src/js/components/activityLog/utils.js:90
 msgid "Bulk action"
 msgstr ""
 
 #: inc/classes/Settings.php:352
 #: assets/src/js/components/activityLog/logFilters.js:85
-#: assets/src/js/components/activityLog/utils.js:87
+#: assets/src/js/components/activityLog/utils.js:93
 msgid "Single action"
 msgstr ""
 
@@ -452,14 +452,14 @@ msgstr ""
 
 #. translators: 1: item name, 2: version number
 #: inc/classes/Settings.php:382
-#: assets/src/js/components/activityLog/utils.js:129
+#: assets/src/js/components/activityLog/utils.js:135
 #, php-format,js-format
 msgid "Language pack updated for %1$s %2$s"
 msgstr ""
 
 #. translators: %s: item name
 #: inc/classes/Settings.php:390
-#: assets/src/js/components/activityLog/utils.js:137
+#: assets/src/js/components/activityLog/utils.js:143
 #, php-format,js-format
 msgid "Language pack updated for %s"
 msgstr ""
@@ -468,16 +468,16 @@ msgstr ""
 #: inc/classes/Settings.php:401
 #: inc/classes/Settings.php:419
 #: inc/classes/Settings.php:427
-#: assets/src/js/components/activityLog/utils.js:146
-#: assets/src/js/components/activityLog/utils.js:162
-#: assets/src/js/components/activityLog/utils.js:169
+#: assets/src/js/components/activityLog/utils.js:152
+#: assets/src/js/components/activityLog/utils.js:168
+#: assets/src/js/components/activityLog/utils.js:175
 #, php-format,js-format
 msgid "v%s"
 msgstr ""
 
 #. translators: 1: previous version number, 2: new version number
 #: inc/classes/Settings.php:410
-#: assets/src/js/components/activityLog/utils.js:154
+#: assets/src/js/components/activityLog/utils.js:160
 #, php-format,js-format
 msgid "v%1$s → v%2$s"
 msgstr ""
@@ -659,6 +659,10 @@ msgstr ""
 msgid "Delete"
 msgstr ""
 
+#: assets/src/js/components/activityLog/constants.js:26
+msgid "Prevented"
+msgstr ""
+
 #: assets/src/js/components/activityLog/ExportLogsModal.js:33
 msgid "Column headings"
 msgstr ""
@@ -762,7 +766,7 @@ msgid "Loading log details…"
 msgstr ""
 
 #: assets/src/js/components/activityLog/LogDetailsContent.js:57
-#: assets/src/js/components/activityLog/utils.js:100
+#: assets/src/js/components/activityLog/utils.js:106
 msgid "Item"
 msgstr ""
 
@@ -825,8 +829,12 @@ msgctxt "empty value fallback"
 msgid "—"
 msgstr ""
 
-#: assets/src/js/components/activityLog/utils.js:48
+#: assets/src/js/components/activityLog/utils.js:51
 msgid "Warning"
+msgstr ""
+
+#: assets/src/js/components/activityLog/utils.js:60
+msgid "Info"
 msgstr ""
 
 #: assets/src/js/components/autoUpdates/AutoUpdatesPanel.js:53

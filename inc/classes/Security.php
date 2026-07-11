@@ -26,14 +26,14 @@ final class Updatronix_Security {
      *
      * @var array<string>
      */
-    public const ALLOWED_ACTION_TYPES = ['update', 'downgrade', 'install', 'same_version', 'failed', 'uninstall'];
+    public const ALLOWED_ACTION_TYPES = ['update', 'downgrade', 'install', 'same_version', 'failed', 'uninstall', 'prevented'];
 
     /**
      * Allowed status values.
      *
      * @var array<string>
      */
-    public const ALLOWED_STATUSES = ['success', 'error', 'cancelled'];
+    public const ALLOWED_STATUSES = ['success', 'error', 'cancelled', 'info', 'warning'];
 
     /**
      * Allowed performed_as values: manual, automatic, or file upload (update.php upload flow).
