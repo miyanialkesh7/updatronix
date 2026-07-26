@@ -108,6 +108,12 @@ final class Updatronix_Settings {
             'permission_callback' => [self::class, 'rest_can_manage_logs'],
         ]);
 
+        register_rest_route(self::REST_NAMESPACE, '/logs/all', [
+            'methods' => \WP_REST_Server::DELETABLE,
+            'callback' => [self::class, 'rest_delete_all_logs'],
+            'permission_callback' => [self::class, 'rest_can_manage_logs'],
+        ]);
+
         register_rest_route(self::REST_NAMESPACE, '/settings', [
             [
                 'methods' => \WP_REST_Server::READABLE,
@@ -464,6 +470,18 @@ final class Updatronix_Settings {
     public static function rest_cleanup_logs(\WP_REST_Request $request): WP_REST_Response {
         $settings = updatronix_get_settings();
         $deleted = Updatronix_Logger::delete_older_than($settings['retention_days']);
+
+        return new WP_REST_Response(['deleted' => $deleted], 200);
+    }
+
+    /**
+     * REST: Delete all log entries.
+     *
+     * @param \WP_REST_Request<array<string, mixed>> $request Request.
+     * @return WP_REST_Response
+     */
+    public static function rest_delete_all_logs(\WP_REST_Request $request): WP_REST_Response {
+        $deleted = Updatronix_Logger::delete_all_logs();
 
         return new WP_REST_Response(['deleted' => $deleted], 200);
     }

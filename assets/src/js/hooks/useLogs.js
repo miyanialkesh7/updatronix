@@ -76,6 +76,25 @@ export function useLogs() {
 		}
 	}, []);
 
+	const clearAllLogs = useCallback(async () => {
+		try {
+			await apiFetch({
+				path: 'updatronix/v1/logs/all',
+				method: 'DELETE',
+			});
+			setLogs([]);
+			setTotal(0);
+			detailsCacheRef.current = {};
+			return true;
+		} catch (e) {
+			setError(
+				e?.message ||
+					__('Could not clear logs. Try again.', 'updatronix')
+			);
+			return 0;
+		}
+	}, []);
+
 	return {
 		logs,
 		total,
@@ -84,5 +103,6 @@ export function useLogs() {
 		fetchLogs,
 		fetchLogDetails,
 		deleteLog,
+		clearAllLogs,
 	};
 }

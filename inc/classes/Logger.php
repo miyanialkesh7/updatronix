@@ -426,6 +426,34 @@ final class Updatronix_Logger {
     }
 
     /**
+     * Delete every log row from the table.
+     *
+     * Intended for the "Clear all logs" destructive action in Settings. Runs via
+     * {@see with_logs_table()} so on Multisite the main site's table is always targeted.
+     *
+     * @return int Number of rows deleted.
+     */
+    public static function delete_all_logs(): int {
+        if (!Updatronix_Database::table_exists()) {
+            return 0;
+        }
+
+        return self::with_logs_table(static function (): int {
+            global $wpdb;
+            $table = Updatronix_Database::get_table_name();
+
+            // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom table; DELETE FROM without WHERE is the correct API for clearing all rows on user action.
+            $result = $wpdb->query($wpdb->prepare('DELETE FROM %i', $table));
+
+            if (is_numeric($result) && (int) $result > 0) {
+                self::bump_logs_cache_last_changed();
+            }
+
+            return is_numeric($result) ? (int) $result : 0;
+        });
+    }
+
+    /**
      * Drop every log row that originated on a now-deleted subsite.
      *
      * Hooked to `wp_delete_site` on Multisite so the network-global table does not accumulate

@@ -133,6 +133,11 @@ export const SettingsPage = () => {
 		dismissConstantNotice,
 	} = usePluginSettings();
 
+	const [logsVersion, setLogsVersion] = useState(0);
+	const handleLogsCleared = useCallback(() => {
+		setLogsVersion((v) => v + 1);
+	}, []);
+
 	const syncDismissedConstants = useCallback(
 		(dismissed) => {
 			setSettings((prev) => ({
@@ -180,6 +185,7 @@ export const SettingsPage = () => {
 				return (
 					<ActivityLogPanel
 						loggingEnabled={settings.logging_enabled}
+						logsVersion={logsVersion}
 					/>
 				);
 			case TAB_AUTO_UPDATES:
@@ -208,6 +214,7 @@ export const SettingsPage = () => {
 						setSettings={setSettings}
 						saveSettings={saveSettings}
 						saving={saving}
+						onLogsCleared={handleLogsCleared}
 					/>
 				);
 			default:

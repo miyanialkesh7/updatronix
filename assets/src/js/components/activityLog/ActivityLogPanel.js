@@ -53,9 +53,10 @@ const DELETE_MODAL_STYLE = {
  *
  * @param {Object}  props                       Component props.
  * @param {boolean} [props.loggingEnabled=true] Whether update logging is enabled.
+ * @param {number}  [props.logsVersion=0]       Incremented to trigger a logs refetch.
  * @return {JSX.Element} The activity log panel UI.
  */
-export function ActivityLogPanel({ loggingEnabled = true }) {
+export function ActivityLogPanel({ loggingEnabled = true, logsVersion = 0 }) {
 	const { logs, loading, error, fetchLogs, fetchLogDetails, deleteLog } =
 		useLogs();
 	const [announcement, setAnnouncement] = useState({
@@ -88,7 +89,7 @@ export function ActivityLogPanel({ loggingEnabled = true }) {
 
 	useEffect(() => {
 		fetchLogs({ per_page: view.perPage, page: view.page });
-	}, [fetchLogs, view.perPage, view.page]);
+	}, [fetchLogs, logsVersion, view.perPage, view.page]);
 
 	const filterFields = useMemo(() => buildFilterFields({ logs }), [logs]);
 
