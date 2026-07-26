@@ -8,6 +8,7 @@
 - WordPress **6.2+** (tested range in `readme.txt`)
 - Composer
 - Node.js **LTS** and npm (for `@wordpress/scripts`, ESLint, Stylelint, Prettier)
+- Python **3** (for `local-wp-cli.sh` site resolution via `sites.json`)
 
 ### Install dependencies
 
