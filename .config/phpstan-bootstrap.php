@@ -16,6 +16,8 @@ define('UPDATRONIX_PLUGIN_DIR', '');
 define('updatronix_PLUGIN_FILE', '');
 define('updatronix_PLUGIN_DIR', '');
 define('UPDATRONIX_CAP_MANAGE', 'manage_updatronix');
+define('UPDATRONIX_DB_VERSION', '1.1.1');
+define('UPDATRONIX_DB_OPTION_KEY', 'updatronix_log_db_version');
 
 if (!defined('DB_NAME')) {
     define('DB_NAME', '');

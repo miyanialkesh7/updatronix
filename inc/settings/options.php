@@ -488,7 +488,7 @@ function updatronix_maybe_migrate_network_storage(): void {
                 UPDATRONIX_OPTION_SETTINGS,
                 UPDATRONIX_OPTION_NETWORK_SCHEDULE,
                 'updatronix_cap_migrated',
-                'updatronix_log_db_version',
+                UPDATRONIX_DB_OPTION_KEY,
                 Updatronix_UpdateLogState::OPTION_STATE,
                 'updatronix_export_audit',
             ],
