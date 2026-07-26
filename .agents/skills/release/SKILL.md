@@ -33,10 +33,14 @@ Prose style: grep style guide one section if needed — never load the full file
 ## Build order
 
 1. `npm run build`
-2. `composer run make:pot` — only if i18n changed
+2. `composer run make:pot` — note any new/changed strings. If new strings appear, add them to the changelog entry: "Updated translations" or list the new strings if significant.
 3. `composer run lint:pcp`
 4. `npm run test:all`
 5. `npm run zip`
+
+## Completion message
+
+On completion, report: "Release ready: version `X.Y.Z`, zip at `<path>`. All checks passed."
 
 ## Escalation
 

@@ -21,14 +21,6 @@ Each thread: choose a **tier** in your model selector. Skills tell the agent wha
 
 **One-line rule:** Planning until `go` → worker to build → audit before ship when required.
 
-### Recommended models
-
-| Tier | Recommended | Why |
-|------|-------------|-----|
-| **Planning** | DeepSeek Pro V4 · Claude Opus | Strong reasoning, design, trade-off analysis |
-| **Worker** | DeepSeek Pro Flash | Fast, cheap, reliable tool calling — bulk of the work |
-| **Audit** | Claude Opus · DeepSeek Pro V4 | Thorough review, security analysis, no hallucinations on gates |
-
 Use **worker** on `/resume` threads to save tokens. Keep **audit** for `/security` and high-risk `/reviewer`. If a worker model mishandles tools or skips WP security rules, move that phase back to planning tier.
 
 ## Daily flow — one feature

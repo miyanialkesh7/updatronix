@@ -19,7 +19,7 @@ Reply in US English.
 | `review_required: yes` or `risk` includes `rest`, `sql`, `auth`, `export`, `multisite` | **Audit** |
 | Optional review on low-risk scope | **Planning** |
 
-User selects the matching model before starting the thread.
+The user selects the matching model before starting the thread. Abstract tier names only — no vendor-specific model recommendations.
 
 ## Inputs
 
@@ -47,6 +47,10 @@ Sections: **Coherence** · **Security** · **Accessibility** · **Performance** 
 Verdict: **Ship** · **Fix then ship** · **Needs rework**
 
 **Needs rework:** user opens **worker** tier + `/resume` with the task file.
+
+**Fix then ship:** user fixes the listed items, then either:
+- If fixes are trivial (typos, copy, minor escaping): re-review is optional at user's discretion.
+- If fixes touch REST, SQL, auth, user input, or new logic: **re-review required** on **audit** tier. User opens a new `/reviewer` thread.
 
 ## Checklists
 

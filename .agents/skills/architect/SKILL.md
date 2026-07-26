@@ -31,18 +31,17 @@ Read only what you need:
 
 ## Phase 3 — Plan (planning tier)
 
-Create `.agents/tasks/YYYY-MM-DD-<type>-<slug>.md`.
+Create `.agents/tasks/YYYY-MM-DD-<type>-<slug>.md`. Generate `uid` from the current time if known (YYYYMMDD-HHMMSS), otherwise use date + random suffix (YYYYMMDD-<random>).
 
 ```markdown
 ---
 type: <type>
 slug: <kebab-case>
 date: YYYY-MM-DD
+uid: YYYYMMDD-<random>
 status: planning
 review_required: yes | no
 risk: []
-planning_model_tier: planning
-worker_model_tier: worker
 ---
 
 ## Goal
@@ -78,21 +77,31 @@ On approval, run all tasks in order.
 | Comments, docs, pure CSS, no new surface | **Batch** every up to **5** tasks |
 | All tasks done | `npm run test:all` |
 
+When lint is skipped per economy rules, say so: "Lint skipped — no PHP/JS surface changed."
+
+### Re-evaluate review_required after implementation
+
+After all tasks are done, compare the actual code against the task file's `review_required` and `risk` frontmatter. If the implementation touches a surface (REST, SQL, auth, user input, export, multisite, new admin UI) that the plan didn't flag, update the frontmatter. This ensures the review gate matches what was actually shipped.
+
 ### Thread rotation
 
 After **3 tasks** or **~20 turns**, update `## Session checkpoint` and tell the user: new **worker** tier thread + `/resume` + this task file.
 
 ### Retry ceiling
 
-After **3 failed attempts** at the same fix (lint fail, failing test, reviewer blocker), **STOP and re-plan** — update `## Tasks` and `## Log`, tell the user what's wrong. Do not grind past three iterations.
+After **3 failed attempts** on the same task (any failure type — lint fail, failing test, reviewer blocker, or any error that prevents task completion), **STOP and re-plan** — update `## Tasks` and `## Log`, tell the user what's wrong. Do not grind past three iterations. Different error types on the same task accumulate toward the same ceiling.
 
 ### Self-review before "done"
 
-Before reporting completion: silently argue against your own solution (redundancy, unused code, simpler alternative, missed edge case). Fix or note anything surfaced. Then report.
+Before reporting completion: silently argue against your own solution (redundancy, unused code, simpler alternative, missed edge case). Fix or note anything surfaced. Then report with a one-line self-review note: "Self-review: checked [redundancy/unused code/edge cases/alternatives] — nothing surfaced" or "Self-review: noted [issue] — see Log."
+
+### Stop conditions
 
 Stop only for uncovered design decisions, frozen docs, version bumps, or major scope creep.
 
-On completion: `status: done`, full test gate, ask user to test.
+### Completion message
+
+On completion: `status: done`, full test gate, one-line summary of what was done and what files changed. Ask user to test.
 
 ## Phase 5 — Feedback (worker tier)
 

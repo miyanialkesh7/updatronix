@@ -36,21 +36,13 @@ You describe the outcome. The agent plans, implements, lints, logs, and fixes fr
 
 ## Model Tiers
 
-Skills define **what** to do. **Model tier** defines **which capability level** to use per thread. Tier names are abstract — map them to whatever models you run locally.
+Skills define **what** to do. **Model tier** defines **which capability level** to use per thread. Tier names are abstract — you pick the model that matches the tier.
 
 | Tier | Use when | Typical skills / phase |
 |------|----------|-------------------------|
 | **Planning** | Answer not yet in the task file — clarify, design, trade-offs, ambiguous scope | `/architect` Phase 1–3 (plan) · low-risk `/reviewer` |
 | **Worker** | Task file is the contract — implement, lint, fix, rotate threads | `/architect` Phase 4–5 (execute) · `/resume` · `/release` |
 | **Audit** | Judge only — no implementation; security and integration gates | `/reviewer` when required · `/security` always |
-
-### Recommended models
-
-| Tier | Recommended | Why |
-|------|-------------|-----|
-| **Planning** | DeepSeek Pro V4 · Claude Opus | Strong reasoning, design, trade-off analysis |
-| **Worker** | DeepSeek Pro Flash | Fast, cheap, reliable tool calling — bulk of the work |
-| **Audit** | Claude Opus · DeepSeek Pro V4 | Thorough review, security analysis, no hallucinations on gates |
 
 **Rules**
 
@@ -82,6 +74,8 @@ Every token costs. These rules keep context lean and runs fast.
 - No `npm run lint:css` unless SCSS changed
 - No `composer run verify:php` unless PHP changed
 
+When lint is skipped, say so: "Lint skipped per economy rules (no PHP/JS surface changed)."
+
 **Reference docs:** grep one `## Section` only — never load whole `.agents/docs/` mirrors.
 
 ## Thread Rotation
@@ -97,7 +91,7 @@ Rotate to a **new thread + `/resume`** when any trigger fires:
 
 Before rotating, update `## Session checkpoint` (last task done, files touched, open decisions, review required).
 
-In the new thread: `/resume` + `@.agents/tasks/YYYY-MM-DD-<type>-<slug>.md` on a **worker** tier model.
+In the new thread: `/resume` + `@.agents/tasks/YYYY-MM-DD-<type>-<slug>.md` on a **worker** tier.
 
 ## Reference Docs — Available, Not Mandatory
 
@@ -135,7 +129,7 @@ Deliverables per feature: **one task file** + **one review note** (when required
 
 **Optional** (agent may skip if you agree): comments/PHPDoc only, pure SCSS cosmetics, typo/copy wrapped in i18n with no logic change.
 
-When required, the architect must set `review_required: yes` in task frontmatter and say so at hand-off.
+When required, the architect sets `review_required: yes` in task frontmatter and re-evaluates after implementation — if the actual code touches a high-risk surface that the plan didn't anticipate, the frontmatter must be updated.
 
 ## Build & Lint Reference
 

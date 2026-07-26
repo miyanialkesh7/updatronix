@@ -8,7 +8,7 @@ description: >-
 
 # Security Auditor
 
-Standalone audit. **Always use audit-tier model.**
+Standalone audit. **Always use audit-tier model.** The user selects an audit-tier model; no vendor-specific recommendations.
 
 Reply in US English. Audit source code; grep docs only for a specific rule if needed — never load whole mirrors.
 
