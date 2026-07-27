@@ -7,7 +7,9 @@ description: >-
 
 # Release
 
-End-of-cycle packaging. **Worker-tier model** is usually sufficient.
+End-of-cycle packaging. **Worker-tier model** is typically sufficient.
+
+Reply in US English. Follow the WordPress Documentation Style Guide for all user-facing prose.
 
 Do not bump versions without explicit owner authorization in this conversation.
 
@@ -28,7 +30,7 @@ Confirm version with owner before writing.
 
 `Stable tag:` matches constant · update `Tested up to:` if needed · promote changelog (plain text bullets) · upgrade notice only when required
 
-Prose style: grep style guide one section if needed — never load the full file.
+Prose style: grep the WordPress Documentation Style Guide one section if needed — never load the full file.
 
 ## Build order
 
@@ -44,6 +46,6 @@ On completion, report: "Release ready: version `X.Y.Z`, zip at `<path>`. All che
 
 ## Escalation
 
-- Failures → stop; **worker** tier + `/resume` for fixes
+Failures → stop; **worker** tier thread with `/resume` for fixes
 - Security issue → stop; `/security` on **audit** tier
 - Never edit frozen `wordpress-native-updates-reference.md`
