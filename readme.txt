@@ -169,6 +169,9 @@ I welcome your ideas! If you have a suggestion for the roadmap, please visit the
 
 = 1.1.1 =
 * New: Updatronix 3000 connector.
+* Fix: Schedule no longer resets to hourly after external tools (e.g. Plesk, WP-CLI) clear the `wp_version_check` cron event. The plugin now verifies the actual WP-Cron recurrence matches your settings on every page load, and self-heals within minutes instead of hours.
+* Safe Mode: exclude Site Health synthetic mock items from logging and blocking.
+
 
 = 1.1 =
 * New: Schedule tab, set how often WordPress checks for updates (hourly, twice daily, daily, or weekly), pick a preferred time of day, and hold automatic installs for a chosen number of days. Active holds show a notice on the Updates, Plugins, and Themes screens, and WordPress schedule messaging stays in sync with your settings.
@@ -219,6 +222,9 @@ I welcome your ideas! If you have a suggestion for the roadmap, please visit the
 * Add: Initial release of Updatronix.
 
 == Upgrade Notice ==
+
+= 1.1.1 =
+Fixes a schedule reset bug: if you use the Schedule tab to set a preferred time and recurrence, visiting some admin pages (or external tools touching the cron table) could reset the next check back to the WordPress default. A self-healing mechanism now catches and corrects it immediately.
 
 = 1.1 =
 Adds the Schedule tab, update log export, a switch to silence WordPress update emails, and multisite support, plus accessibility improvements across every tab.

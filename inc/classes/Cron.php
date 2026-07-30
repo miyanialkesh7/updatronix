@@ -177,11 +177,46 @@ final class Updatronix_Cron {
 
         if (self::is_unified_schedule_active()) {
             self::suppress_redundant_core_update_crons();
+            self::assert_update_check_recurrence();
 
             return;
         }
 
         self::restore_core_update_check_crons_if_needed();
+    }
+
+    /**
+     * Verify the `wp_version_check` cron event matches the stored schedule recurrence.
+     *
+     * When the event is missing, has a different recurrence, or is a one-time event
+     * (no schedule), re-schedule using the stored settings. This is a lightweight
+     * check — one cron array lookup — and runs without throttle on `init` so that
+     * external tools (Plesk, WP-CLI, manual DB edits) that clear or overwrite the
+     * event are corrected on the next admin page load.
+     *
+     * @since 1.1.1
+     * @return void
+     */
+    private static function assert_update_check_recurrence(): void {
+        $settings = updatronix_get_settings();
+        $schedule = $settings['schedule'];
+        $stored_recurrence = $schedule['update_check']['recurrence'];
+
+        if ($stored_recurrence === '' || !in_array($stored_recurrence, updatronix_allowed_update_check_recurrence_slugs(), true)) {
+            return;
+        }
+
+        $event = wp_get_scheduled_event(self::HOOK_WP_CRON_CORE_VERSION_CHECK);
+
+        if ($event !== false && isset($event->schedule) && $event->schedule === $stored_recurrence) {
+            return;
+        }
+
+        // Event missing, wrong recurrence, or one-time — re-apply.
+        wp_clear_scheduled_hook(self::HOOK_WP_CRON_CORE_VERSION_CHECK);
+        $time = $schedule['update_check']['time'];
+        $timestamp = updatronix_next_update_check_timestamp($stored_recurrence, $time);
+        wp_schedule_event((int) $timestamp, $stored_recurrence, self::HOOK_WP_CRON_CORE_VERSION_CHECK);
     }
 
     /**
@@ -268,7 +303,7 @@ final class Updatronix_Cron {
             return;
         }
 
-        updatronix_set_plugin_transient(self::UPDATE_CHECK_HEAL_TRANSIENT, '1', HOUR_IN_SECONDS);
+        updatronix_set_plugin_transient(self::UPDATE_CHECK_HEAL_TRANSIENT, '1', 5 * MINUTE_IN_SECONDS);
 
         $settings = updatronix_get_settings();
         $schedule = $settings['schedule'];
@@ -279,13 +314,8 @@ final class Updatronix_Cron {
             return;
         }
 
-        if (wp_next_scheduled(self::HOOK_WP_CRON_CORE_VERSION_CHECK)) {
-            return;
-        }
-
-        $time = $schedule['update_check']['time'];
-        $timestamp = updatronix_next_update_check_timestamp($recurrence, $time);
-        wp_schedule_event((int) $timestamp, $recurrence, self::HOOK_WP_CRON_CORE_VERSION_CHECK);
+        // Check recurrence correctness, not just existence.
+        self::assert_update_check_recurrence();
         self::sync_core_update_crons_with_schedule();
     }
 
