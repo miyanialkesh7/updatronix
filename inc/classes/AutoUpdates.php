@@ -272,7 +272,7 @@ final class Updatronix_AutoUpdates {
                 && (isset($update_transient->response[$file])
                     || isset($update_transient->no_update[$file]));
 
-            $plugins[] = [
+            $plugins[] = apply_filters('updatronix_auto_update_plugin_data', [
                 'file' => $file,
                 'slug' => $slug,
                 'name' => $data['Name'] ?? '',
@@ -284,7 +284,7 @@ final class Updatronix_AutoUpdates {
                 'auto_update' => in_array($file, $auto_update_plugins, true),
                 'auto_update_available' => $auto_update_available,
                 'active' => is_plugin_active($file),
-            ];
+            ], $file);
         }
 
         usort($plugins, static function (array $a, array $b): int {
@@ -313,7 +313,7 @@ final class Updatronix_AutoUpdates {
                     || isset($update_themes_transient->no_update[$stylesheet]);
             }
 
-            $themes[] = [
+            $themes[] = apply_filters('updatronix_auto_update_theme_data', [
                 'stylesheet' => $stylesheet,
                 'name' => $theme->get('Name'),
                 'description' => self::get_localized_theme_description($theme),
@@ -324,7 +324,7 @@ final class Updatronix_AutoUpdates {
                 'auto_update' => in_array($stylesheet, $auto_update_themes, true),
                 'auto_update_available' => $auto_update_available,
                 'active' => $stylesheet === $active_stylesheet,
-            ];
+            ], $stylesheet);
         }
 
         usort($themes, static function (array $a, array $b): int {

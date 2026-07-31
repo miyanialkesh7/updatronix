@@ -132,26 +132,41 @@ export function ItemsDataViewSection({
 								onChange={(checked) =>
 									onToggle(item[itemIdKey], checked)
 								}
-								disabled={locked || busy}
-								aria-label={
-									item.auto_update
-										? sprintf(
-												/* translators: %s: plugin or theme name */
-												__(
-													'Disable auto-update for %s',
-													'updatronix'
-												),
-												item.name
-											)
-										: sprintf(
-												/* translators: %s: plugin or theme name */
-												__(
-													'Enable auto-update for %s',
-													'updatronix'
-												),
-												item.name
-											)
+								disabled={
+									locked || busy || item.auto_update_locked
 								}
+								title={
+									item.auto_update_locked
+										? item.auto_update_locked_reason ||
+											__(
+												'Locked by Safe Mode due to incompatibility',
+												'updatronix'
+											)
+										: undefined
+								}
+								aria-label={(() => {
+									if (item.auto_update_locked) {
+										return item.auto_update_locked_reason;
+									}
+									if (item.auto_update) {
+										return sprintf(
+											/* translators: %s: plugin or theme name */
+											__(
+												'Disable auto-update for %s',
+												'updatronix'
+											),
+											item.name
+										);
+									}
+									return sprintf(
+										/* translators: %s: plugin or theme name */
+										__(
+											'Enable auto-update for %s',
+											'updatronix'
+										),
+										item.name
+									);
+								})()}
 							/>
 						)}
 					</span>

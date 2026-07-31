@@ -43,7 +43,7 @@ final class Updatronix_Logger {
      * Insert a log entry.
      *
      * @param string $log_type       One of: core, plugin, theme, translation.
-     * @param string $action_type    One of: update, downgrade, install, same_version, failed, uninstall.
+     * @param string $action_type    One of: update, downgrade, install, same_version, failed, uninstall, prevented, incompatible, disabled.
      * @param string $item_name      Display name of the item.
      * @param string $item_slug      Slug/identifier.
      * @param string $version_before Previous version.

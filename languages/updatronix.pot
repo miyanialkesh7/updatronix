@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-07-30T18:56:10+00:00\n"
+"POT-Creation-Date: 2026-07-31T07:59:09+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: updatronix\n"
@@ -197,8 +197,8 @@ msgid "Unknown theme"
 msgstr ""
 
 #: inc/classes/AutoUpdateDelay.php:492
-#: inc/classes/Settings.php:389
-#: inc/classes/Settings.php:397
+#: inc/classes/Settings.php:392
+#: inc/classes/Settings.php:400
 #: assets/src/js/components/activityLog/utils.js:136
 #: assets/src/js/components/activityLog/utils.js:144
 msgid "WordPress"
@@ -292,7 +292,7 @@ msgid "Action"
 msgstr ""
 
 #: inc/classes/ExportBodyBuilder.php:640
-#: assets/src/js/components/autoUpdates/ItemsDataViewSection.js:225
+#: assets/src/js/components/autoUpdates/ItemsDataViewSection.js:240
 msgid "Version"
 msgstr ""
 
@@ -321,7 +321,7 @@ msgstr ""
 #: assets/src/js/components/activityLog/ExportLogsModal.js:49
 #: assets/src/js/components/activityLog/LogDetailsContent.js:63
 #: assets/src/js/components/activityLog/logFilters.js:203
-#: assets/src/js/components/autoUpdates/ItemsDataViewSection.js:205
+#: assets/src/js/components/autoUpdates/ItemsDataViewSection.js:220
 msgid "Status"
 msgstr ""
 
@@ -399,24 +399,42 @@ msgstr ""
 msgid "Uninstall"
 msgstr ""
 
-#: inc/classes/ExportBodyBuilder.php:946
-msgid "CORE"
+#: inc/classes/ExportBodyBuilder.php:934
+#: inc/classes/Settings.php:351
+#: assets/src/js/components/activityLog/constants.js:26
+msgid "Prevented"
 msgstr ""
 
-#: inc/classes/ExportBodyBuilder.php:947
-msgid "PLUGINS"
+#: inc/classes/ExportBodyBuilder.php:935
+#: inc/classes/Settings.php:352
+#: assets/src/js/components/activityLog/constants.js:27
+msgid "Incompatible"
 msgstr ""
 
-#: inc/classes/ExportBodyBuilder.php:948
-msgid "THEMES"
+#: inc/classes/ExportBodyBuilder.php:936
+#: inc/classes/Settings.php:353
+#: assets/src/js/components/activityLog/constants.js:28
+msgid "Disabled"
 msgstr ""
 
 #: inc/classes/ExportBodyBuilder.php:949
+msgid "CORE"
+msgstr ""
+
+#: inc/classes/ExportBodyBuilder.php:950
+msgid "PLUGINS"
+msgstr ""
+
+#: inc/classes/ExportBodyBuilder.php:951
+msgid "THEMES"
+msgstr ""
+
+#: inc/classes/ExportBodyBuilder.php:952
 msgid "TRANSLATIONS"
 msgstr ""
 
 #: inc/classes/Settings.php:305
-#: inc/classes/Settings.php:452
+#: inc/classes/Settings.php:455
 msgid "The requested log entry could not be found."
 msgstr ""
 
@@ -432,42 +450,42 @@ msgstr ""
 msgid "Manual"
 msgstr ""
 
-#: inc/classes/Settings.php:356
+#: inc/classes/Settings.php:359
 #: assets/src/js/components/activityLog/logFilters.js:81
 #: assets/src/js/components/activityLog/utils.js:90
 msgid "Bulk action"
 msgstr ""
 
-#: inc/classes/Settings.php:358
+#: inc/classes/Settings.php:361
 #: assets/src/js/components/activityLog/logFilters.js:85
 #: assets/src/js/components/activityLog/utils.js:93
 msgid "Single action"
 msgstr ""
 
-#: inc/classes/Settings.php:360
-#: inc/classes/Settings.php:410
-#: inc/classes/Settings.php:438
+#: inc/classes/Settings.php:363
+#: inc/classes/Settings.php:413
+#: inc/classes/Settings.php:441
 msgid "—"
 msgstr ""
 
 #. translators: 1: item name, 2: version number
-#: inc/classes/Settings.php:388
+#: inc/classes/Settings.php:391
 #: assets/src/js/components/activityLog/utils.js:135
 #, php-format,js-format
 msgid "Language pack updated for %1$s %2$s"
 msgstr ""
 
 #. translators: %s: item name
-#: inc/classes/Settings.php:396
+#: inc/classes/Settings.php:399
 #: assets/src/js/components/activityLog/utils.js:143
 #, php-format,js-format
 msgid "Language pack updated for %s"
 msgstr ""
 
 #. translators: %s: version number
-#: inc/classes/Settings.php:407
-#: inc/classes/Settings.php:425
-#: inc/classes/Settings.php:433
+#: inc/classes/Settings.php:410
+#: inc/classes/Settings.php:428
+#: inc/classes/Settings.php:436
 #: assets/src/js/components/activityLog/utils.js:152
 #: assets/src/js/components/activityLog/utils.js:168
 #: assets/src/js/components/activityLog/utils.js:175
@@ -476,30 +494,30 @@ msgid "v%s"
 msgstr ""
 
 #. translators: 1: previous version number, 2: new version number
-#: inc/classes/Settings.php:416
+#: inc/classes/Settings.php:419
 #: assets/src/js/components/activityLog/utils.js:160
 #, php-format,js-format
 msgid "v%1$s → v%2$s"
 msgstr ""
 
-#: inc/classes/Settings.php:458
+#: inc/classes/Settings.php:461
 #: assets/src/js/components/activityLog/ActivityLogPanel.js:258
 msgid "The log entry could not be deleted. Try again or check your database connection."
 msgstr ""
 
-#: inc/classes/Settings.php:559
+#: inc/classes/Settings.php:562
 msgid "The core auto-update setting is controlled by a constant in your wp-config.php file and cannot be changed here."
 msgstr ""
 
-#: inc/classes/Settings.php:579
+#: inc/classes/Settings.php:582
 msgid "This plugin was not found on your site. It may have been removed."
 msgstr ""
 
-#: inc/classes/Settings.php:599
+#: inc/classes/Settings.php:602
 msgid "This theme was not found on your site. It may have been removed."
 msgstr ""
 
-#: inc/classes/Settings.php:634
+#: inc/classes/Settings.php:637
 msgid "That constant is not recognised by Updatronix."
 msgstr ""
 
@@ -574,12 +592,12 @@ msgid "Title"
 msgstr ""
 
 #: assets/src/js/components/activityLog/ActivityLogPanel.js:108
-#: assets/src/js/components/autoUpdates/ItemsDataViewSection.js:251
+#: assets/src/js/components/autoUpdates/ItemsDataViewSection.js:266
 msgid "Details"
 msgstr ""
 
 #: assets/src/js/components/activityLog/ActivityLogPanel.js:134
-#: assets/src/js/components/autoUpdates/ItemsDataViewSection.js:165
+#: assets/src/js/components/autoUpdates/ItemsDataViewSection.js:180
 msgid "Icon"
 msgstr ""
 
@@ -597,7 +615,7 @@ msgstr ""
 
 #: assets/src/js/components/activityLog/ActivityLogPanel.js:228
 #: assets/src/js/components/activityLog/ActivityLogPanel.js:229
-#: assets/src/js/components/autoUpdates/ItemsDataViewSection.js:268
+#: assets/src/js/components/autoUpdates/ItemsDataViewSection.js:283
 msgid "View details"
 msgstr ""
 
@@ -657,10 +675,6 @@ msgstr ""
 
 #: assets/src/js/components/activityLog/constants.js:25
 msgid "Delete"
-msgstr ""
-
-#: assets/src/js/components/activityLog/constants.js:26
-msgid "Prevented"
 msgstr ""
 
 #: assets/src/js/components/activityLog/ExportLogsModal.js:33
@@ -914,32 +928,36 @@ msgstr ""
 msgid "Unavailable"
 msgstr ""
 
+#: assets/src/js/components/autoUpdates/ItemsDataViewSection.js:141
+msgid "Locked by Safe Mode due to incompatibility"
+msgstr ""
+
 #. translators: %s: plugin or theme name
-#: assets/src/js/components/autoUpdates/ItemsDataViewSection.js:140
+#: assets/src/js/components/autoUpdates/ItemsDataViewSection.js:154
 #, js-format
 msgid "Disable auto-update for %s"
 msgstr ""
 
 #. translators: %s: plugin or theme name
-#: assets/src/js/components/autoUpdates/ItemsDataViewSection.js:148
+#: assets/src/js/components/autoUpdates/ItemsDataViewSection.js:163
 #, js-format
 msgid "Enable auto-update for %s"
 msgstr ""
 
-#: assets/src/js/components/autoUpdates/ItemsDataViewSection.js:210
+#: assets/src/js/components/autoUpdates/ItemsDataViewSection.js:225
 msgid "Active"
 msgstr ""
 
-#: assets/src/js/components/autoUpdates/ItemsDataViewSection.js:214
+#: assets/src/js/components/autoUpdates/ItemsDataViewSection.js:229
 msgid "Inactive"
 msgstr ""
 
-#: assets/src/js/components/autoUpdates/ItemsDataViewSection.js:238
+#: assets/src/js/components/autoUpdates/ItemsDataViewSection.js:253
 msgid "Description"
 msgstr ""
 
 #. translators: %s: plugin or theme name
-#: assets/src/js/components/autoUpdates/ItemsDataViewSection.js:261
+#: assets/src/js/components/autoUpdates/ItemsDataViewSection.js:276
 #, js-format
 msgid "View details for %s (opens in a new tab)"
 msgstr ""

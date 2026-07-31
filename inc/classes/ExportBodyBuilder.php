@@ -931,6 +931,9 @@ final class Updatronix_Export_Body_Builder {
             'same_version' => __('Reinstall', 'updatronix'),
             'failed' => __('Failed', 'updatronix'),
             'uninstall' => __('Uninstall', 'updatronix'),
+            'prevented' => __('Prevented', 'updatronix'),
+            'incompatible' => __('Incompatible', 'updatronix'),
+            'disabled' => __('Disabled', 'updatronix'),
             default => $action_type !== '' ? $action_type : '',
         };
     }

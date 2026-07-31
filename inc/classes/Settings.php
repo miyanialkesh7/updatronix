@@ -348,6 +348,9 @@ final class Updatronix_Settings {
             'same_version' => __('Reinstall', 'updatronix'),
             'failed' => __('Failed', 'updatronix'),
             'uninstall' => __('Uninstall', 'updatronix'),
+            'prevented' => __('Prevented', 'updatronix'),
+            'incompatible' => __('Incompatible', 'updatronix'),
+            'disabled' => __('Disabled', 'updatronix'),
         ];
         $log->action_type_display = $action_labels[$action_type] ?? $action_type;
 
