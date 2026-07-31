@@ -1,4 +1,10 @@
-import { useState, useEffect, useCallback, useMemo } from '@wordpress/element';
+import {
+	useState,
+	useEffect,
+	useCallback,
+	useMemo,
+	useRef,
+} from '@wordpress/element';
 import {
 	backup as iconLogs,
 	calendar as iconSchedule,
@@ -13,7 +19,6 @@ import { AutoUpdatesPanel } from '../components/autoUpdates';
 import { SchedulePanel } from '../components/schedule';
 import { SettingsPanel } from '../components/SettingsPanel';
 import { usePluginSettings } from '../hooks/usePluginSettings';
-import ProTabPanel from '../updatronix-pro/components/ProTabPanel';
 import { __ } from '@wordpress/i18n';
 
 const TAB_LOGS = 'logs';
@@ -31,11 +36,10 @@ const BUILTIN_TAB_ICONS = {
 	[TAB_AUTO_UPDATES]: iconUpdate,
 	[TAB_SCHEDULE]: iconSchedule,
 	[TAB_SETTINGS]: iconSettings,
-	'updatronix-3000': iconStar,
 };
 
 function resolveTabIcon(tab) {
-	return BUILTIN_TAB_ICONS[tab.slug];
+	return BUILTIN_TAB_ICONS[tab.slug] || iconStar;
 }
 
 /**
@@ -218,9 +222,58 @@ export const SettingsPage = () => {
 					/>
 				);
 			default:
-				return <ProTabPanel slug={tab.slug} />;
+				return <ProTabMount slug={tab.slug} />;
 		}
 	};
+
+	/**
+	 * Mount point for extension tabs (e.g., Updatronix Pro).
+	 *
+	 * Reads the renderer from the global Pro panel registry
+	 * (window.updatronixProPanelRegistry by default). The renderer
+	 * signature is (mountEl: HTMLElement) => (() => void) | undefined.
+	 * Returns an empty div when no extension is active.
+	 *
+	 * @param {{slug: string}} props Component props.
+	 * @return {JSX.Element} Mount-point div for the extension tab content.
+	 */
+	function ProTabMount({ slug }) {
+		const mountRef = useRef(null);
+
+		useEffect(() => {
+			if (!window.updatronixSettings?.isPro) {
+				return undefined;
+			}
+			const globalName = window.updatronixSettings.proPanelRegistryGlobal;
+			if (typeof globalName !== 'string' || !globalName) {
+				return undefined;
+			}
+			// eslint-disable-next-line no-undef
+			const registry = window[globalName];
+			if (!registry || typeof registry !== 'object') {
+				return undefined;
+			}
+			const render = registry[slug];
+			if (typeof render !== 'function' || !mountRef.current) {
+				return undefined;
+			}
+			const cleanup = render(mountRef.current);
+
+			return () => {
+				if (typeof cleanup === 'function') {
+					cleanup();
+				}
+			};
+		}, [slug]);
+
+		return (
+			<div
+				ref={mountRef}
+				id={`updatronix-pro-tab-${slug}`}
+				className="updatronix-settings-form"
+			/>
+		);
+	}
 
 	return (
 		<div className="updatronix-row">

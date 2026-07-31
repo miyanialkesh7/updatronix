@@ -171,6 +171,8 @@ I welcome your ideas! If you have a suggestion for the roadmap, please visit the
 * New: Updatronix 3000 connector.
 * Fix: Schedule no longer resets to hourly after external tools (e.g. Plesk, WP-CLI) clear the `wp_version_check` cron event. The plugin now verifies the actual WP-Cron recurrence matches your settings on every page load, and self-heals within minutes instead of hours.
 * Safe Mode: exclude Site Health synthetic mock items from logging and blocking.
+* Fix: Extension tab icons now fall back to a generic star icon for unknown slugs, removing the hardcoded Pro-specific reference from Free's source tree.
+* Fix: Cleaned up extension bridge code from the Free release bundle. The Pro tab mount point is now generated inline, keeping Free's built assets free of Pro-specific code.
 
 
 = 1.1 =
