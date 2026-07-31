@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-07-31T07:59:09+00:00\n"
+"POT-Creation-Date: 2026-07-31T10:41:28+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: updatronix\n"
@@ -197,8 +197,8 @@ msgid "Unknown theme"
 msgstr ""
 
 #: inc/classes/AutoUpdateDelay.php:492
-#: inc/classes/Settings.php:392
-#: inc/classes/Settings.php:400
+#: inc/classes/Settings.php:393
+#: inc/classes/Settings.php:401
 #: assets/src/js/components/activityLog/utils.js:136
 #: assets/src/js/components/activityLog/utils.js:144
 msgid "WordPress"
@@ -417,24 +417,30 @@ msgstr ""
 msgid "Disabled"
 msgstr ""
 
-#: inc/classes/ExportBodyBuilder.php:949
-msgid "CORE"
+#: inc/classes/ExportBodyBuilder.php:937
+#: inc/classes/Settings.php:354
+#: assets/src/js/components/activityLog/constants.js:29
+msgid "Auto-updates disabled by Safe Mode"
 msgstr ""
 
 #: inc/classes/ExportBodyBuilder.php:950
-msgid "PLUGINS"
+msgid "CORE"
 msgstr ""
 
 #: inc/classes/ExportBodyBuilder.php:951
-msgid "THEMES"
+msgid "PLUGINS"
 msgstr ""
 
 #: inc/classes/ExportBodyBuilder.php:952
+msgid "THEMES"
+msgstr ""
+
+#: inc/classes/ExportBodyBuilder.php:953
 msgid "TRANSLATIONS"
 msgstr ""
 
 #: inc/classes/Settings.php:305
-#: inc/classes/Settings.php:455
+#: inc/classes/Settings.php:456
 msgid "The requested log entry could not be found."
 msgstr ""
 
@@ -450,42 +456,42 @@ msgstr ""
 msgid "Manual"
 msgstr ""
 
-#: inc/classes/Settings.php:359
+#: inc/classes/Settings.php:360
 #: assets/src/js/components/activityLog/logFilters.js:81
 #: assets/src/js/components/activityLog/utils.js:90
 msgid "Bulk action"
 msgstr ""
 
-#: inc/classes/Settings.php:361
+#: inc/classes/Settings.php:362
 #: assets/src/js/components/activityLog/logFilters.js:85
 #: assets/src/js/components/activityLog/utils.js:93
 msgid "Single action"
 msgstr ""
 
-#: inc/classes/Settings.php:363
-#: inc/classes/Settings.php:413
-#: inc/classes/Settings.php:441
+#: inc/classes/Settings.php:364
+#: inc/classes/Settings.php:414
+#: inc/classes/Settings.php:442
 msgid "—"
 msgstr ""
 
 #. translators: 1: item name, 2: version number
-#: inc/classes/Settings.php:391
+#: inc/classes/Settings.php:392
 #: assets/src/js/components/activityLog/utils.js:135
 #, php-format,js-format
 msgid "Language pack updated for %1$s %2$s"
 msgstr ""
 
 #. translators: %s: item name
-#: inc/classes/Settings.php:399
+#: inc/classes/Settings.php:400
 #: assets/src/js/components/activityLog/utils.js:143
 #, php-format,js-format
 msgid "Language pack updated for %s"
 msgstr ""
 
 #. translators: %s: version number
-#: inc/classes/Settings.php:410
-#: inc/classes/Settings.php:428
-#: inc/classes/Settings.php:436
+#: inc/classes/Settings.php:411
+#: inc/classes/Settings.php:429
+#: inc/classes/Settings.php:437
 #: assets/src/js/components/activityLog/utils.js:152
 #: assets/src/js/components/activityLog/utils.js:168
 #: assets/src/js/components/activityLog/utils.js:175
@@ -494,30 +500,30 @@ msgid "v%s"
 msgstr ""
 
 #. translators: 1: previous version number, 2: new version number
-#: inc/classes/Settings.php:419
+#: inc/classes/Settings.php:420
 #: assets/src/js/components/activityLog/utils.js:160
 #, php-format,js-format
 msgid "v%1$s → v%2$s"
 msgstr ""
 
-#: inc/classes/Settings.php:461
+#: inc/classes/Settings.php:462
 #: assets/src/js/components/activityLog/ActivityLogPanel.js:258
 msgid "The log entry could not be deleted. Try again or check your database connection."
 msgstr ""
 
-#: inc/classes/Settings.php:562
+#: inc/classes/Settings.php:563
 msgid "The core auto-update setting is controlled by a constant in your wp-config.php file and cannot be changed here."
 msgstr ""
 
-#: inc/classes/Settings.php:582
+#: inc/classes/Settings.php:583
 msgid "This plugin was not found on your site. It may have been removed."
 msgstr ""
 
-#: inc/classes/Settings.php:602
+#: inc/classes/Settings.php:603
 msgid "This theme was not found on your site. It may have been removed."
 msgstr ""
 
-#: inc/classes/Settings.php:637
+#: inc/classes/Settings.php:638
 msgid "That constant is not recognised by Updatronix."
 msgstr ""
 

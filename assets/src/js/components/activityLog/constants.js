@@ -26,4 +26,5 @@ export const ACTION_LABELS = {
 	prevented: __('Prevented', 'updatronix'),
 	incompatible: __('Incompatible', 'updatronix'),
 	disabled: __('Disabled', 'updatronix'),
+	safe_mode_disabled: __('Auto-updates disabled by Safe Mode', 'updatronix'),
 };

@@ -26,7 +26,7 @@ final class Updatronix_Security {
      *
      * @var array<string>
      */
-    public const ALLOWED_ACTION_TYPES = ['update', 'downgrade', 'install', 'same_version', 'failed', 'uninstall', 'prevented', 'incompatible', 'disabled'];
+    public const ALLOWED_ACTION_TYPES = ['update', 'downgrade', 'install', 'same_version', 'failed', 'uninstall', 'prevented', 'incompatible', 'disabled', 'safe_mode_disabled'];
 
     /**
      * Allowed status values.

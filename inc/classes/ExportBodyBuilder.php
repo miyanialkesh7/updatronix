@@ -934,6 +934,7 @@ final class Updatronix_Export_Body_Builder {
             'prevented' => __('Prevented', 'updatronix'),
             'incompatible' => __('Incompatible', 'updatronix'),
             'disabled' => __('Disabled', 'updatronix'),
+            'safe_mode_disabled' => __('Auto-updates disabled by Safe Mode', 'updatronix'),
             default => $action_type !== '' ? $action_type : '',
         };
     }

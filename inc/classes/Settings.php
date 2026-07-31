@@ -351,6 +351,7 @@ final class Updatronix_Settings {
             'prevented' => __('Prevented', 'updatronix'),
             'incompatible' => __('Incompatible', 'updatronix'),
             'disabled' => __('Disabled', 'updatronix'),
+            'safe_mode_disabled' => __('Auto-updates disabled by Safe Mode', 'updatronix'),
         ];
         $log->action_type_display = $action_labels[$action_type] ?? $action_type;
 
