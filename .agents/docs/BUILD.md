@@ -29,9 +29,9 @@ Grep by command name. Source of truth for script tables: `composer.json` / `pack
 | `format` / `format:fix` | Prettier on `assets/src/**/*.{js,jsx}` |
 | `start` / `build` | `@wordpress/scripts` bundle |
 | `setup` | `bin/harness setup` — one-time dev environment setup (env file + WP test stack) |
-| `test:all` | `verify:all` (WPCS + PHPStan + unit + integration) + `lint:pcp` + `lint` + `lint:css` + `format` |
+| `test:all` | `verify:all` (WPCS + PHPStan + unit + integration) + `lint:pcp` + `lint` + `lint:css` + `test:js` |
 | `build:all` | `test:all` + `make:pot` + `build` (see **Build** below) |
-| `zip` | Build distributable zip via `.config/zip.js` (uses `archiver`; respects `.distignore`-style exclusions) |
+| `zip` | `bin/harness zip` — the distributable archive, reading `.distignore` |
 
 ## Configuration files
 
@@ -42,13 +42,10 @@ Grep by command name. Source of truth for script tables: `composer.json` / `pack
 | `.config/phpstan-bootstrap.php` | PHPStan bootstrap |
 | `.config/phpunit.xml.dist` | PHPUnit **unit** tests |
 | `.config/phpunit.integration.xml.dist` | PHPUnit **integration** tests |
-| `.config/eslint.config.mjs` | ESLint flat config (`@wordpress/eslint-plugin` recommended preset) |
-| `.config/stylelintrc.json` | Stylelint (`@wordpress/stylelint-config/scss-stylistic` + project overrides) |
 | `package.json` | `"prettier": "@wordpress/prettier-config"` for ESLint / editor Prettier |
 | `.editorconfig` | Tabs for source; spaces for `package.json` / YAML |
 | `.config/local-wp-cli.sh` | **Removed.** `bin/harness` resolves the backend itself (DDEV → LocalWP → host) |
 | `.config/pcp-setup.php` | Loaded by `wp plugin check --require` (CLI only) |
-| `.config/zip.js` | Distributable zip builder (`npm run zip`); reads `.distignore`, so there is one exclusion list |
 | `.config/wp-tests-env.example` | Template for integration test DB / path variables (generated automatically by `bin/harness setup` → `.config/wp-tests.env`) |
 | `bin/harness setup` | One-time dev setup: installs deps + generates `.config/wp-tests.env` + installs the WP test stack |
 | `bin/install-wp-tests.sh` | Installs WordPress core + `wordpress-tests-lib` (invoked by `setup`) |
@@ -67,7 +64,7 @@ For integration tests only, see **`tests/README.md`** and `bin/harness integrati
 
 | Suite | Path | Bootstrap | What it covers |
 |-------|------|-----------|----------------|
-| Unit | `tests/Unit/` | Stubs only — no WordPress | 11 files, no WP runtime: `AdminTabs` (tab definitions + active-tab resolution), `AutomaticUpdateResultNotes` (skin-message merge), `AutoUpdateDelay` (Behavior: soak-pipeline decisions; FilterVisibility: hook-callback visibility contract; Ledger: ledger hash), `CoreUpdateLogVersions` (version parsing/action-type detection), `ExportBodyBuilder` (field normalization + column allowlist) + `ExportBodyBuilderRender` (full render pipeline, byte cap, same-version collapse), `HooksShim` (bootstrap filter/action shim fidelity), `ScheduleSanitizers`, `Security` (redact/sanitize helpers) |
+| Unit | `tests/Unit/` | Stubs only — no WordPress | 13 files, no WP runtime: `AdminTabs` (tab definitions + active-tab resolution), `AutomaticUpdateResultNotes` (skin-message merge), `AutoUpdateDelay` (Behavior: soak-pipeline decisions; FilterVisibility: hook-callback visibility contract; Ledger: ledger hash), `CoreUpdateLogVersions` (version parsing/action-type detection), `ExportBodyBuilder` (field normalization + column allowlist) + `ExportBodyBuilderRender` (full render pipeline, byte cap, same-version collapse), `HooksShim` (bootstrap filter/action shim fidelity), `ScheduleSanitizers`, `Security` (redact/sanitize helpers) |
 | Integration — Auto-updates REST API | `tests/Integration/AutoUpdatesRestApiTest.php` | `wordpress-tests-lib` | Auto-update REST endpoints return correct responses for valid/invalid input and enforce permission gates; constant-gate cases (`AUTOMATIC_UPDATER_DISABLED`, `DISALLOW_FILE_MODS`) excluded because `defined()` cannot be reset mid-request |
 | Integration — REST auth | `tests/Integration/RestSettingsAuthTest.php` | `wordpress-tests-lib` | `permission_callback` + nonce gates on `/wp-json/updatronix/v1/settings` and `/logs` |
 | Integration — Activity-log REST API & cron helpers | `tests/Integration/LogsRestApiTest.php` | `wordpress-tests-lib` | Log CRUD/list/cleanup/export routes, auto-update kill-switch 403s (`Updatronix_Settings::auto_update_globally_locked()`), and cron helpers `Updatronix_Cron::maybe_schedule_if_needed()`, `run_cleanup()`, `clear_subsite_cron_artifacts()` |

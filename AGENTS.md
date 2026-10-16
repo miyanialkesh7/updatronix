@@ -156,7 +156,7 @@ broken project rather than a broken environment.
 | translations | `bin/harness pot` |
 | distributable | `bin/harness zip` / `bin/harness package` |
 
-**Tests.** This project carries the full test layer: `bin/harness test` (unit), `bin/harness integration` (real WordPress), `bin/harness coverage`, `bin/harness test:js` (Vitest) and `bin/harness e2e` (Playwright).
+**Tests.** This project carries the harness's test layer: `bin/harness test` (unit), `bin/harness integration` (real WordPress, where the project has an integration suite), `bin/harness coverage`, `bin/harness test:js` (Vitest, where `tests/js/` exists), and `bin/harness e2e` (Playwright, where a config exists).
 
 **Anti-tautology.** A test that cannot fail is worse than no test, because it still reports coverage. This is machine-enforced:
 
@@ -192,7 +192,7 @@ git config core.hooksPath .githooks
 | stage | budget | contents |
 |---|---|---|
 | `pre-commit` | target < 10 s | staged-file lint, anti-pattern scan, unit tests when PHP changed |
-| `pre-push` | target < 90 s | full lint, the suite, Infection and counterfactual on the diff |
+| `pre-push` | target < 270 s | full lint, the suite, Infection and counterfactual on the diff |
 | `pre-release` | unbounded | integration suite, Plugin Check, i18n, packaging |
 
 The budgets are targets, not guarantees, and the hook prints what it actually

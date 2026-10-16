@@ -20,7 +20,7 @@ Updatronix is built on WordPress's own update engine, so everything keeps workin
 [![WordPress tested](https://img.shields.io/badge/WordPress%20tested-7.1-21759b)](https://wordpress.org/plugins/updatronix/)
 [![WordPress requires](https://img.shields.io/badge/WordPress%20requires-6.2%2B-21759b)](https://wordpress.org/plugins/updatronix/)
 [![PHP](https://img.shields.io/badge/PHP-8.1%2B-8892BF)](https://www.php.net/)
-[![Plugin version](https://img.shields.io/badge/version-1.1.5-2E77BC)](https://wordpress.org/plugins/updatronix/)
+[![Plugin version](https://img.shields.io/badge/version-1.2.0-2E77BC)](https://wordpress.org/plugins/updatronix/)
 [![License](https://img.shields.io/badge/license-GPL--2.0--or--later-brightgreen)](https://www.gnu.org/licenses/gpl-2.0.html)
 [![WordPress downloads](https://img.shields.io/wordpress/plugin/dt/updatronix)](https://wordpress.org/plugins/updatronix/)
 
@@ -109,13 +109,13 @@ bin/harness setup   # one-time: dependencies and this project's toolchain
 | `npm run test:all` | every linter, and the suites the project has |
 | `npm run build:all` | `test:all`, then the `.pot`, then the bundle |
 | `composer run verify:php` | the pre-push gate: standards and static analysis |
-| `composer run verify:all` | the same, plus the suites the project has |
+| `composer run verify:all` | the same, plus the integration suite where the project has one |
 | `composer run lint:wpcs` / `npm run lint` / `npm run lint:css` | WPCS, ESLint, Stylelint — the `:fix` variants rewrite |
 | `composer run lint:pcp` | Plugin Check, where the project ships through WordPress.org |
 | `composer run make:pot` | regenerate `languages/updatronix.pot` |
 | `npm run zip` | the distributable archive |
 
-**Tests.** This project carries the full test layer: `bin/harness test` (unit), `bin/harness integration` (real WordPress), `bin/harness coverage`, `bin/harness test:js` (Vitest) and `bin/harness e2e` (Playwright).
+**Tests.** This project carries the harness's test layer: `bin/harness test` (unit), `bin/harness integration` (real WordPress, where the project has an integration suite), `bin/harness coverage`, `bin/harness test:js` (Vitest, where `tests/js/` exists), and `bin/harness e2e` (Playwright, where a config exists).
 
 **Anti-tautology.** A test that cannot fail is worse than no test, because it still reports coverage. This is machine-enforced:
 
