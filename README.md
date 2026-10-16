@@ -59,9 +59,9 @@ Set how long the log is kept, route WordPress update emails to the right address
 
 ## Compatibility & Multisite
 
-<!-- harness:compat:start -->
 ### Requirements
 
+<!-- harness:compat:start -->
 - WordPress **6.2+** (tested up to **7.1**)
 - PHP **8.1+**
 - Version **1.2.0**

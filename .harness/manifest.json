@@ -1,5 +1,5 @@
 {
-  "commit": "f163f95",
+  "commit": "b4941f9",
   "files": {
     ".agents/docs/DISTILLATION.md": {
       "class": "owned",
@@ -510,7 +510,7 @@
     },
     "README.md": {
       "class": "block",
-      "sha256": "fe329ddf9daff1cc5609b083747c1c08a783fd963f319f1d9664a8a8ebd02120"
+      "sha256": "b3b165428dd96d5ffd8a89c4200da3c5a60b6a4ab6bf0a883f86e0800319afb8"
     },
     "bin/check-prose-drift.php": {
       "class": "owned",
