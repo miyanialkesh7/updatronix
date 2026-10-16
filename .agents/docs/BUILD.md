@@ -73,6 +73,7 @@ For integration tests only, see **`tests/README.md`** and `bin/harness integrati
 | Integration — Recipient sanitisation | `tests/Integration/NotificationsRecipientSanitisationTest.php` | `wordpress-tests-lib` | `updatronix_sanitize_emails()` strips header-injection payloads, dedupes, and caps the recipient list (`UPDATRONIX_NOTIFY_EMAILS_MAX_RECIPIENTS`) |
 | Integration — Post-save action | `tests/Integration/SettingsPostSaveActionTest.php` | `wordpress-tests-lib` | `Updatronix_AutoUpdates::dismiss_constant()` and `set_translations()` route through `updatronix_save_settings_array()` and fire `updatronix_after_save_settings`; unrelated saves do not fire `updatronix_after_save_network_schedule` |
 | Integration — Multisite network-only | `tests/Integration/Multisite/MultisiteNetworkOnlyTest.php` | `wordpress-tests-lib` with `WP_MULTISITE=1` | Subsite context bails via `updatronix_should_load()`; settings live in site options network-wide; Super Admin REST saves schedule; uninstall clears network options |
+| Integration — Multisite network scope | `tests/Integration/Multisite/MultisiteNetworkScopeTest.php` | `wordpress-tests-lib` with `WP_MULTISITE=1` | Verifies the native-network load gate, REST scope resolution, shared storage, and cron placement. |
 
 Multisite tests **self-skip** when the bootstrap is not in multisite mode, so they stay in the default suite. To exercise them, prepend `WP_MULTISITE=1` to the integration-test command (the WordPress test bootstrap reads that env var to spin the install up as a network).
 
