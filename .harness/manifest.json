@@ -1,5 +1,5 @@
 {
-  "commit": "66630c9",
+  "commit": "0da485b",
   "files": {
     ".agents/docs/DISTILLATION.md": {
       "class": "owned",
@@ -508,6 +508,10 @@
       "class": "block",
       "sha256": "b1b544e9be0918b84db9ce9236f08bcf8f8118f6bdeb289df5a1acf1b7d25b52"
     },
+    "LICENSE": {
+      "class": "seed",
+      "sha256": "edaef632cbb643e4e7a221717a6c441a4c1a7c918e6e4d56debc3d8739b233f6"
+    },
     "README.md": {
       "class": "block",
       "sha256": "b3b165428dd96d5ffd8a89c4200da3c5a60b6a4ab6bf0a883f86e0800319afb8"
@@ -522,7 +526,7 @@
     },
     "bin/harness": {
       "class": "owned",
-      "sha256": "bda27b6e241ee932c4151cae212af25e7076fd11eb2026dc4abdd65fb02e20f0"
+      "sha256": "90d54d4f7e52056f8957ad5744ce6734bcd604c0f34f6ce8f944a1a0a4b8a9f5"
     },
     "bin/install-wp-tests.sh": {
       "class": "owned",
@@ -539,6 +543,10 @@
     "package.json": {
       "class": "merge",
       "sha256": "1133f67314edfafd6f8cb2d0f9f6cd67ed78363094e445ec5bdfbf3093c16e6b"
+    },
+    "readme.txt": {
+      "class": "seed",
+      "sha256": "abdb7c10f15c1f064d260503691f370e0abc0c70b092b8e3378be6f23e3b1b9d"
     },
     "workflow.md": {
       "class": "block",

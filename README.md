@@ -1,6 +1,13 @@
 # Updatronix — Update Manager Enhanced
 
-<img src=".wordpress-org/icon-256x256.png" alt="Updatronix logo" height="160" />
+<img src=".wordpress-org/banner-1544x500.png" alt="Updatronix banner" width="100%" />
+
+[![WordPress tested](https://img.shields.io/badge/WordPress%20tested-7.1-21759b)](https://wordpress.org/plugins/updatronix/)
+[![WordPress requires](https://img.shields.io/badge/WordPress%20requires-6.2%2B-21759b)](https://wordpress.org/plugins/updatronix/)
+[![PHP](https://img.shields.io/badge/PHP-8.1%2B-8892BF)](https://www.php.net/)
+[![Version](https://img.shields.io/badge/version-1.2.0-2E77BC)](https://wordpress.org/plugins/updatronix/)
+[![License](https://img.shields.io/badge/license-GPL--2.0--or--later-brightgreen)](https://www.gnu.org/licenses/gpl-2.0.html)
+[![WordPress downloads](https://img.shields.io/wordpress/plugin/dt/updatronix)](https://wordpress.org/plugins/updatronix/)
 
 **WordPress updates made easy — monitor every change, control all updates, and fine-tune your maintenance workflow.**
 
@@ -14,15 +21,6 @@ Updatronix is built on WordPress's own update engine, so everything keeps workin
 - **Freelancers:** When a client asks what you did, the answer is right there.
 - **Developers:** Real control over automatic updates and scheduling, with the full detail behind every event.
 - **Agencies:** The same update policy you trust, running on every client site, each with its own log.
-
-<img src=".wordpress-org/banner-1544x500.png" alt="Updatronix wide banner (1544x500)" width="100%" />
-
-[![WordPress tested](https://img.shields.io/badge/WordPress%20tested-7.1-21759b)](https://wordpress.org/plugins/updatronix/)
-[![WordPress requires](https://img.shields.io/badge/WordPress%20requires-6.2%2B-21759b)](https://wordpress.org/plugins/updatronix/)
-[![PHP](https://img.shields.io/badge/PHP-8.1%2B-8892BF)](https://www.php.net/)
-[![Plugin version](https://img.shields.io/badge/version-1.2.0-2E77BC)](https://wordpress.org/plugins/updatronix/)
-[![License](https://img.shields.io/badge/license-GPL--2.0--or--later-brightgreen)](https://www.gnu.org/licenses/gpl-2.0.html)
-[![WordPress downloads](https://img.shields.io/wordpress/plugin/dt/updatronix)](https://wordpress.org/plugins/updatronix/)
 
 ## Table of Contents
 
